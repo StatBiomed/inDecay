@@ -12,7 +12,7 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 # Set __version__ for the project.
-exec(open("./qrguide/version.py").read())
+exec(open("./inDecay/version.py").read())
 
 # Get the long description from the relevant file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
