@@ -89,7 +89,7 @@ def read_labeld_XY_matrix(matrix_path):
     return data.astype('float32'), oligo_order
 
 def ForeCast_gen_indels(target_seq, pam_idx):
-    INDELGENTARGET_EXE = os.getenv("INDELGENTARGET_EXE", "/home/wergillius/tools/indelgentarget")
+    INDELGENTARGET_EXE = os.getenv("INDELGENTARGET_EXE", f"{PATH.toolkit_dir}/indelgentarget")
     
     # 
     random_idx = np.random.randint(0, 1000000)
