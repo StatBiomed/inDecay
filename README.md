@@ -4,6 +4,11 @@ This library provides the inDecay package, the script for using our model to pre
 
 ![image](results/model.jpg)
 
+## Understanding how inDecay works
+We provide a demonstrating notebook containing the most necessary code to re-implement and inDecay work flow. You can follow the demo to build an idea of how the features were extracted and designed. It also recodes the a very small inDecay model and how to train the model with pytorch_lightning trainer.  
+
+To unlock full power of inDecay, please follow the installation and training steps.
+
 
 ## Installation
 To run inDecay model, please install the package by 
@@ -38,6 +43,7 @@ cmake . -DINDELMAP_OUTPUT_DIR=../inDecay/tool
 make && make install
 export INDELGENTARGET_EXE=../inDecay/tool/bin/indelgentarget
 ```
+&nbsp;
 
 ## Data download
 To get the data for re-producing the model or developing related tools, you can easily download the processed data via
@@ -52,16 +58,21 @@ bash script/Data_download.sh
 [out] Enter the path of folder you wanted to : 
 [in] data 
 ```
+&nbsp;  
 
-## predict with the model
+## Predict with the specified model weights
+
+To predict the editing profile for a collection of sequences, put all your sequence in a `.txt` file (e.g. `INPUTE_SEQUENCES.txt` below). 
+
 Under the main directory , run
-
 ```shell
-python scripts/STfeatV2_predict.py -S input_sequences.txt
+python scripts/STfeatV2_predict.py -S <INPUTE_SEQUENCES.txt> -M <MODEL_WEIGHT.pt>
 ```
 
+&nbsp;  
+## Train the model from scratch
 
-## train the model
+To reproduce the result, you can 
 Under the main directory , run
 ```shell
 python scripts/STfeatv2_inDecay.py --experiment --read_cutoff 500 --Model_Class ST_DeepDecay --Data_transform interaction
