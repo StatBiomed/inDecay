@@ -1,8 +1,6 @@
 import os, sys, subprocess, argparse, time, PATH, shutil, math ,  re, json
 import my_utils
 # sys.path.append(PATH.main_dir)
-# from features import readFeaturesData
-# from model import calcThetaX, computeRegularisers,  assessFit
 import numpy as np
 import pandas as pd 
 import torch
@@ -42,12 +40,9 @@ device = 'gpu' if torch.cuda.is_available() else 'cpu'
 
 # some path and requisite files
 pj = os.path.join
-SelfTarget_data_dir = PATH.data_dir
-high_dir = PATH.high_dir
+data_dir = PATH.data_dir
 
-reference_path = pj(SelfTarget_data_dir, "SelfTarget_NewScaffold.fasta")
-
-
+reference_path = pj(data_dir, "SelfTarget_NewScaffold.fasta")
 ref_lookup = reader.get_reference()
 
 
@@ -75,9 +70,8 @@ if __name__ == "__main__":
     experiments = args.experiment
     Cellline = experiments.split("_")[3]
     rep = experiments.split("_")[4]
-    save_dir = pj(high_dir, experiments)
+    save_dir = pj(data_dir, 'processed_df')
     csv_path = pj(save_dir,f"{Cellline}_{rep}.csv")
-    FXY_dir = pj(high_dir, experiments ,"ForeCastXY")
 
     
     gpu_device = {
@@ -93,7 +87,7 @@ if __name__ == "__main__":
     
     print(f"Runing {experiments} using cuda: {gpu_device}")
     pth_save_dir = os.path.join(PATH.pth_dir, f"STfeatv2_{args.Model_Class}_{args.Data_transform}_finetune")
-    for DIR in [SelfTarget_data_dir, pth_save_dir, high_dir, save_dir, FXY_dir]:
+    for DIR in [data_dir, pth_save_dir,  save_dir]:
         check_dir(DIR)  
     # Temp Theta file
     date = time.strftime("%b%d")
@@ -217,7 +211,6 @@ if __name__ == "__main__":
     trainer = pl.Trainer(
 			auto_lr_find = True,
             accelerator = device,
-            # fast_dev_run=True,
 			default_root_dir = pth_save_path,
             devices = [gpu_device],
 			max_epochs = args.Rounds,

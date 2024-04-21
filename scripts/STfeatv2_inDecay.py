@@ -1,8 +1,6 @@
 import os, sys, subprocess, argparse, time, PATH, shutil, math 
 import my_utils
 sys.path.append(PATH.main_dir)
-# from features import readFeaturesData
-# from model import calcThetaX, computeRegularisers,  assessFit
 import numpy as np
 import pandas as pd 
 import torch
@@ -42,10 +40,9 @@ device = 'gpu' if torch.cuda.is_available() else 'cpu'
 
 # some path and requisite files
 pj = os.path.join
-SelfTarget_data_dir = PATH.data_dir
-high_dir = PATH.high_dir
+data_dir = PATH.data_dir
 
-reference_path = pj(SelfTarget_data_dir, "SelfTarget_NewScaffold.fasta")
+reference_path = pj(data_dir, "SelfTarget_NewScaffold.fasta")
 
 
 def check_dir(DIR_NAME):
@@ -109,15 +106,8 @@ def read_data(OligoID, processed_df, experiments):
     """Read the precompute features according to the OligoID"""
     # read features
     Guide, refseq, pamsite, Strand = ref_lookup[OligoID]
-    # featurefile = my_utils.get_feature_file(OligoID, Guide)
     idfgen_file = my_utils.get_indelgen_file(OligoID, Guide)
-    # indel_feature_data, feature_cols = readFeaturesData(featurefile)
     idfgen = pd.read_table(idfgen_file, skiprows=1, names=['Identifier', 'n_coevent', 'loc'])
-
-    # merge data to get Y
-    Label_data_file = pj(high_dir, experiments ,"STDecay_XY", f"{OligoID}_{Guide}_ForeCastXY.csv")
-    check_dir(pj(high_dir, experiments ,"STDecay_XY"))
-
 
     def merging(OligoID,idfgen=idfgen):
         oligo_df = processed_df.query("`OligoID` == @OligoID")
@@ -125,7 +115,6 @@ def read_data(OligoID, processed_df, experiments):
         label_df = idfgen.merge(oligo_df[['OligoID','Identifier', 'Count']], 
                         left_on=['Identifier'], right_on=['Identifier'], suffixes=['', '_filled'], how='left') # type: ignore 
         label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-        # label_df.to_csv(Label_data_file, index=True)
         return label_df
     
     label_df = merging(OligoID)
@@ -206,9 +195,8 @@ if __name__ == "__main__":
     experiments = args.experiment
     Cellline = experiments.split("_")[3]
     rep = experiments.split("_")[4]
-    save_dir = pj(high_dir, experiments)
+    save_dir = pj(data_dir, 'processed_df')
     csv_path = pj(save_dir,f"{Cellline}_{rep}.csv")
-    FXY_dir = pj(high_dir, experiments ,"ForeCastXY")
 
     gpu_device = {
         "ST_June_2017_BOB_LV7A_DPI7":0,
@@ -223,7 +211,7 @@ if __name__ == "__main__":
     
     print(f"Runing {experiments} using cud: {gpu_device}")
     pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv2_{args.Model_Class}_{args.Data_transform}")
-    for DIR in [SelfTarget_data_dir, pth_save_dir, high_dir, save_dir, FXY_dir]:
+    for DIR in [data_dir, pth_save_dir, save_dir, FXY_dir]:
         check_dir(DIR)  
     # Temp Theta file
     date = time.strftime("%B%d")
