@@ -2,12 +2,15 @@
 
 This library provides the inDecay package, the script for using our model to predict indels for your own input sequence, the script for training, finetuning the inDecay model.
 
-<!-- ![image](results/model.jpg) -->
 
 ## Understand the workflow of inDecay  
-We provide a demonstrating notebook ([demo/inDecay_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main/demo/inDecay_demo.ipynb)) containing the most necessary code to re-implement and inDecay work flow. You can follow the demo to build an idea of how the features were extracted and designed. It also recodes the a very small inDecay model and how to train the model with pytorch_lightning trainer.  
+We provide a demonstrating notebook ([demo/inDecay_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main/demo/inDecay_demo.ipynb)) containing the most necessary code to re-implement the inDecay work flow. You can follow the demo to get an idea of how the features were extracted and designed. It also records the a simplified inDecay model and the training process using `pytorch_lightning` `Trainer`.  
 
-To unlock full power of inDecay, please follow the installation and training steps.
+<img src="results/model.jpg" alt="drawing" width="400"/>  
+
+
+&nbsp;  
+To unlock the full power of inDecay, please follow the installation and training steps below.
 &nbsp;  
 
 ## Installation  
@@ -39,13 +42,6 @@ cd selftarget_pyutils
 pip install -e .
 cd ../indel_prediction
 pip install -e .
-
-# compile predictor
-cd ../indel_analysis/indelmap
-export INDELGENTARGET_EXE=${Tooldir}/indelgentarget
-
-cd main_dir
-
 ```
 &nbsp;
 
