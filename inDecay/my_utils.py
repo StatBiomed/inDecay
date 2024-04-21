@@ -9,10 +9,9 @@ from qrguide import transformation, analysis_fn
 sys.path.append(PATH.STpyutils_dir)
 # -- lindel utils --
 sys.path.append(PATH.Lindel_dir)
-from Predictor import gen_indel , onehotencoder, create_feature_array
 from selftarget.indel import tokFullIndel
 import matplotlib.pyplot as plt
-from scipy.special import softmax
+
 global data_dir
 global combine_train
 global combine_test
