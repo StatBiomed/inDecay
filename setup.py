@@ -18,7 +18,7 @@ exec(open("./inDecay/version.py").read())
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
     
-reqs = ['numpy>=1.9.0', 'scipy>=1.4.0', 'matplotlib', 'statsmodels>=0.13', 'qrguide', 'torch']
+reqs = ['numpy>=1.9.0', 'scipy>=1.4.0', 'matplotlib', 'statsmodels>=0.13', 'torch']
 
 setup(
     name='inDecay',
@@ -61,6 +61,7 @@ setup(
     
     install_requires=reqs,
     include_package_data=True,
+
 
     extras_require={
         'docs': [
