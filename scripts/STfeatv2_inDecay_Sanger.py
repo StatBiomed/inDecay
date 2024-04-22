@@ -289,16 +289,16 @@ if __name__ == "__main__":
         predict_y = trainer.predict(model, Test_DL)
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(test_genes)} # type: ignore
 
-        ForeCast_pred = ckpt_abspath.replace(".ckpt", "TestPred.pkl")
+        TestPred = ckpt_abspath.replace(".ckpt", "TestPred.pkl")
         
         # TODO: comment this 2 lines later
         # exp_name = args.Pretrain.split("ST_June_2017_")[-1].split("_LV7A_DPI7")[0]
-        # ForeCast_pred = os.path.join(pth_save_dir, exp_name+"_TestPred.pkl")
+        # TestPred = os.path.join(pth_save_dir, exp_name+"_TestPred.pkl")
 
-        pred_f = open(ForeCast_pred, 'wb')
+        pred_f = open(TestPred, 'wb')
         pkl.dump(pred_lookup, pred_f)
         pred_f.close()
-        print("prediction writed to %s" %ForeCast_pred)
+        print("prediction writed to %s" %TestPred)
     
     
 

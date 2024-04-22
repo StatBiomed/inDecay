@@ -266,11 +266,11 @@ if __name__ == "__main__":
         
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(Test_Oligos)} # type: ignore
 
-        ForeCast_pred = ckpt_abspath.replace(".ckpt", "TestPred.pkl")
-        pred_f = open(ForeCast_pred, 'wb')
+        TestPred = ckpt_abspath.replace(".ckpt", "TestPred.pkl")
+        pred_f = open(TestPred, 'wb')
         pkl.dump(pred_lookup, pred_f)
         pred_f.close()
-        print("prediction writed to %s" %ForeCast_pred)
+        print("prediction writed to %s" %TestPred)
 
 
         

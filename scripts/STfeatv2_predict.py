@@ -23,3 +23,18 @@ if __name__ == "__main__":
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-M","--Model_checkpoint", type=str, required=True, help='the model weight')
     parser.add_argument("-S","--Sequence", type=str, required=True, help='the sequence to predict')
+
+    # prepare
+
+    # indelgentarget
+    
+    ##  read input txt
+
+    # predict
+
+    ##  load model
+    
+    ##  prepare data loader
+
+    ## use model.predict
+
