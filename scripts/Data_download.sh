@@ -9,7 +9,7 @@ fi
 cd $Data_dir
 
 echo "ready to download pre-training data"
-curl https://figshare.com/ndownloader/articles/25133564/versions/2 --output inDecay_data.zip
+wget --no-check-certificate https://figshare.com/ndownloader/articles/25133564/versions/2 -O inDecay_data.zip
 
 echo "unzipping the downloaded data"
 unzip inDecay_data.zip

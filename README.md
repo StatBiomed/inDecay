@@ -48,14 +48,15 @@ pip install -e .
 ## Data download
 To get the data for re-producing the model or developing related tools, you can easily download the processed data via
 ```shell
-bash script/Data_download.sh
+cd ../../inDecay
+bash scripts/Data_download.sh
 ```
 
 The script will ask for the directory to place the data. You the script will create the folder if not existed. An example below:
 
 ```shell
-bash script/Data_download.sh
-[out] Enter the path of folder you wanted to : 
+bash scripts/Data_download.sh
+[out] Enter the a path where you want to save the data: 
 [in] data 
 ```
 
