@@ -6,6 +6,8 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - python=3.9
+  - pip
   - _libgcc_mutex=0.1=main
   - _openmp_mutex=5.1=1_gnu
   - appdirs=1.4.4=pyhd3eb1b0_0
@@ -112,15 +114,12 @@ dependencies:
   - pear=0.9.6=h36cd882_7
   - pexpect=4.8.0=pyhd3eb1b0_3
   - pickleshare=0.7.5=pyhd3eb1b0_1003
-  - pip=22.1.2
   - pooch=1.4.0=pyhd3eb1b0_0
   - ptyprocess=0.7.0=pyhd3eb1b0_2
   - pure_eval=0.2.2=pyhd3eb1b0_0
   - pycparser=2.21=pyhd3eb1b0_0
   - pyopenssl=22.0.0=pyhd3eb1b0_0
   - pyparsing=3.0.4=pyhd3eb1b0_0
-  - python=3.10.4=h12debd9_0
-  - python-dateutil=2.8.2=pyhd3eb1b0_0
   - pytorch=1.13.1=py3.10_cuda11.6_cudnn8.3.2_0
   - pytorch-cuda=11.6=h867d48c_1
   - pytorch-mutex=1.0=cuda
@@ -215,7 +214,6 @@ dependencies:
     - lightning-utilities==0.7.0
     - llvmlite==0.39.1
     - markdown==3.4.1
-    - markupsafe==2.1.2
     - matplotlib==3.5.2
     - matplotlib-inline==0.1.6
     - matplotlib-venn==0.11.9

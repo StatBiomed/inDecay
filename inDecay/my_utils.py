@@ -6,9 +6,9 @@ import subprocess
 import pickle as pkl
 from qrguide import transformation, analysis_fn
 # -- selftarget utils --
-sys.path.append(PATH.STpyutils_dir)
+# sys.path.append(PATH.STpyutils_dir)
 # -- lindel utils --
-sys.path.append(PATH.Lindel_dir)
+# sys.path.append(PATH.Lindel_dir)
 from selftarget.indel import tokFullIndel
 import matplotlib.pyplot as plt
 
