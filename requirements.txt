@@ -126,7 +126,6 @@ pysam==0.19.1
 pysocks==1.7.1
 pytest==7.4.2
 python-json-logger==2.0.7
-pytorch-lightning==1.9.3
 pytz==2022.1
 pyyaml==6.0
 pyzmq==25.0.0
@@ -159,10 +158,6 @@ tensorboard-plugin-wit==1.8.1
 terminado==0.17.1
 tinycss2==1.2.1
 tomli==2.0.1
-torch==1.13.1
-torchaudio==0.13.1
-torchmetrics==0.11.1
-torchvision==0.14.1+cu116
 tornado==6.2
 tqdm==4.64.0
 traitlets==5.7.1
@@ -182,3 +177,8 @@ y-py==0.5.9
 yarl==1.8.2
 ypy-websocket==0.8.2
 qrguide==0.0.2
+torch==1.13.1
+torchaudio==0.13.1
+torchmetrics==0.11.1
+torchvision==0.14.1
+pytorch-lightning==1.9.3
