@@ -1,5 +1,4 @@
 import os, sys, subprocess, argparse, time, PATH, shutil, math 
-import my_utils
 sys.path.append(PATH.main_dir)
 import numpy as np
 import pandas as pd 
@@ -10,7 +9,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
 # from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
-from inDecay import alignmap, models, reader
+from inDecay import my_utils, alignmap, models, reader
 from tqdm.contrib.concurrent import process_map
 
 to_train = True
@@ -178,7 +177,7 @@ if __name__ == "__main__":
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
     parser.add_argument("-C","--read_cutoff", type=int, default=500, help='The threshold of total count. Only Guides having total read count over this threshold are used')
-    parser.add_argument("-T","--test_oligos", type=str, default="result/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
+    parser.add_argument("-T","--test_oligos", type=str, default="results/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
     parser.add_argument("-d","--L2_Lambda", required=False, type=float, default=3e-5, help="the regularization strength")
@@ -191,23 +190,18 @@ if __name__ == "__main__":
     experiments = args.experiment
     Cellline = experiments.split("_")[3]
     rep = experiments.split("_")[4]
+    trainer_log = pj(PATH.main_dir, 'pl_trainer_log')
     save_dir = pj(data_dir, 'processed_df')
     csv_path = pj(save_dir,f"{Cellline}_{rep}.csv")
 
-    gpu_device = {
-        "ST_June_2017_BOB_LV7A_DPI7":0,
-        "ST_June_2017_CHO_LV7A_DPI7":1,
-        "ST_June_2017_E14TG2A_LV7A_DPI7":2,
-        "ST_June_2017_HAP1_LV7A_DPI7":3,
-        "ST_June_2017_K562_800x_LV7A_DPI7":3,
-        }[experiments]
+    gpu_device = 0 if device=='gpu' else 10
 
     if args.GPU_devices is not None:
         gpu_device= args.GPU_devices
     
     print(f"Runing {experiments} using cud: {gpu_device}")
     pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv2_{args.Model_Class}_{args.Data_transform}")
-    for DIR in [data_dir, pth_save_dir, save_dir, FXY_dir]:
+    for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
         check_dir(DIR)  
     # Temp Theta file
     date = time.strftime("%B%d")
