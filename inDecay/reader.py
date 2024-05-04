@@ -1,6 +1,6 @@
-import os, io, csv, sys, time, PATH
+import os, io, csv, sys, time
 sys.path.append(os.path.abspath("../"))
-from . import my_utils
+from . import my_utils, PATH
 import numpy as np
 import pandas as pd
 import pickle as pkl

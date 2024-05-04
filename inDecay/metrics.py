@@ -1,5 +1,5 @@
-import os, sys, PATH
-import my_utils
+import os, sys
+from . import my_utils, PATH
 import numpy as np
 import torch
 import torchmetrics

@@ -1,4 +1,5 @@
-import os, io, csv, sys, time, PATH
+import os, io, csv, sys, time
+from . import PATH
 import numpy as np
 import pandas as pd
 from scipy import special
