@@ -1,5 +1,4 @@
 import os, sys, subprocess, argparse, time, PATH, shutil, math 
-import my_utils
 sys.path.append(PATH.main_dir)
 import numpy as np
 import pandas as pd 
@@ -10,7 +9,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
 # from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
-from inDecay import alignmap, models, reader
+from inDecay import my_utils, alignmap, models, reader
 from tqdm.contrib.concurrent import process_map
 
 def indelgen():

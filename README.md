@@ -20,10 +20,11 @@ git clone https://github.com/StatBiomed/inDecay.git
 cd inDecay
 
 # create an new environment and install the dependencies
-conda env create -f environment.yml
+conda env create -n inDecay python=3.10.4 pip
 
 # install the python package
 conda activate inDecay
+pip install -r requirements.txt
 pip install -e ./  
 ```
 &nbsp;  

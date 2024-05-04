@@ -1,8 +1,5 @@
 import os, sys, subprocess, argparse, time, PATH, shutil, math 
-import my_utils
 sys.path.append(PATH.main_dir)
-# from features import readFeaturesData
-# from model import calcThetaX, computeRegularisers,  assessFit
 import numpy as np
 import pandas as pd 
 import torch
@@ -14,8 +11,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
 from Bio import SeqIO
-from scripts.reimplement_forecast import Forecast_model
-from inDecay import alignmap, models, reader
+from inDecay import alignmap, models, reader, my_utils
 from tqdm.contrib.concurrent import process_map
 from scripts.STfeatv2_inDecay_finetune import check_dir, readFeaturesData, find_ckpt, interaction_transform, decay_transform
 
