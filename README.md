@@ -29,23 +29,6 @@ pip install -e ./
 ```
 &nbsp;  
 
-And we also encourage users to install indelgen toolkits from SelfTarget(https://github.com/felicityallen/SelfTarget).
-
-```shell
-conda activate inDecay
-
-cd ../
-git clone https://github.com/felicityallen/SelfTarget.git
-cd SelfTarget
-# the python dependent
-pip install -r requirements.txt
-cd selftarget_pyutils
-pip install -e .
-cd ../indel_prediction
-pip install -e .
-```
-&nbsp;
-
 ## Data download
 To get the data for re-producing the model or developing related tools, you can easily download the processed data via
 
@@ -72,6 +55,14 @@ bash scripts/setup_path.sh
 Please **change the directories mannually** in PATH.py **if you did not download them with default directorial setting** !!
 
 &nbsp;  
+
+And we also encourage users to install indelgen toolkits from SelfTarget(https://github.com/felicityallen/SelfTarget).
+
+```shell
+conda activate inDecay
+bash scripts/selftarget.sh
+```
+&nbsp;
 
 ## Predict with the specified model weights
 
