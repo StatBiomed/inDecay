@@ -101,6 +101,7 @@ if __name__ == "__main__":
     parser.add_argument("-L","--L1_Lambda", required=False, type=float, default=0, help="the regularization strength")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default=0, help="the regularization strength")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="interaction", help="the name of data transformation")
+    parser.add_argument("-T","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only` and `Write_Y`")
     args = parser.parse_args()
@@ -135,6 +136,18 @@ if __name__ == "__main__":
     # get gene list
     # and also a gene to table look up
     genes, gene_ref_dict  = get_sanger_training()
+    
+    valided_genes = []
+    unused_genes = ''
+    for g in genes:
+        label_df = read_sanger_data(g)
+        n_event = label_df.query('`Identifier` != "Identifier"').nunique()
+        if n_event < args.threshold:
+            unused_genes += f', {g}'
+        else:
+            valided_genes.append(g)
+            
+    genes = valided_genes
 
     # split genes
     kf_indeces = reader.get_Sanger_train_test(genes)
