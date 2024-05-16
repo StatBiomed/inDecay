@@ -1,4 +1,4 @@
-import os, sys, subprocess, argparse, time, PATH, shutil, math ,  re, json
+import os, sys, subprocess, argparse, time, shutil, math ,  re, json
 import numpy as np
 import pandas as pd 
 import torch
@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks
 import pickle as pkl
-from inDecay import alignmap, models, reader, my_utils
+from inDecay import alignmap, models, reader, my_utils, PATH
 from tqdm.contrib.concurrent import process_map
 from qrguide import analysis_fn, transformation
 from scripts.STfeatv2_inDecay import check_dir,readFeaturesData ,find_ckpt, read_data, interaction_transform, decay_transform

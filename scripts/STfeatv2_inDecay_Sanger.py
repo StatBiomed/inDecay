@@ -75,7 +75,7 @@ def save_spliting(genes, kf_indeces):
     split_df = pd.DataFrame(gene_by_fold,
                             columns=['Train_gene', 'Val_gene', 'Test_gene'])
     # save
-    split_df.to_csv("result/Sanger_spliting.csv") # save to result (will updated in github repo)
+    split_df.to_csv("results/Sanger_spliting.csv") # save to result (will updated in github repo)
     split_df.to_csv(os.path.join(indelgen_dir, f"Sanger_spliting_{date}.csv")) # backup locally
 
 def read_sanger_data(gene, gene_ref_lookup, exp):
@@ -96,14 +96,14 @@ def read_sanger_data(gene, gene_ref_lookup, exp):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("`inDecay` few shot learning on Sanger sequencing data")
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
-    parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
+    parser.add_argument("-P","--Pretrain", required=False, type=str, default='pl_trainer_log/pretrained/mESC_pretained.ckpt', help="the pretrained parameter theta")
     parser.add_argument("-d","--L2_Lambda", required=False, type=float, default=3e-5, help="the regularization strength")
     parser.add_argument("-L","--L1_Lambda", required=False, type=float, default=0, help="the regularization strength")
-    parser.add_argument("-M","--Model_Class", required=False, type=str, default=0, help="the regularization strength")
+    parser.add_argument("-M","--Model_Class", required=False, type=str, default='ST_DeepDecay', help="the regularization strength")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="interaction", help="the name of data transformation")
-    parser.add_argument("-T","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
+    parser.add_argument("-J","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
-    parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only` and `Write_Y`")
+    parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
     args = parser.parse_args()
 
     ## Mode ##
@@ -121,6 +121,10 @@ if __name__ == "__main__":
     elif args.Mode == 'Write_Y':
         to_train = to_predict = False
         to_write_y = True
+
+    elif args.Mode == 'Baseline':
+        to_train = to_predict = to_write_y = False 
+        to_baseline = True
     else:
         raise ValueError("Invalide action combination")
 
@@ -140,14 +144,17 @@ if __name__ == "__main__":
     valided_genes = []
     unused_genes = ''
     for g in genes:
-        label_df = read_sanger_data(g)
-        n_event = label_df.query('`Identifier` != "Identifier"').nunique()
+        label_df = read_sanger_data(g,'','')
+        n_event = label_df.query('`Identifier` != "Identifier"')['Identifier'].nunique()
         if n_event < args.threshold:
             unused_genes += f', {g}'
         else:
             valided_genes.append(g)
-            
-    genes = valided_genes
+
+    print("Unused genes : \n" + unused_genes)
+    print("number_valided genes: \n" + str(len(valided_genes)))
+
+    genes = np.array(valided_genes)
 
     # split genes
     kf_indeces = reader.get_Sanger_train_test(genes)
@@ -158,11 +165,11 @@ if __name__ == "__main__":
 
 
     # save train test splits
-    if not os.path.exists("result/Sanger_spliting.csv"):
+    if not os.path.exists("results/Sanger_spliting.csv"):
         save_spliting(genes, kf_indeces) # create a 2-dimensional list  then to df
     else:
         # sanity check
-        spliting_df = pd.read_csv("result/Sanger_spliting.csv")
+        spliting_df = pd.read_csv("results/Sanger_spliting.csv")
         assert len(kf_indeces) == spliting_df.shape[0], 'the num of fold has changed'
         
         record_test_genes = spliting_df.iloc[args.test_split]['Test_gene']
@@ -173,8 +180,10 @@ if __name__ == "__main__":
     # some checkpoint settings
     save_dir = pj(high_dir, "Sanger")
     exp_name = args.Pretrain.split("ST_June_2017_")[-1].split("_LV7A_DPI7")[0]
+    if "/" in exp_name:
+        exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
 
-    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv2_{args.Model_Class}_{args.Data_transform}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"{args.Model_Class}_{args.Data_transform}")
     pth_save_path = pj(pth_save_dir, f"Sanger_{exp_name}_{len(kf_indeces)}fold_{args.test_split}")
     
     for DIR in [SelfTarget_data_dir, pth_save_dir, high_dir, save_dir]:
@@ -196,7 +205,7 @@ if __name__ == "__main__":
     
     
     # Modeling and Training
-    model_class = eval("inDecay.%s"%args.Model_Class)
+    model_class = eval("models.%s"%args.Model_Class)
     model_parsms = dict(inputsize=n_features, outputsize=1,  lr=lr,
                         L1_lambda=L1_Lambda, L2_lambda=L2_Lambda)
     if 'Deep' in args.Model_Class:
@@ -257,7 +266,7 @@ if __name__ == "__main__":
         Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
 
         # TODO: comment this later
-        # Forecast_Y = "/home/wergillius/data/CRISPR_data/pl_trainer_log/ST_featv2_ST_DeepDecay_interaction/Sanger_Y.pkl"
+        # Forecast_Y = f"{PATH.pth_dir}/ST_featv2_ST_DeepDecay_interaction/Sanger_Y.pkl"
         # test_genes = genes 
 
         if not os.path.exists(Forecast_Y):
@@ -288,12 +297,7 @@ if __name__ == "__main__":
         
         
         # TODO: comment this 2 lines later
-        # DS = reader.ST_dataset(genes, gene_ref_dict, "Sanger", 
-        #                         read_data_fn = read_sanger_data,
-        #                         transformation=transform,
-        #                         feat_ext_fn = feature_extraction_fn,
-        #                         normalize=normalize)
-        # Test_DL = DataLoader(DS, shuffle=False, batch_size=1, num_workers=num_workers)
+        
 
         predict_y = trainer.predict(model, Test_DL)
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(test_genes)} # type: ignore
@@ -309,6 +313,23 @@ if __name__ == "__main__":
         pred_f.close()
         print("prediction writed to %s" %TestPred)
     
-    
+    if to_baseline:
+        #  to generate baseline for the pretrained model
 
+        DS = reader.ST_dataset(valided_genes, gene_ref_dict, "Sanger", 
+                                read_data_fn = read_sanger_data,
+                                transformation=transform,
+                                feat_ext_fn = feature_extraction_fn,
+                                normalize=normalize)
+        Test_DL = DataLoader(DS, shuffle=False, batch_size=1, num_workers=num_workers)
 
+        model.eval()
+        predict_y = trainer.predict(model, Test_DL)
+        pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(valided_genes)}
+        print(len(pred_lookup))
+        TestPred = args.Pretrain.replace(".ckpt", "_TestPred.pkl")
+
+        pred_f = open(TestPred, 'wb')
+        pkl.dump(pred_lookup, pred_f)
+        pred_f.close()
+        print("prediction writed to %s" %TestPred)

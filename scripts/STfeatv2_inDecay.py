@@ -1,5 +1,4 @@
-import os, sys, subprocess, argparse, time, PATH, shutil, math 
-sys.path.append(PATH.main_dir)
+import os, sys, subprocess, argparse, time, shutil, math 
 import numpy as np
 import pandas as pd 
 import torch
@@ -9,7 +8,8 @@ import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
 # from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
-from inDecay import my_utils, alignmap, models, reader
+from inDecay import my_utils, alignmap, models, reader, PATH
+sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
 
 to_train = True
