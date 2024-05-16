@@ -35,8 +35,6 @@ To get the data for re-producing the model or developing related tools, you can 
 The script will ask for the directory to place the data. You the script will create the folder if not existed. 
 
 ```shell
-cd ../../inDecay
-
 # Enter the a path where you want to save the data: 
 # i.e simply type data
 bash scripts/Data_download.sh
@@ -49,6 +47,9 @@ bash scripts/Data_download.sh
 After you have downloaded the data and install the SelfTarget toolkits, please runn the following script under the main directories. 
 
 ```shell
+bash scripts/selftarget.sh
+cd ../../inDecay
+
 bash scripts/setup_path.sh
 ```
 
