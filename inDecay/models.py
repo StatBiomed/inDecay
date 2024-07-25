@@ -737,6 +737,43 @@ class ST_DeepDecay(Base_del_model):
 		y_pred = torch.softmax(Out.squeeze(2), dim=1)
 		return y_pred, y
 
+class ST_delfeat_DeepDecay(ST_DeepDecay):
+	"""
+	DeepDecay multi-ev model
+	"""
+	def __init__(self, del_feat, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4):
+		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda)
+
+        # deletion model
+		layer_size = [del_feat] + hidden 
+
+		layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
+				for din, dout in zip(layer_size[:-1] , layer_size[1:])]
+		layer_ls += [nn.Linear(hidden[-1],1)]
+          
+		self.del_regressor = nn.Sequential(*layer_ls)
+
+
+		# insertion model
+		layer_ins = [inputsize-del_feat] + hidden
+
+		layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
+				for din, dout in zip(layer_ins[:-1] , layer_ins[1:])]
+		layer_ls += [nn.Linear(hidden[-1],1)]
+          
+		self.del_regressor = nn.Sequential(*layer_ls)
+		self.del_feat = del_feat
+
+	
+	def forward(self, train_batch):
+		x,y  = train_batch 
+        x_del = x[:,:,:self.del_feat]
+        x_ins = x[:,:,:self.del_feat]
+		Out = self.del_regressor(x) # [b, N_indel, 3633] -> [b, N_indel,1]
+		y_pred = torch.softmax(Out.squeeze(2), dim=1)
+		return y_pred, y
+
+
 class ST_DeepDecay_dropout(ST_DeepDecay):
 	"""
 	repeat Lindel's linear model
