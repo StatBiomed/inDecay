@@ -19,6 +19,26 @@ def decay(x, k):
     y = 1 / (1+np.exp(x)**k)
     return y
 
+def one_hot(seq,complementary=False):
+    """
+    one_hot encoding on sequence
+    complementary: encode nucleatide into complementary one
+    """
+    # setting
+    seq = list(seq.replace("U","T"))
+    seq_len = len(seq)
+    complementary = -1 if complementary else 1
+    # compose dict
+    keys = ['A', 'C', 'G', 'T'][::complementary]
+    oh_dict = {keys[i]:i for i in range(4)}
+    # array
+    oh_array = np.zeros((seq_len,4))
+    for i,C in enumerate(seq):
+        try:
+            oh_array[i,oh_dict[C]]=1
+        except:
+            continue      # for nucleotide that are not in A C G T   
+    return oh_array 
 
 def get_ins_weight_bias():
     """
@@ -123,6 +143,50 @@ def extract_features_from_map(input_map):
         
     return detected_events
 
+def pair_align_map(seq, cut_site=39, plotout=False):
+    """
+    we split the sequence at CRISPR cut site and construct the substitution matrix
+    set `plotout=True` to visualize the micro-homology alignment
+    """    
+    
+    left = seq[:cut_site]
+    right = seq[cut_site:]
+    onehot_left = one_hot(left)
+    onehot_right = one_hot(right)  # A C G T
+    
+    align_map = np.zeros((cut_site, len(right)))
+    
+    for i in range(4):
+        outprod = onehot_left[:,i].reshape(-1,1) @ onehot_right[:,i].reshape(1,-1)
+        align_map += outprod 
+        
+    if plotout:
+        plt.matshow(align_map, cmap='Blues')
+        plt.yticks(range(cut_site), list(left), fontsize=5)
+        plt.xticks(range(len(right)), list(right), fontsize=5)
+    
+    return align_map
+
+def diag_conv_filter(matrix, panelty=-1):
+    """
+    for a pair-wise alignment matrix, detect the diagonal line with kernel convolution
+    """
+    
+    conv_f = np.diag((1,1))
+    out = np.full_like(matrix, panelty)
+    
+    for i in range(matrix.shape[0]-1):
+        for j in range(matrix.shape[1]-1):
+        # move from left to right first
+        # then change line
+            
+            if np.multiply(matrix[i:i+2,j:j+2], conv_f).sum() == 2:
+                out[i,j] = 1
+                out[i+1,j+1] = 1
+                
+    return out
+
+
 def construct_diagonal_map(seq, cut_site=39, plotout=False):
     """
     a function to simply convert input sequences to filtered alignment map
@@ -154,59 +218,6 @@ def construct_diagonal_map(seq, cut_site=39, plotout=False):
         plt.xticks(range(len(right)), list(right), fontsize=7);
         
     return filtered_map
-
-def diag_conv_filter(matrix):
-    """
-    for a pair-wise alignment map, detect the diagonal line
-    """
-    
-    conv_f = np.diag((1,1))
-    out = np.full_like(matrix, -1)
-    
-    for i in range(matrix.shape[0]-1):
-        for j in range(matrix.shape[1]-1):
-        # move from left to right first
-        # then switch line
-            
-            if np.multiply(matrix[i:i+2,j:j+2], conv_f).sum() == 2:
-                out[i,j] = 1
-                out[i+1,j+1] = 1
-                
-#     for i in range(matrix.shape[0]):
-#         for j in range(matrix.shape[1]):
-#             if j<=i:
-#                 out[i,j] = -1 
-        
-    return out
-
-
-def pair_align_map(seq, cut_site=39, plotout=False):
-    """
-    for a typical Lindel input, we split the sequence at CRISPR cut site
-    and visualize the micro-homology alignment
-    """
-#     assert len(seq) == 60, "length not equal to 60; not a lindel input seq"
-    
-    
-    left = seq[:cut_site]
-    right = seq[cut_site:]
-    onehot_left = one_hot(left)
-    onehot_right = one_hot(right)  # A C G T
-    
-    
-    align_map = np.zeros((cut_site, len(right)))
-    
-    for i in range(4):
-        outprod = onehot_left[:,i].reshape(-1,1) @ onehot_right[:,i].reshape(1,-1)
-        align_map += outprod 
-        
-    if plotout:
-        plt.matshow(align_map, cmap='Blues')
-        plt.yticks(range(cut_site), list(left), fontsize=5)
-        plt.xticks(range(len(right)), list(right), fontsize=5)
-    
-    return align_map
-
 
 def label_mh(refseq, cutsite, label_df):
     # construct
@@ -373,28 +384,6 @@ def ST_decayfeat_v2(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
         X2[i, 17] = guide_gc
 
     return X2
-
-
-def one_hot(seq,complementary=False):
-    """
-    one_hot encoding on sequence
-    complementary: encode nucleatide into complementary one
-    """
-    # setting
-    seq = list(seq.replace("U","T"))
-    seq_len = len(seq)
-    complementary = -1 if complementary else 1
-    # compose dict
-    keys = ['A', 'C', 'G', 'T'][::complementary]
-    oh_dict = {keys[i]:i for i in range(4)}
-    # array
-    oh_array = np.zeros((seq_len,4))
-    for i,C in enumerate(seq):
-        try:
-            oh_array[i,oh_dict[C]]=1
-        except:
-            continue      # for nucleotide that are not in A C G T   
-    return oh_array 
 
 def K_mer(seq,K):
     """
