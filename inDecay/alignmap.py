@@ -186,8 +186,7 @@ def diag_conv_filter(matrix, panelty=-1):
                 
     return out
 
-
-def construct_diagonal_map(seq, cut_site=39, plotout=False):
+def construct_diagonal_map(seq, cut_site=39, panelty=-1,plotout=False):
     """
     a function to simply convert input sequences to filtered alignment map
     
@@ -206,7 +205,7 @@ def construct_diagonal_map(seq, cut_site=39, plotout=False):
         np.ndarray, filtered matrix only contains diagonal elements
     """
     alignmap = pair_align_map(seq, cut_site)
-    filtered_map = diag_conv_filter(alignmap)
+    filtered_map = diag_conv_filter(alignmap,panelty)
     
     if plotout:
         left = seq[:cut_site]

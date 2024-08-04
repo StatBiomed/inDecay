@@ -764,11 +764,10 @@ class ST_delfeat_DeepDecay(ST_DeepDecay):
 		self.del_regressor = nn.Sequential(*layer_ls)
 		self.del_feat = del_feat
 
-	
 	def forward(self, train_batch):
-		x,y  = train_batch 
-        x_del = x[:,:,:self.del_feat]
-        x_ins = x[:,:,:self.del_feat]
+		x,y  = train_batch
+		x_del = x[:,:,:self.del_feat]
+		x_ins = x[:,:,:self.del_feat]
 		Out = self.del_regressor(x) # [b, N_indel, 3633] -> [b, N_indel,1]
 		y_pred = torch.softmax(Out.squeeze(2), dim=1)
 		return y_pred, y

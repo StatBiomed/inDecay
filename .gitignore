@@ -169,3 +169,5 @@ pl_trainer_log
 pl_trainer_log/*
 inDecay/PATH.py
 scripts/PATH.py
+
+*f_map*.jpg
