@@ -85,7 +85,7 @@ class ST_dataset(Dataset):
         label_df = self.read_data_fn(oligo, self.processed_df, self.experiments)
         # x = label_df[feature_columns].values
 
-        mh_mask, label_df = label_mh(refseq, cutsite, label_df)
+        mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df)
 
         x2 = self.feat_ext_fn(label_df, refseq, cutsite)
         x2 = self.transformation(x2)
@@ -95,28 +95,6 @@ class ST_dataset(Dataset):
         # self.Identifiers[self.Oligos[i]] = label_df['Identifier']
 
         return x2.astype("float32"), y.astype("float32")
-    
-def label_mh(refseq, cutsite, label_df):
-    # construct
-    filtered_map = alignmap.construct_diagonal_map(refseq, cutsite)
-    detected_events = alignmap.extract_features_from_map(filtered_map)
-
-    is_mh = np.zeros((label_df.shape[0],1))
-    mml_v = np.zeros((label_df.shape[0],))
-    for i, locs in enumerate(label_df['loc'].values):
-        locs = eval(locs)
-        for ss_end in locs:
-            left, right = ss_end[:2]
-            dl = right - left
-            relative_ss = left - cutsite
-            event_name = f"{relative_ss}+{dl}"
-
-            if event_name in detected_events.keys():
-                is_mh[i] = 1
-                mml_v[i] = detected_events[event_name]
-
-    label_df['mh_length'] = mml_v
-    return is_mh, label_df
 
 
 class inDecay_DataModule(pl.LightningDataModule):
