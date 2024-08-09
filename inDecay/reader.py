@@ -85,7 +85,8 @@ class ST_dataset(Dataset):
         label_df = self.read_data_fn(oligo, self.processed_df, self.experiments)
         # x = label_df[feature_columns].values
 
-        mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df)
+        mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df, mml_name='mh_length')
+        mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df, mml_name='mh_length2', panelty=0)
 
         x2 = self.feat_ext_fn(label_df, refseq, cutsite)
         x2 = self.transformation(x2)

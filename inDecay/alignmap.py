@@ -1,6 +1,7 @@
 import os, io, re, csv, sys, time
 sys.path.append(os.path.abspath("../"))
 from . import my_utils, PATH
+import torch
 import numpy as np
 import pandas as pd
 from scipy import special
@@ -10,6 +11,7 @@ from scipy.signal import convolve2d
 from matplotlib import pyplot as plt
 
 ins_wb = None
+base_dist_M = None
 
 A,T,G,C = 'A','T','G','C'
 AA,AT,AC,AG,CG,CT,CA,CC = 'AA','AT','AC','AG','CG','CT','CA','CC'
@@ -18,6 +20,15 @@ GT,GA,GG,GC,TA,TG,TC,TT = 'GT','GA','GG','GC','TA','TG','TC','TT'
 def decay(x, k):
     y = 1 / (1+np.exp(x)**k)
     return y
+
+def get_distance_matrix(size=50):
+
+    global base_dist_M
+    base_dist_M = np.sqrt(np.broadcast_to(np.arange(0,size), shape=(size,size)).T**2 + \
+                np.broadcast_to(np.arange(size-1,-1,-1), shape=(size,size))**2)
+    
+    base_dist_M = base_dist_M/base_dist_M.max()
+
 
 def one_hot(seq,complementary=False):
     """
@@ -167,12 +178,12 @@ def pair_align_map(seq, cut_site=39, plotout=False):
     
     return align_map
 
-def diag_conv_filter(matrix, panelty=-1):
+def diag_conv_filter(matrix, score=1, panelty=-1):
     """
     for a pair-wise alignment matrix, detect the diagonal line with kernel convolution
     """
     
-    conv_f = np.diag((1,1))
+    conv_f = np.diag((score,score))
     out = np.full_like(matrix, panelty)
     
     for i in range(matrix.shape[0]-1):
@@ -186,7 +197,7 @@ def diag_conv_filter(matrix, panelty=-1):
                 
     return out
 
-def construct_diagonal_map(seq, cut_site=39, panelty=-1,plotout=False):
+def construct_diagonal_map(seq, cut_site=39, score=1, panelty=-1, matrix_size=None):
     """
     a function to simply convert input sequences to filtered alignment map
     
@@ -205,22 +216,35 @@ def construct_diagonal_map(seq, cut_site=39, panelty=-1,plotout=False):
         np.ndarray, filtered matrix only contains diagonal elements
     """
     alignmap = pair_align_map(seq, cut_site)
-    filtered_map = diag_conv_filter(alignmap,panelty)
+    filtered_map = diag_conv_filter(alignmap, score, panelty)
+
+    if matrix_size is None: 
+        # no padding is required
+        left = -1 * matrix_size
+        filtered_map = torch.from_numpy(filtered_map).float()[left:, :matrix_size]
+
+        dim1, dim2 = tuple(filtered_map.shape)
+        right_pad = max(matrix_size - dim2, 0)
+        upper_pad = max(matrix_size - dim1, 0)
+        padding = (
+            0, right_pad,  # pad at right for dim -1
+            upper_pad,0,   # pad at left for dim -2
+        )
+        filtered_map = torch.nn.functional.pad(filtered_map, padding).numpy()
     
-    if plotout:
-        left = seq[:cut_site]
-        right = seq[cut_site:]
-        
-        plt.figure(dpi=400)
-        plt.matshow(filtered_map, cmap='Blues')
-        plt.yticks(range(cut_site), list(left), fontsize=7)
-        plt.xticks(range(len(right)), list(right), fontsize=7);
-        
     return filtered_map
 
-def label_mh(refseq, cutsite, label_df):
+
+# def various_kernel_conv(filtered_map, kernel_size_ls=[3,5,7,9,11]):
+    
+#     for ws in kernel_size_ls:
+#         kernel = np.diag(np.full((ws,), 1))
+#         conv2d_fn = lambda x: convolve2d(kernel, x , mode='valid').item()
+# s
+
+def label_mh(refseq, cutsite, label_df, mml_name='mh_length',  score=1, panelty=-1):
     # construct
-    filtered_map = construct_diagonal_map(refseq, cutsite)
+    filtered_map = construct_diagonal_map(refseq, cutsite, score=score, panelty=panelty)
     detected_events = extract_features_from_map(filtered_map)
 
     is_mh = np.zeros((label_df.shape[0],1))
@@ -237,10 +261,31 @@ def label_mh(refseq, cutsite, label_df):
                 is_mh[i] = 1
                 mml_v[i] = detected_events[event_name]
 
-    label_df['mh_length'] = mml_v
+    label_df[mml_name] = mml_v
     return is_mh, label_df
 
-def ST_decayfeat(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
+def compute_decay_sum_P50(seq, cut_site=39):
+    """
+    for each reference sequence  output 4 features
+    """
+    filtered_map = construct_diagonal_map(seq, cut_site=cut_site, score=1, panelty=-1, matrix_size=50)
+    filtered_map_1 = construct_diagonal_map(seq, cut_site=cut_site, score=1, panelty=0, matrix_size=50)
+
+    mh_intensity_sum = []
+    decay_term = [
+        lambda x : np.power(3, x),
+        lambda x : np.power(2, x),
+    ]
+    for decay_fn in decay_term:
+        dist_M = decay_fn(base_dist_M)
+
+        for filter_M in [filtered_map, filtered_map_1]:
+            summ  = np.multiply(filter_M, dist_M).sum()
+            mh_intensity_sum.append(summ)        
+    
+    return mh_intensity_sum
+
+def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     """
     Construct 15 features for each indel gen dataframe
     DEL : dl, ss, ss-decay, mml, proximal(left), aproximal(right), dl-decay, del_intcpt, n_events
@@ -259,7 +304,8 @@ def ST_decayfeat(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     ------------
     x : np.ndarray, [df.shape, 15]
     """
-    MML = label_df['mh_length'].values
+    MML_1 = label_df['mh_length'].values
+    MML_2 = label_df['mh_length2'].values
     Idfs = label_df['Identifier'].values
     locs = label_df['loc'].values
     coevents = label_df['n_coevent'].values
@@ -273,6 +319,9 @@ def ST_decayfeat(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     guide_gc = compute_gc_ratio(guide)
     del_intcpt, ins_intcpt = del_ins_intercept(guide)
 
+    # mh intensity
+    mh_pixelsum_list = compute_decay_sum_P50(refseq, cutsite)
+
     for i,idf in enumerate(Idfs):
         indel_type, indel_size,  details, muts  = my_utils.tokFullIndel(idf)
         ss = details['L'] + details['C']
@@ -285,12 +334,13 @@ def ST_decayfeat(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             X2[i, 0] = indel_size
             X2[i, 1] = ss
             X2[i, 2] = decay(ss, k1)
-            X2[i, 3] = MML[i]**h                   # max mm length
-            X2[i, 4] = proximal_mask[i]            # proximal del, this is different from v1 !!
-            X2[i, 5] = distal_mask[i]              # distal del, this is different from v1 !!
-            X2[i, 6] = decay(indel_size, k2)
-            X2[i, 7] = del_intcpt
-            X2[i, 8] = coevents[i]
+            X2[i, 3] = MML_1[i]**h                   # max mm length
+            X2[i, 4] = MML_2[i]**h                   # max mm length
+            X2[i, 5] = proximal_mask[i]            # proximal del, this is different from v1 !!
+            X2[i, 6] = distal_mask[i]              # distal del, this is different from v1 !!
+            X2[i, 7] = decay(indel_size, k2)
+            X2[i, 8] = del_intcpt
+            X2[i, 9] = coevents[i]
 
         elif indel_type == 'I':
 
@@ -299,16 +349,20 @@ def ST_decayfeat(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             right_nt = refseq[cutsite : cutsite+indel_size]
             left_nt =  refseq[cutsite-indel_size:cutsite]
 
-            X2[i, 9] = indel_size
-            X2[i, 10] = details['C']
-            X2[i, 11] = (ss + indel_size) == 0 
-            X2[i, 12] = indel_size == details['C']
-            X2[i, 13] = ins_intcpt
-            X2[i, 14] = coevents[i]
-            X2[i, 15] = 1/len(inserts)*int(right_nt in inserts)
-            X2[i, 16] = 1/len(inserts)*int(left_nt in inserts)
+            X2[i, 10] = indel_size
+            X2[i, 11] = details['C']
+            X2[i, 12] = (ss + indel_size) == 0 
+            X2[i, 13] = indel_size == details['C']
+            X2[i, 14] = ins_intcpt
+            X2[i, 15] = coevents[i]
+            X2[i, 16] = 1/len(inserts)*int(right_nt in inserts)
+            X2[i, 17] = 1/len(inserts)*int(left_nt in inserts)
 
-        X2[i, 17] = guide_gc
+        X2[i, 18] = guide_gc
+        X2[i, 19] = mh_pixelsum_list[0]
+        X2[i, 20] = mh_pixelsum_list[1]
+        X2[i, 21] = mh_pixelsum_list[2]
+        X2[i, 22] = mh_pixelsum_list[3]
 
     return X2
 
