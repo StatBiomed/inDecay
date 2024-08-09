@@ -218,7 +218,7 @@ def construct_diagonal_map(seq, cut_site=39, score=1, panelty=-1, matrix_size=No
     alignmap = pair_align_map(seq, cut_site)
     filtered_map = diag_conv_filter(alignmap, score, panelty)
 
-    if matrix_size is None: 
+    if matrix_size is not None: 
         # no padding is required
         left = -1 * matrix_size
         filtered_map = torch.from_numpy(filtered_map).float()[left:, :matrix_size]
@@ -268,6 +268,9 @@ def compute_decay_sum_P50(seq, cut_site=39):
     """
     for each reference sequence  output 4 features
     """
+    if base_dist_M is None:
+        get_distance_matrix()
+
     filtered_map = construct_diagonal_map(seq, cut_site=cut_site, score=1, panelty=-1, matrix_size=50)
     filtered_map_1 = construct_diagonal_map(seq, cut_site=cut_site, score=1, panelty=0, matrix_size=50)
 
@@ -276,6 +279,7 @@ def compute_decay_sum_P50(seq, cut_site=39):
         lambda x : np.power(3, x),
         lambda x : np.power(2, x),
     ]
+
     for decay_fn in decay_term:
         dist_M = decay_fn(base_dist_M)
 
@@ -309,7 +313,7 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     Idfs = label_df['Identifier'].values
     locs = label_df['loc'].values
     coevents = label_df['n_coevent'].values
-    X2 = np.zeros((len(Idfs), 18))
+    X2 = np.zeros((len(Idfs), 23))
 
     distal_mask = get_distal(label_df, cutsite)
     proximal_mask = get_proximal(label_df, cutsite)
