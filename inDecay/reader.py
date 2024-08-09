@@ -95,7 +95,7 @@ class ST_dataset(Dataset):
 
         # self.Identifiers[self.Oligos[i]] = label_df['Identifier']
 
-        return x2.astype("float32"), y.astype("float32")
+        return torch.from_numpy(x2).float(),torch.from_numpy(y).float()
 
 
 class inDecay_DataModule(pl.LightningDataModule):

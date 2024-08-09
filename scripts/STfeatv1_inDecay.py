@@ -172,6 +172,11 @@ def decay_transform(X):
     X_ins = np.hstack([X[:,:5], interaction_ins])
     return np.hstack([X_del, X_ins])
 
+def my_collect_fn(batch_list):
+    features = [item[0].requires_grad_() for item in batch_list]
+    ys = [item[1].requires_grad_() for item in batch_list]
+    return features, ys
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
@@ -264,9 +269,9 @@ if __name__ == "__main__":
                                 feat_ext_fn = feature_extraction_fn,
                                 normalize=normalize)
 
-    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=1, num_workers=num_workers)
-    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=1, num_workers=num_workers)
-    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=1, num_workers=num_workers)
+    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
+    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
+    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
 
     trainer = pl.Trainer(
 			auto_lr_find=True,
