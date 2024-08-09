@@ -363,10 +363,10 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             X2[i, 17] = 1/len(inserts)*int(left_nt in inserts)
 
         X2[i, 18] = guide_gc
-        X2[i, 19] = mh_pixelsum_list[0]
-        X2[i, 20] = mh_pixelsum_list[1]
-        X2[i, 21] = mh_pixelsum_list[2]
-        X2[i, 22] = mh_pixelsum_list[3]
+        X2[i, 19] = mh_pixelsum_list[0] / 1600
+        X2[i, 20] = mh_pixelsum_list[1] / 600
+        X2[i, 21] = mh_pixelsum_list[2] / 1200
+        X2[i, 22] = mh_pixelsum_list[3] / 500
 
     return X2
 
