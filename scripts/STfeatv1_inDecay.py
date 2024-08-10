@@ -310,7 +310,9 @@ if __name__ == "__main__":
 
 
     if to_predict:
-        
+        # if args.Pretrain is not None:
+        #     ckpt_abspath = os.path.join(PATH.main_dir, args.Pretrain)
+        # else:
         ckpt_abspath = find_ckpt(pj(pth_save_path, 'lightning_logs'))
         assert os.path.exists(ckpt_abspath)
 

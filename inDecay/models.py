@@ -421,7 +421,8 @@ class Base_del_model(pl.LightningModule):
         return cre
 
     def predict_step(self, batch, batch_idx):
-        p_pred, y = self.forward(batch)
+        X, y = batch
+        p_pred = [self.forward(x).unsqueeze(0) for x in X]
         return p_pred
 
 
