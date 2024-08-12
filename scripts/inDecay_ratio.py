@@ -12,8 +12,7 @@ from pytorch_lightning import callbacks
 from inDecay import my_utils, alignmap, ratio_models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
-from STfeatv2_inDecay import check_dir, readFeaturesData, find_ckpt, read_data, \
-                            ref_lookup, interaction_transform, decay_transform 
+from STfeatv2_inDecay import  read_data, ref_lookup
 
 to_train = True
 to_predict = True
@@ -69,6 +68,31 @@ def compute_ratios(Oligo, processed_df):
 
 
     return ins_ratio, mh_ratio
+
+
+def compute_dig_map(Oligo, matrix_size=50, score=1, panelty=-1):
+
+    Guide, refseq, pamsite, Strand = ref_lookup[Oligo]
+    cutsite = int(pamsite) - 3
+
+    left = -1 * matrix_size
+    filtered_map = alignmap.construct_diagonal_map(refseq, score=score, cut_site=cutsite, panelty=panelty)[left:, :matrix_size]
+    filtered_map = torch.from_numpy(filtered_map).float().unsqueeze(0)
+    # C, H, W
+
+    N, dim1, dim2 = tuple(filtered_map.shape)
+    right_pad = max(matrix_size - dim2, 0)
+    upper_pad = max(matrix_size - dim1, 0)
+    padding = (
+        0, right_pad,  # pad at right for dim -1
+        upper_pad,0,   # pad at left for dim -2
+        0,0            # no padding for dim -3
+    )
+    filtered_map = nn.functional.pad(filtered_map, padding).numpy()
+
+    return filtered_map[0]  # remove channel
+
+
 
 
 class ratio_dataset(Dataset):
@@ -134,7 +158,7 @@ if __name__ == "__main__":
     parser.add_argument("-T","--test_oligos", type=str, default="data/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
     parser.add_argument("-G","--GPU_devices", type=int, default="0", help='The gpu to use')
     parser.add_argument("--lr", type=float, default=3e-4, help='The learning rate')
-    args = parser.parse_args()
+    args = parser.parse_args(["-E" ,"ST_June_2017_BOB_LV7A_DPI7"])
     
     # some save file settings
     experiments = args.experiment
@@ -158,11 +182,69 @@ if __name__ == "__main__":
     # precompute the ratios
     Oligos = Train_Oligos + Val_Oligos + Test_Oligos.tolist()
 
+
+    base_dist_M = np.sqrt(np.broadcast_to(np.arange(0,50), shape=(50,50)).T**2 + \
+                np.broadcast_to(np.arange(49,-1,-1), shape=(50,50))**2)
+    
+    base_dist_M = base_dist_M/base_dist_M.max()
+
+
     def precompute_fn(x): 
         return compute_ratios(x, processed_df)
+
+    def compute_decay_sum1_P50(Oligo):
+        filtered_map = compute_dig_map(Oligo, score=1, panelty=-1)
+        filtered_map_0 = compute_dig_map(Oligo, score=1, panelty=0)
+        filtered_map_2 = compute_dig_map(Oligo, score=2, panelty=-1)
+
+        mh_intensity_sum = []
+        decay_term = [
+            lambda x : np.power(3, x),
+            lambda x : np.power(2, x),
+            lambda x : x**3
+        ]
+        for decay_fn in decay_term:
+            dist_M = decay_fn(base_dist_M)
+
+            for filter_M in [filtered_map, filtered_map_0, filtered_map_2]:
+                summ  = np.multiply(filter_M, dist_M).sum()
+                mh_intensity_sum.append(summ)        
+        
+        return mh_intensity_sum
+
+
+    def compute_decay_sum1_P20(Oligo):
+        filtered_map = compute_dig_map(Oligo, score=1, panelty=-1, matrix_size=20)
+        filtered_map_0 = compute_dig_map(Oligo, score=1, panelty=0, matrix_size=20)
+        
+
+        base_dist_M = base_dist_M[-20:,20]
+        mh_intensity_sum = []
+        decay_term = [0.2,0.5,0.8]
+        for decay in decay_term:
+            dist_M = base_dist_M
+            dist_M /= dist_M.max()
+            dist_M = 1 - dist_M
+
+            dist_M = np.power(dist_M,4)
+
+            for filter_M in [filtered_map, filtered_map_0]:
+                summ  = np.multiply(filter_M, dist_M).sum()
+                mh_intensity_sum.append(summ)        
+        
+        return mh_intensity_sum
     
     # process_map(precompute_fn,Oligos,max_workers=8, chunksize=500)
-    ratios = np.stack(process_map(precompute_fn,Oligos,max_workers=8, chunksize=10), dtype=np.float32)
+    ratios = np.stack(process_map(precompute_fn, Oligos,max_workers=20, chunksize=10), dtype=np.float32)
+
+    Decay_sum = np.stack(process_map(compute_decay_sum1_P50, Oligos, max_workers=20, chunksize=10), dtype=np.float32)
+
+    # linear regression
+    from sklearn.linear_model import LinearRegression
+    model = LinearRegression()
+    model.fit(Decay_sum[:6694], ratios[:6694,1])
+    model.score(Decay_sum[:6694], ratios[:6694,1])
+    model.score(Decay_sum[6694:], ratios[6694:,1])
 
     # construct lookup dict for each ratio
     ins_ratio_lookup = dict(zip(Oligos, ratios[:,0]))

@@ -23,20 +23,28 @@ class Topk_Event_Overlapping(torchmetrics.Metric):
                        dist_reduce_fx="sum")
         self.add_state("total", default=torch.tensor(0), dist_reduce_fx="sum")
 
-    def update(self, preds: torch.Tensor, target: torch.Tensor):
+    def update(self, preds: Union[list,torch.Tensor], target: Union[list,torch.Tensor]):
         # preds, target = self._input_format(preds, target)  # type: ignore
-        assert preds.shape == target.shape
+        # assert len(preds) == len(target)
 
-        k = self.k if self.k <= target.shape[1] else target.shape[1]
-        pred_idxs = torch.topk(preds, k=k, dim=1).indices.cpu().numpy()
-        target_idxs = torch.topk(target, k=k, dim=1).indices.cpu().numpy()
+        if isinstance(preds, torch.Tensor):
+            preds = [preds.squeeze()]
+            target = [target.squeeze()]
 
-        batch_overlap = 0
-        for i_p, i_t in zip(pred_idxs, target_idxs):
-            batch_overlap += len(np.intersect1d(i_p, i_t))
+        for pred_i, target_i in zip(preds, target):
 
-        self.overlap += batch_overlap  # type: ignore
-        self.total += target.shape[0]  # type: ignore
+            assert pred_i.shape == target_i.shape
+            k = self.k if self.k <= target_i.shape[0] else target_i.shape[0]
+
+            pred_idxs = torch.topk(pred_i, k=k, dim=0).indices.cpu().numpy()
+            target_idxs = torch.topk(target_i, k=k, dim=0).indices.cpu().numpy()
+
+            batch_overlap = 0
+            for i_p, i_t in zip(pred_idxs, target_idxs):
+                batch_overlap += len(np.intersect1d(i_p, i_t))
+
+            self.overlap += batch_overlap  # type: ignore
+            self.total += target_i.shape[0]  # type: ignore
 
     def compute(self):
         return self.overlap.float() / self.total  # type: ignore
@@ -257,14 +265,32 @@ class Base_del_model(pl.LightningModule):
                 torch.Tensor([attr]).float(), requires_grad=is_updatable)
             self.__setattr__(attr_name, init_parm)
 
-    def compute_Loss(self, out, y):
+    def compute_Loss(self, out, y, reduce='mean'):
         """
         NLL loss 
         """
-
         # TODO: weight case by total count
         #  = 200 for > 200 or S
-        cre = -1* torch.multiply(torch.log(out+1e-5), y).sum(dim=1).mean()
+        if isinstance(y, list):
+            cre_list = []
+            for pred_i, y_i in zip(out, y):   #  iterate over each sample
+                cre_list.append(
+                    -1* torch.multiply(torch.log(pred_i+1e-5), y_i).sum()
+                )
+            
+            cre = torch.stack(cre_list)
+
+        elif isinstance(y, torch.Tensor):
+            cre = -1* torch.multiply(torch.log(out+1e-5), y).sum()
+
+        if reduce is None:
+            cre = cre
+        elif reduce == 'mean':
+            cre = cre.mean()
+        elif reduce == 'sum':
+            cre = cre.sum()
+        else:
+            raise ValueError("invalid reduce of NLL loss")
         return cre
 
     def compute_L1(self):
@@ -283,18 +309,35 @@ class Base_del_model(pl.LightningModule):
         raise NotImplementedError("please cover this")
         return None
 
-    def forward(self, train_batch):
+    def normalize_y(self, y):
+
+        with torch.no_grad():
+            if isinstance(y, torch.Tensor):
+                if torch.any(y.sum(1) != 1):
+                    y = y / y.sum(dim=1, keepdim=True)
+
+            elif isinstance(y, list):
+                y_out = []
+                for y_i in y:
+                    if np.isclose(y_i.sum().item(), 1):
+                        y_out.append(y_i)
+                    else:
+                        y_out.append(y_i / y_i.sum())
+                y=y_out
+        return y
+
+    def forward(self, x):
         """
         Compute the probability for mmej and nhej separately and then combine them.
         During trainig, the ground turth mh ratio is used 
         """
-        (nhej_feat, mmej_feat, mh_strength), y, c_matrix = train_batch
+        nhej_feat, mmej_feat, mh_strength = x
         mh_strength = mh_strength.view(-1, 1).float()
         mmej_p_pred = self.mmej_forward(mmej_feat)
         nhej_p_pred = self.nhej_forward(nhej_feat)
         y_pred = nhej_p_pred * (1-mh_strength) + mmej_p_pred * (mh_strength)
         # return torch.bmm(y_pred.unsqueeze(1), c_matrix).squeeze(), torch.bmm(y.unsqueeze(1), c_matrix).squeeze()
-        return y_pred, y
+        return y_pred
 
     def predict(self, x, c_matrix=None):
         y_pred = self.del_regressor(x)
@@ -305,55 +348,81 @@ class Base_del_model(pl.LightningModule):
     def training_step(self, train_batch, batch_idx):
 
         # forward
-        p_pred, y = self.forward(train_batch)
+        X, y = train_batch
+        if isinstance(y, list):
+            p_pred = [self.forward(x) for x in X]
+        else:
+            p_pred = self.forward(X).unsqueeze(0)
         cre = self.compute_Loss(p_pred, y)
 
         # compute all kinds of loss and metrices
-        if torch.any(y.sum(1) != 1):
-            y = y / y.sum(dim=1, keepdim=True)
+        y = self.normalize_y(y)
+
         L1 = self.compute_L1()
         L2 = self.compute_L2()
-        mse = F.mse_loss(p_pred, y,)
-        kld = self.train_kld(p_pred+1e-14, y+1e-14)
+
+        
+        if isinstance(y, list):
+            mse = torch.stack([F.mse_loss(pred_i, y_i) for pred_i, y_i in zip(p_pred, y)]).mean()
+            kld = torch.stack([self.train_kld(p.unsqueeze(0) + 1e-14, y_i.unsqueeze(0)+ 1e-14) for p, y_i in zip(p_pred, y)]).mean()
+        else:
+            mse = F.mse_loss(p_pred, y)
+            kld = self.train_kld(p_pred+1e-14, y+1e-14)
+        
+        
         self.top5_recall(p_pred, y)
         self.top10_recall(p_pred, y)
 
         # logging
-        self.log('train_mse', mse, sync_dist=True)
-        self.log('train_cre', cre, sync_dist=True)
-        self.log('train_L1', L1, sync_dist=True)
-        self.log('train_L2', L2, sync_dist=True)
-        self.log('train_kld', self.train_kld)
-        self.log('train_top5recall', self.top5_recall)
-        self.log('train_top10recall', self.top10_recall)
+        self.log('train_mse', mse, sync_dist=False, batch_size=len(y))
+        self.log('train_cre', cre, sync_dist=False, batch_size=len(y))
+        self.log('train_L1', L1, sync_dist=False, batch_size=len(y))
+        self.log('train_L2', L2, sync_dist=False, batch_size=len(y))
+        self.log('train_kld', kld, batch_size=len(y))
+        self.log('train_top5recall', self.top5_recall, batch_size=len(y))
+        self.log('train_top10recall', self.top10_recall, batch_size=len(y))
 
         # the final loss is defined here
         loss = cre + L1*self.L1_lambda + L2*self.L2_lambda
         return loss
 
     def validation_step(self, train_batch, batch_idx):
+        
+        X, y = train_batch
+        
+        if isinstance(y, list):
+            p_pred = [self.forward(x) for x in X]
+        else:
+            p_pred = self.forward(X).unsqueeze(0)
 
-        p_pred, y = self.forward(train_batch)
         cre = self.compute_Loss(p_pred, y)
 
         # compute all kinds of loss and metrices
-        if torch.any(y.sum(1) != 1):
-            y = y / y.sum(dim=1, keepdim=True)
-        mse = F.mse_loss(p_pred, y)
-        kld = self.val_kld(p_pred+1e-14, y+1e-14)
+        # if torch.any(y.sum(1) != 1):
+        #     y = y / y.sum(dim=1, keepdim=True)
+        y = self.normalize_y(y)
+
+        if isinstance(y, list):
+            mse = torch.stack([F.mse_loss(pred_i, y_i) for pred_i, y_i in zip(p_pred, y)]).mean()
+            kld = torch.stack([self.train_kld(p.unsqueeze(0) + 1e-14, y_i.unsqueeze(0)+ 1e-14) for p, y_i in zip(p_pred, y)]).mean()
+        else:
+            mse = F.mse_loss(p_pred, y)
+            kld = self.train_kld(p_pred+1e-14, y+1e-14)
+
         self.top5_recall(p_pred, y)
         self.top10_recall(p_pred, y)
 
         # logging
-        self.log('val_mse', mse)
-        self.log('val_cre', cre)
-        self.log('val_kld', self.val_kld)
-        self.log('val_top5recall', self.top5_recall)
-        self.log('val_top10recall', self.top10_recall)
+        self.log('val_mse', mse, batch_size=len(y))
+        self.log('val_cre', cre, batch_size=len(y))
+        self.log('val_kld', kld, batch_size=len(y))
+        self.log('val_top5recall', self.top5_recall, batch_size=len(y))
+        self.log('val_top10recall', self.top10_recall, batch_size=len(y))
         return cre
 
     def predict_step(self, batch, batch_idx):
-        p_pred, y = self.forward(batch)
+        X, y = batch
+        p_pred = [self.forward(x).unsqueeze(0) for x in X]
         return p_pred
 
 
@@ -617,11 +686,10 @@ class ST_Decay(Base_del_model):
         self.train_kld = torchmetrics.KLDivergence()
         self.val_kld = torchmetrics.KLDivergence()
 
-    def forward(self, train_batch):
-        x, y = train_batch
+    def forward(self, x):
         Out = self.del_regressor(x)  # [b, N_indel, 3633] -> [b, N_indel,1]
         y_pred = torch.softmax(Out.squeeze(2), dim=1)
-        return y_pred, y
+        return y_pred
 
 
 class ST_Decay_Scaler(Base_del_model):
@@ -656,37 +724,6 @@ class ST_Decay_Scaler(Base_del_model):
         scaled_y = torch.multiply(y_pred, scaler_v)
 
         return scaled_y / scaled_y.sum(), y
-
-
-class ST_DeepDecay(Base_del_model):
-    """
-    repeat Lindel's linear model
-    """
-
-    def __init__(self, inputsize=9, outputsize=1, hidden=[16], pathway_dim=4, lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4):
-        super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda)
-        self.lr = lr
-        layer_size = [inputsize] + hidden
-
-        layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
-                    for din, dout in zip(layer_size[:-1], layer_size[1:])]
-        layer_ls += [nn.Sequential(
-            nn.Linear(hidden[-1], pathway_dim),
-            nn.Mish(),
-            nn.Linear(pathway_dim, 1))]
-        self.del_regressor = nn.Sequential(*layer_ls)
-
-        # self.del_regressor = nn.Linear(inputsize, outputsize)
-        # self.loss_fn = nn.NLLLoss()
-        self.l1_crit = nn.L1Loss(size_average=False)
-        self.train_kld = torchmetrics.KLDivergence()
-        self.val_kld = torchmetrics.KLDivergence()
-
-    def forward(self, train_batch):
-        x, y = train_batch
-        Out = self.del_regressor(x)  # [b, N_indel, 3633] -> [b, N_indel,1]
-        y_pred = torch.softmax(Out.squeeze(2), dim=1)
-        return y_pred, y
 
 
 class Lindel_del(Base_del_model):
@@ -731,11 +768,45 @@ class ST_DeepDecay(Base_del_model):
 		self.train_kld = torchmetrics.KLDivergence()
 		self.val_kld = torchmetrics.KLDivergence()
 	
-	def forward(self, train_batch):
-		x,y  = train_batch 
+	def forward(self, x):
+		Out = self.del_regressor(x) # [b, N_indel, 3633] -> [b, N_indel,1]
+		y_pred = torch.softmax(Out.squeeze(), dim=0)
+		return y_pred
+
+class ST_delfeat_DeepDecay(ST_DeepDecay):
+	"""
+	DeepDecay multi-ev model
+	"""
+	def __init__(self, del_feat, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4):
+		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda)
+
+        # deletion model
+		layer_size = [del_feat] + hidden 
+
+		layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
+				for din, dout in zip(layer_size[:-1] , layer_size[1:])]
+		layer_ls += [nn.Linear(hidden[-1],1)]
+          
+		self.del_regressor = nn.Sequential(*layer_ls)
+
+
+		# insertion model
+		layer_ins = [inputsize-del_feat] + hidden
+
+		layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
+				for din, dout in zip(layer_ins[:-1] , layer_ins[1:])]
+		layer_ls += [nn.Linear(hidden[-1],1)]
+          
+		self.del_regressor = nn.Sequential(*layer_ls)
+		self.del_feat = del_feat
+
+	def forward(self, x):
+		x_del = x[:,:,:self.del_feat]
+		x_ins = x[:,:,:self.del_feat]
 		Out = self.del_regressor(x) # [b, N_indel, 3633] -> [b, N_indel,1]
 		y_pred = torch.softmax(Out.squeeze(2), dim=1)
-		return y_pred, y
+		return y_pred
+
 
 class ST_DeepDecay_dropout(ST_DeepDecay):
 	"""
