@@ -318,7 +318,8 @@ if __name__ == "__main__":
             model.eval()
         model.eval()
         predict_y = trainer.predict(model, Test_DL)
-        
+        if isinstance(predict_y[0], list):
+            predict_y = sum(predict_y, [])  # to join lists 
         
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(Test_Oligos)} # type: ignore
 
