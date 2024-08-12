@@ -1,3 +1,6 @@
+*/__MACOSX
+__MACOSX/
+tool/*
 data/*
 inDecay/PATH.py
 scripts/PATH.py
