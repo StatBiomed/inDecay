@@ -313,7 +313,7 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     Idfs = label_df['Identifier'].values
     locs = label_df['loc'].values
     coevents = label_df['n_coevent'].values
-    X2 = np.zeros((len(Idfs), 23))
+    X1 = np.zeros((len(Idfs), 23))
 
     distal_mask = get_distal(label_df, cutsite)
     proximal_mask = get_proximal(label_df, cutsite)
@@ -335,16 +335,16 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
         ss = np.max([ss_end[0] for ss_end in list_eval(loc_ls)]) - cutsite
 
         if indel_type == 'D':
-            X2[i, 0] = indel_size
-            X2[i, 1] = ss
-            X2[i, 2] = decay(ss, k1)
-            X2[i, 3] = MML_1[i]**h                   # max mm length
-            X2[i, 4] = MML_2[i]**h                   # max mm length
-            X2[i, 5] = proximal_mask[i]            
-            X2[i, 6] = distal_mask[i]              
-            X2[i, 7] = decay(indel_size, k2)
-            X2[i, 8] = del_intcpt
-            X2[i, 9] = coevents[i]
+            X1[i, 0] = indel_size
+            X1[i, 1] = ss
+            X1[i, 2] = decay(ss, k1)
+            X1[i, 3] = MML_1[i]**h                   # max mm length
+            X1[i, 4] = MML_2[i]**h                   # max mm length
+            X1[i, 5] = proximal_mask[i]            
+            X1[i, 6] = distal_mask[i]              
+            X1[i, 7] = decay(indel_size, k2)
+            X1[i, 8] = del_intcpt
+            X1[i, 9] = coevents[i]
 
         elif indel_type == 'I':
 
@@ -353,22 +353,22 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             right_nt = refseq[cutsite : cutsite+indel_size]
             left_nt =  refseq[cutsite-indel_size:cutsite]
 
-            X2[i, 10] = indel_size
-            X2[i, 11] = details['C']
-            X2[i, 12] = (ss + indel_size) == 0 
-            X2[i, 13] = indel_size == details['C']
-            X2[i, 14] = ins_intcpt
-            X2[i, 15] = coevents[i]
-            X2[i, 16] = 1/len(inserts)*int(right_nt in inserts)
-            X2[i, 17] = 1/len(inserts)*int(left_nt in inserts)
+            X1[i, 10] = indel_size
+            X1[i, 11] = details['C']
+            X1[i, 12] = (ss + indel_size) == 0 
+            X1[i, 13] = indel_size == details['C']
+            X1[i, 14] = ins_intcpt
+            X1[i, 15] = coevents[i]
+            X1[i, 16] = 1/len(inserts)*int(right_nt in inserts)
+            X1[i, 17] = 1/len(inserts)*int(left_nt in inserts)
 
-        X2[i, 18] = guide_gc
-        X2[i, 19] = mh_pixelsum_list[0] 
-        X2[i, 20] = mh_pixelsum_list[1] 
-        X2[i, 21] = mh_pixelsum_list[2] 
-        X2[i, 22] = mh_pixelsum_list[3] 
+        X1[i, 18] = guide_gc
+        X1[i, 19] = mh_pixelsum_list[0] 
+        X1[i, 20] = mh_pixelsum_list[1] 
+        X1[i, 21] = mh_pixelsum_list[2] 
+        X1[i, 22] = mh_pixelsum_list[3] 
 
-    return X2
+    return X1
 
 def ST_decayfeat_v2(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     """
@@ -445,7 +445,7 @@ def ST_decayfeat_v2(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
 
 def ST_decayfeat_v3(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3, ratio_model=None):
     """
-    Construct 18 features for each indel gen dataframe
+    Construct 24 features for each indel gen dataframe
     DEL : dl, ss, ss-decay, mml, proximal(left), aproximal(right), dl-decay, del_intcpt, n_events
     INS : insl, C, shift , full_complement ins, n_coevents
     Input
@@ -555,6 +555,95 @@ def ST_decayfeat_v3(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3, ratio_mode
         X3[i, 23] = mh_strength
 
     return X3
+
+def ST_decayfeat_v4(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
+    """
+    Construct 25 features for each indel gen dataframe
+
+    DEL : dl, ss, ss-decay, mml, proximal(left), aproximal(right), dl-decay, del_intcpt, n_events
+    INS : insl, C, shift , full_complement ins, n_coevents
+    Input
+    ------------
+    label_df : df by forecast indelgentarget , must contain columns [mh_length, identifier, loc, n_coevent]
+    refseq : taraget sequence
+    cutsite : pamsite -3
+    k1 : ss decay param
+    k2 : dl decay param
+    h : MH strength scaler
+
+    Return
+    ------------
+    x : np.ndarray, [df.shape, 18]
+    """
+    MML_1 = label_df['mh_length'].values
+    MML_2 = label_df['mh_length2'].values
+    Idfs = label_df['Identifier'].values
+    locs = label_df['loc'].values
+    coevents = label_df['n_coevent'].values
+    X4 = np.zeros((len(Idfs), 25))
+
+    distal_mask = get_distal(label_df, cutsite)
+    proximal_mask = get_proximal(label_df, cutsite)
+
+    # prior knowledge  
+    guide = refseq[cutsite-17:cutsite+3]
+    guide_gc = compute_gc_ratio(guide)
+    
+    # other wise goes back to linear model
+    del_intcpt, ins_intcpt = del_ins_intercept(guide)
+    mh_pixelsum_list = compute_decay_sum_P50(refseq, cutsite)
+
+    for i,idf in enumerate(Idfs):
+        indel_type, indel_size,  details, muts  = my_utils.tokFullIndel(idf)
+        ss = details['L'] + details['C']
+
+        # for i, locs in enumerate(label_df['loc'].values):
+        loc_ls = locs[i]
+        ss = np.max([ss_end[0] for ss_end in list_eval(loc_ls)]) - cutsite
+
+        if indel_type == 'D':
+            X4[i, 0] = indel_size
+            X4[i, 1] = ss
+            
+            X4[i, 2] = decay(ss, 0.5*k1)
+            X4[i, 3] = decay(ss, k1)
+            X4[i, 4] = decay(ss, 1.5*k1)
+            
+            X4[i, 5] = MML_1[i]**h                   # max mm length
+            X4[i, 6] = MML_2[i]**h                   # max mm length
+
+            X4[i, 7] = proximal_mask[i]            
+            X4[i, 8] = distal_mask[i]              
+            
+            X4[i, 9] = decay(indel_size, 0.5*k2)
+            X4[i, 10] = decay(indel_size, k2)
+            X4[i, 11] = decay(indel_size, 1.5*k2)
+
+            X4[i, 12] = del_intcpt
+            X4[i, 13] = coevents[i]
+
+        elif indel_type == 'I':
+
+            # one identifier may contain different inserted 
+            inserts = [ss_end[-1] for ss_end in list_eval(loc_ls)]
+            right_nt = refseq[cutsite : cutsite+indel_size]
+            left_nt =  refseq[cutsite-indel_size:cutsite]
+
+            X4[i, 14] = indel_size
+            X4[i, 15] = details['C']
+            X4[i, 16] = (ss + indel_size) == 0 
+            X4[i, 17] = indel_size == details['C']
+            X4[i, 18] = ins_intcpt
+            X4[i, 19] = coevents[i]
+            X4[i, 20] = 1/len(inserts)*int(right_nt in inserts)
+            X4[i, 21] = 1/len(inserts)*int(left_nt in inserts)
+
+        X4[i, 22] = guide_gc
+        X4[i, 23] = mh_pixelsum_list[0] 
+        X4[i, 24] = mh_pixelsum_list[1] 
+
+
+    return X4
 
 def K_mer(seq,K):
     """
