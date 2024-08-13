@@ -276,8 +276,8 @@ def compute_decay_sum_P50(seq, cut_site=39):
 
     mh_intensity_sum = []
     decay_term = [
-        lambda x : np.power(3, x),
-        lambda x : np.power(2, x),
+        lambda x : np.power(3, x) / 1500,
+        lambda x : np.power(2, x) / 600,
     ]
 
     for decay_fn in decay_term:
@@ -340,8 +340,8 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             X2[i, 2] = decay(ss, k1)
             X2[i, 3] = MML_1[i]**h                   # max mm length
             X2[i, 4] = MML_2[i]**h                   # max mm length
-            X2[i, 5] = proximal_mask[i]            # proximal del, this is different from v1 !!
-            X2[i, 6] = distal_mask[i]              # distal del, this is different from v1 !!
+            X2[i, 5] = proximal_mask[i]            
+            X2[i, 6] = distal_mask[i]              
             X2[i, 7] = decay(indel_size, k2)
             X2[i, 8] = del_intcpt
             X2[i, 9] = coevents[i]
@@ -363,10 +363,10 @@ def ST_decayfeat_v1(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             X2[i, 17] = 1/len(inserts)*int(left_nt in inserts)
 
         X2[i, 18] = guide_gc
-        X2[i, 19] = mh_pixelsum_list[0] / 1600
-        X2[i, 20] = mh_pixelsum_list[1] / 600
-        X2[i, 21] = mh_pixelsum_list[2] / 1200
-        X2[i, 22] = mh_pixelsum_list[3] / 500
+        X2[i, 19] = mh_pixelsum_list[0] 
+        X2[i, 20] = mh_pixelsum_list[1] 
+        X2[i, 21] = mh_pixelsum_list[2] 
+        X2[i, 22] = mh_pixelsum_list[3] 
 
     return X2
 
@@ -416,8 +416,8 @@ def ST_decayfeat_v2(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
             X2[i, 1] = ss
             X2[i, 2] = decay(ss, k1)
             X2[i, 3] = MML[i]**h                   # max mm length
-            X2[i, 4] = proximal_mask[i]            # proximal del, this is different from v1 !!
-            X2[i, 5] = distal_mask[i]              # distal del, this is different from v1 !!
+            X2[i, 4] = proximal_mask[i]            
+            X2[i, 5] = distal_mask[i]              
             X2[i, 6] = decay(indel_size, k2)
             X2[i, 7] = del_intcpt
             X2[i, 8] = coevents[i]
@@ -441,6 +441,120 @@ def ST_decayfeat_v2(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
         X2[i, 17] = guide_gc
 
     return X2
+
+
+def ST_decayfeat_v3(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3, ratio_model=None):
+    """
+    Construct 18 features for each indel gen dataframe
+    DEL : dl, ss, ss-decay, mml, proximal(left), aproximal(right), dl-decay, del_intcpt, n_events
+    INS : insl, C, shift , full_complement ins, n_coevents
+    Input
+    ------------
+    label_df : df by forecast indelgentarget , must contain columns [mh_length, identifier, loc, n_coevent]
+    refseq : taraget sequence
+    cutsite : pamsite -3
+    k1 : ss decay param
+    k2 : dl decay param
+    h : MH strength scaler
+
+
+    Return
+    ------------
+    x : np.ndarray, [df.shape, 18]
+    """
+    MML_1 = label_df['mh_length'].values
+    MML_2 = label_df['mh_length2'].values
+    Idfs = label_df['Identifier'].values
+    locs = label_df['loc'].values
+    coevents = label_df['n_coevent'].values
+    X3 = np.zeros((len(Idfs), 24))
+
+    distal_mask = get_distal(label_df, cutsite)
+    proximal_mask = get_proximal(label_df, cutsite)
+
+    # prior knowledge  
+    guide = refseq[cutsite-17:cutsite+3]
+    guide_gc = compute_gc_ratio(guide)
+
+    if ratio_model is not None:
+
+        device = ratio_model.device
+        matrix_size = ratio_model.matrix_size
+
+        with torch.no_grad():
+            # the first input : one hot encoded guide            
+            guide_oh = one_hot(guide).T[:,  :20] # L,C -> C,L 
+            guide_oh = torch.from_numpy(guide_oh).float().to(device)
+
+            # the second input : diagonal kernel convolved output
+            filtered_map = construct_diagonal_map(refseq, 
+                                                  cut_site=cutsite,
+                                                  panelty=0,
+                                                  matrix_size=matrix_size
+                                                  )
+            filtered_map = torch.from_numpy(filtered_map).unsqueeze(0).to(device)
+
+            # predict
+            out = ratio_model(guide_oh, filtered_map).cpu().numpy()
+
+        ins_intcpt = out[0,0]
+        del_intcpt = 1-ins_intcpt
+        mh_strength = out[0,1]
+
+    else:
+        # other wise goes back to linear model
+        del_intcpt, ins_intcpt = del_ins_intercept(guide)
+        mh_strength = compute_decay_sum_P50(refseq, cutsite)[0]
+
+    for i,idf in enumerate(Idfs):
+        indel_type, indel_size,  details, muts  = my_utils.tokFullIndel(idf)
+        ss = details['L'] + details['C']
+
+        # for i, locs in enumerate(label_df['loc'].values):
+        loc_ls = locs[i]
+        ss = np.max([ss_end[0] for ss_end in list_eval(loc_ls)]) - cutsite
+
+        if indel_type == 'D':
+            X3[i, 0] = indel_size
+            X3[i, 1] = ss
+            
+            X3[i, 2] = decay(ss, 0.5*k1)
+            X3[i, 3] = decay(ss, k1)
+            X3[i, 4] = decay(ss, 1.5*k1)
+            
+            X3[i, 5] = MML_1[i]**h                   # max mm length
+            X3[i, 6] = MML_2[i]**h                   # max mm length
+
+            X3[i, 7] = proximal_mask[i]            
+            X3[i, 8] = distal_mask[i]              
+            
+            X3[i, 9] = decay(indel_size, 0.5*k2)
+            X3[i, 10] = decay(indel_size, k2)
+            X3[i, 11] = decay(indel_size, 1.5*k2)
+
+            X3[i, 12] = del_intcpt
+            X3[i, 13] = coevents[i]
+
+        elif indel_type == 'I':
+
+            # one identifier may contain different inserted 
+            inserts = [ss_end[-1] for ss_end in list_eval(loc_ls)]
+            right_nt = refseq[cutsite : cutsite+indel_size]
+            left_nt =  refseq[cutsite-indel_size:cutsite]
+
+            X3[i, 14] = indel_size
+            X3[i, 15] = details['C']
+            X3[i, 16] = (ss + indel_size) == 0 
+            X3[i, 17] = indel_size == details['C']
+            X3[i, 18] = ins_intcpt
+            X3[i, 19] = coevents[i]
+            X3[i, 20] = 1/len(inserts)*int(right_nt in inserts)
+            X3[i, 21] = 1/len(inserts)*int(left_nt in inserts)
+
+        X3[i, 22] = guide_gc
+        X3[i, 23] = mh_strength
+
+    return X3
 
 def K_mer(seq,K):
     """

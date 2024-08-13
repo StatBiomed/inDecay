@@ -44,7 +44,7 @@ class Topk_Event_Overlapping(torchmetrics.Metric):
                 batch_overlap += len(np.intersect1d(i_p, i_t))
 
             self.overlap += batch_overlap  # type: ignore
-            self.total += target_i.shape[0]  # type: ignore
+            self.total += 1  # type: ignore
 
     def compute(self):
         return self.overlap.float() / self.total  # type: ignore

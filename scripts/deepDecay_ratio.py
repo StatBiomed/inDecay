@@ -127,7 +127,7 @@ class ratio_dataset(Dataset):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Train Lindel model on different cell types")
+    parser = argparse.ArgumentParser("Train Deep ratio model on different cell types")
     parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
     parser.add_argument("-P", "--matrix_size", type=int, default=50, help="The matrix size used as the second input to the ratio model")
     parser.add_argument("-C","--read_cutoff", type=int, default=500, help='The threshold of total count. Only Guides having total read count over this threshold are used')
@@ -162,7 +162,8 @@ if __name__ == "__main__":
         return compute_ratios(x, processed_df)
     
     # process_map(precompute_fn,Oligos,max_workers=8, chunksize=500)
-    ratios = np.stack(process_map(precompute_fn,Oligos,max_workers=8, chunksize=10), dtype=np.float32)
+    ratios = np.stack(process_map(precompute_fn,Oligos,max_workers=8, chunksize=10)).astype(np.float32)
+
 
     # construct lookup dict for each ratio
     ins_ratio_lookup = dict(zip(Oligos, ratios[:,0]))

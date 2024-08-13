@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
 # from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
-from inDecay import my_utils, alignmap, models, reader, PATH
+from inDecay import my_utils, alignmap, models, reader, PATH, ratio_models
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
 
@@ -17,9 +17,9 @@ to_predict = True
 to_write_y = True
 num_workers = 12
 
-ndel = 10
+ndel = 14
 nins = 8
-nshare = 5
+nshare = 2
 
 # model params
 k1 = 0.5 
@@ -185,6 +185,7 @@ if __name__ == "__main__":
     parser.add_argument("-T","--test_oligos", type=str, default="results/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
+    parser.add_argument("-W","--Ratio_weight", required=False, type=str, default=None, help="the pretrained deep ratio model")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay", help="inDecay / DeepDecay")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
     args = parser.parse_args()
@@ -202,8 +203,8 @@ if __name__ == "__main__":
     if args.GPU_devices is not None:
         gpu_device= args.GPU_devices
     
-    print(f"Runing {experiments} using cud: {gpu_device}")
-    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv1_{args.Model_Class}_{args.Data_transform}")
+    print(f"Runing {experiments} using cuda: {gpu_device}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv3_{args.Model_Class}_{args.Data_transform}")
     for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
         check_dir(DIR)  
     # Temp Theta file
@@ -235,6 +236,26 @@ if __name__ == "__main__":
         raise ValueError("Invalid transform name")
     else:
         raise ValueError("Invalid transform name")
+
+    # Define ratio model
+    if args.Ratio_weight is None:
+        ratio_model = None
+    elif not os.path.exists(args.Ratio_weight):
+        raise FileNotFoundError("the given ratio ckpt path is incorrect")
+    else:
+
+        # determining the matrix size from the rapath
+        ckpt= args.Ratio_weight 
+        size_i = ckpt.index("_MixedConv_P") + len("_MixedConv_P")
+        Pad_size= ckpt[size_i:size_i+2]
+
+        # 
+        if Pad_size == '50':
+            ratio_model = ratio_models.Ratio_Model.load_from_checkpoint(ckpt)
+        elif Pad_size == '20':
+            ratio_model = ratio_models.Ratio_Model_size20.load_from_checkpoint(ckpt)
+        else:
+            raise ValueError("Pad_size incorrect")
     
     
     # Modeling and Training
@@ -251,7 +272,9 @@ if __name__ == "__main__":
 
     # dataset    
     normalize = 'Multinomial' not in args.Model_Class 
-    feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v1(label_df, refseq, cutsite, k1, k2, h)
+    def feature_extraction_fn(label_df, refseq, cutsite):
+        fn = alignmap.ST_decayfeat_v3(label_df, refseq, cutsite, k1, k2, h, ratio_model=ratio_model)
+        return fn
 
     Train_DS = reader.ST_dataset(Train_Oligos,processed_df, experiments, 
                           read_data_fn = read_data,

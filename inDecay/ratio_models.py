@@ -27,6 +27,8 @@ class Ratio_Model(pl.LightningModule):
         self.pearson_mh = torchmetrics.PearsonCorrCoef()
         self.loss_fn = nn.BCELoss()
 
+        self.matrix_size = 50 # the size of the second input
+
         # conv1d input : N,C,L
         self.sequence_module = nn.Sequential(
             nn.Conv1d(4, channel_1d, kernel_size=k),
@@ -85,6 +87,18 @@ class Ratio_Model(pl.LightningModule):
         ------
         out : [bs, 2], ins ratio and mh ratio
         """
+        # reshape the input
+        in_shape1 = guide_oh.shape
+        in_shape_2 = filtered_map.shape
+        if (len(in_shape1)) == 2 and (in_shape1[-1] == 20):
+            guide_oh = guide_oh.unsqueeze(0)
+        
+        if len(in_shape_2) ==3:
+            filtered_map = filtered_map.unsqueeze(0)
+
+        if (len(in_shape_2)== 2) and (in_shape_2[-1]==in_shape_2[-2]): 
+            filtered_map = filtered_map.unsqueeze(0).unsqueeze(0)
+
         # feature encoding
         h_1d = self.sequence_module(guide_oh)
         h_2d = self.matrix_module(filtered_map)
@@ -179,6 +193,7 @@ class Ratio_Model_size20(Ratio_Model):
         optim_class : str, adam, RMSprop
         """
         super().__init__(channel_1d, channel_2d, k, lr, optim_class)
+        self.matrix_size = 20
 
         self.matrix_module = nn.Sequential(
             nn.Conv2d(1,channel_2d, kernel_size=k),
