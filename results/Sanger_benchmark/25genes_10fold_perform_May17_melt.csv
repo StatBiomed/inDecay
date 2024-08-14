@@ -1,0 +1,97 @@
+,Name,Model,Celltype,metric,value
+0,inDecay_mESC_scratch,inDecay_scratch,mESC,KL divergence,0.9977128311991692
+1,inDecay_iPSC_scratch,inDecay_scratch,iPSC,KL divergence,1.039647857248783
+2,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,KL divergence,1.0277669909596443
+3,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,KL divergence,1.0667423141002654
+4,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,KL divergence,0.4911687609553337
+5,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,KL divergence,0.45132835283875467
+6,inDecay_mESC_fewshot,inDecay_fewshot,mESC,KL divergence,0.5286288474500179
+7,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,KL divergence,0.5023935995995998
+8,inDecay_mESC_scratch,inDecay_scratch,mESC,Top5 events recall,3.64
+9,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Top5 events recall,3.64
+10,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Top5 events recall,3.76
+11,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Top5 events recall,3.68
+12,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Top5 events recall,3.64
+13,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Top5 events recall,3.72
+14,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Top5 events recall,3.64
+15,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Top5 events recall,3.56
+16,inDecay_mESC_scratch,inDecay_scratch,mESC,Top10 events recall,8.92
+17,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Top10 events recall,8.92
+18,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Top10 events recall,8.96
+19,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Top10 events recall,8.92
+20,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Top10 events recall,8.84
+21,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Top10 events recall,8.76
+22,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Top10 events recall,8.76
+23,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Top10 events recall,8.84
+24,inDecay_mESC_scratch,inDecay_scratch,mESC,R2 of Frameshift ratio,0.10987299815287116
+25,inDecay_iPSC_scratch,inDecay_scratch,iPSC,R2 of Frameshift ratio,0.09133759419689273
+26,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,R2 of Frameshift ratio,0.08066845802323366
+27,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,R2 of Frameshift ratio,0.04664221866041665
+28,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,R2 of Frameshift ratio,0.12876930670853154
+29,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,R2 of Frameshift ratio,0.21420816755805627
+30,inDecay_mESC_fewshot,inDecay_fewshot,mESC,R2 of Frameshift ratio,0.2203474550350052
+31,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,R2 of Frameshift ratio,0.20982951775521075
+32,inDecay_mESC_scratch,inDecay_scratch,mESC,Coll_I_Top5,3.8
+33,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Coll_I_Top5,3.8
+34,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Coll_I_Top5,3.92
+35,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Coll_I_Top5,3.8
+36,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Coll_I_Top5,3.8
+37,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Coll_I_Top5,3.84
+38,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Coll_I_Top5,3.84
+39,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Coll_I_Top5,3.76
+40,inDecay_mESC_scratch,inDecay_scratch,mESC,Coll_I_Top10,9.04
+41,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Coll_I_Top10,9.0
+42,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Coll_I_Top10,9.12
+43,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Coll_I_Top10,9.08
+44,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Coll_I_Top10,9.08
+45,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Coll_I_Top10,9.0
+46,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Coll_I_Top10,8.96
+47,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Coll_I_Top10,9.0
+48,inDecay_mESC_scratch,inDecay_scratch,mESC,KLD_IDL,0.9025171330504936
+49,inDecay_iPSC_scratch,inDecay_scratch,iPSC,KLD_IDL,0.9475988821204245
+50,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,KLD_IDL,0.9167729789114802
+51,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,KLD_IDL,0.9629358420777513
+52,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,KLD_IDL,0.4225863046856418
+53,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,KLD_IDL,0.3839296160202975
+54,inDecay_mESC_fewshot,inDecay_fewshot,mESC,KLD_IDL,0.47418404873562714
+55,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,KLD_IDL,0.4466842343321192
+56,inDecay_mESC_scratch,inDecay_scratch,mESC,Top5_IDL,4.08
+57,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Top5_IDL,4.16
+58,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Top5_IDL,4.12
+59,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Top5_IDL,4.16
+60,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Top5_IDL,4.0
+61,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Top5_IDL,3.96
+62,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Top5_IDL,4.12
+63,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Top5_IDL,4.04
+64,inDecay_mESC_scratch,inDecay_scratch,mESC,Top10_IDL,9.32
+65,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Top10_IDL,9.24
+66,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Top10_IDL,9.28
+67,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Top10_IDL,9.36
+68,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Top10_IDL,9.24
+69,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Top10_IDL,9.36
+70,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Top10_IDL,9.2
+71,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Top10_IDL,9.12
+72,inDecay_mESC_scratch,inDecay_scratch,mESC,W1-distance_IDL,0.2326768197341468
+73,inDecay_iPSC_scratch,inDecay_scratch,iPSC,W1-distance_IDL,0.24051838889491112
+74,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,W1-distance_IDL,0.2263628313060002
+75,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,W1-distance_IDL,0.24106029429748438
+76,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,W1-distance_IDL,0.19544035681006716
+77,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,W1-distance_IDL,0.1831479084514836
+78,inDecay_mESC_fewshot,inDecay_fewshot,mESC,W1-distance_IDL,0.18363238143130706
+79,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,W1-distance_IDL,0.1887053589183689
+80,inDecay_mESC_scratch,inDecay_scratch,mESC,delratio_r2,0.02471730512183854
+81,inDecay_iPSC_scratch,inDecay_scratch,iPSC,delratio_r2,0.015887639285158062
+82,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,delratio_r2,0.058758392510639045
+83,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,delratio_r2,0.04740055141783898
+84,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,delratio_r2,0.1662365910719112
+85,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,delratio_r2,0.23281028881114485
+86,inDecay_mESC_fewshot,inDecay_fewshot,mESC,delratio_r2,0.04367965438970538
+87,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,delratio_r2,0.0398856583113537
+88,inDecay_mESC_scratch,inDecay_scratch,mESC,Kendall_tau_IDL,0.9331797631150177
+89,inDecay_iPSC_scratch,inDecay_scratch,iPSC,Kendall_tau_IDL,0.9325805445549578
+90,DeepDecay_mESC_scratch,DeepDecay_scratch,mESC,Kendall_tau_IDL,0.9325412515346259
+91,DeepDecay_iPSC_scratch,DeepDecay_scratch,iPSC,Kendall_tau_IDL,0.931539279516165
+92,DeepDecay_iPSC_fewshot,DeepDecay_fewshot,iPSC,Kendall_tau_IDL,0.9399676323773363
+93,DeepDecay_mESC_fewshot,DeepDecay_fewshot,mESC,Kendall_tau_IDL,0.9441228692774242
+94,inDecay_mESC_fewshot,inDecay_fewshot,mESC,Kendall_tau_IDL,0.9379538650853315
+95,inDecay_iPSC_fewshot,inDecay_fewshot,iPSC,Kendall_tau_IDL,0.9387593720021333

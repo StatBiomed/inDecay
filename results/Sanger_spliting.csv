@@ -1,0 +1,11 @@
+,Train_gene,Val_gene,Test_gene
+0,"ELF5_F_sg1,IL5,Rag-1,mHV5sg7,Mettl14-F-sg2,PDL-1,H2AB1_R_sg2,ZNRF-4-dna3,H2AB1,mHV5sg6,H2K1-F1-sg2,DIRK,CTNNB1_R_sg1,IL6,IL2g,MTAP,H2AB1_F_sg1,H2D1_R_sg2,Rag1,IL7,Kif","Mettl14-R-sg1,mHV5sg2","Adam6_F_sg1,ZNRF-4-dna4,Kat2a_F_sg1"
+1,"Rag-1,Kat2a_F_sg1,mHV5sg2,IL7,H2AB1_F_sg1,H2K1-F1-sg2,Mettl14-F-sg2,ELF5_F_sg1,mHV5sg6,MTAP,Adam6_F_sg1,Rag1,DIRK,ZNRF-4-dna3,IL2g,PDL-1,Kif,H2AB1,mHV5sg7,ZNRF-4-dna4,IL5","H2D1_R_sg2,CTNNB1_R_sg1","Mettl14-R-sg1,IL6,H2AB1_R_sg2"
+2,"H2AB1,Kat2a_F_sg1,CTNNB1_R_sg1,PDL-1,ZNRF-4-dna4,IL7,H2K1-F1-sg2,Kif,IL5,mHV5sg6,ZNRF-4-dna3,Adam6_F_sg1,mHV5sg2,H2AB1_F_sg1,H2AB1_R_sg2,Rag1,Rag-1,H2D1_R_sg2,ELF5_F_sg1,Mettl14-R-sg1,MTAP","Mettl14-F-sg2,IL6","IL2g,DIRK,mHV5sg7"
+3,"ELF5_F_sg1,Kif,Adam6_F_sg1,H2AB1_R_sg2,Mettl14-F-sg2,H2AB1_F_sg1,Kat2a_F_sg1,mHV5sg2,ZNRF-4-dna4,DIRK,H2K1-F1-sg2,IL2g,Mettl14-R-sg1,PDL-1,IL7,ZNRF-4-dna3,CTNNB1_R_sg1,Rag1,mHV5sg7,mHV5sg6,MTAP","H2D1_R_sg2,IL6","H2AB1,IL5,Rag-1"
+4,"Mettl14-F-sg2,MTAP,IL7,mHV5sg7,Rag-1,IL6,IL5,DIRK,Rag1,ZNRF-4-dna4,Mettl14-R-sg1,Kif,mHV5sg2,mHV5sg6,ELF5_F_sg1,H2AB1,H2K1-F1-sg2,Adam6_F_sg1,H2AB1_R_sg2,IL2g,Kat2a_F_sg1","H2AB1_F_sg1,ZNRF-4-dna3","PDL-1,H2D1_R_sg2,CTNNB1_R_sg1"
+5,"IL5,IL6,DIRK,mHV5sg7,mHV5sg2,mHV5sg6,H2K1-F1-sg2,IL2g,Kif,Rag-1,H2AB1,Mettl14-R-sg1,PDL-1,Kat2a_F_sg1,Rag1,H2AB1_R_sg2,ZNRF-4-dna4,H2D1_R_sg2,H2AB1_F_sg1,Adam6_F_sg1,Mettl14-F-sg2","CTNNB1_R_sg1,IL7","MTAP,ELF5_F_sg1,ZNRF-4-dna3"
+6,"ELF5_F_sg1,IL5,IL7,H2D1_R_sg2,Kat2a_F_sg1,MTAP,ZNRF-4-dna4,DIRK,PDL-1,H2AB1,IL6,Adam6_F_sg1,mHV5sg7,Mettl14-R-sg1,H2K1-F1-sg2,ZNRF-4-dna3,CTNNB1_R_sg1,mHV5sg6,mHV5sg2,H2AB1_R_sg2,IL2g,Rag-1","Kif,H2AB1_F_sg1","Mettl14-F-sg2,Rag1"
+7,"mHV5sg6,Mettl14-F-sg2,Rag-1,H2AB1_F_sg1,Adam6_F_sg1,MTAP,Mettl14-R-sg1,ZNRF-4-dna3,ELF5_F_sg1,H2AB1,CTNNB1_R_sg1,mHV5sg7,DIRK,IL6,H2AB1_R_sg2,Kat2a_F_sg1,H2D1_R_sg2,Rag1,PDL-1,H2K1-F1-sg2,IL5,IL2g","Kif,ZNRF-4-dna4","mHV5sg2,IL7"
+8,"Mettl14-R-sg1,IL2g,Adam6_F_sg1,H2D1_R_sg2,Rag1,ZNRF-4-dna3,ZNRF-4-dna4,PDL-1,Mettl14-F-sg2,DIRK,IL6,ELF5_F_sg1,Rag-1,Kat2a_F_sg1,mHV5sg7,H2K1-F1-sg2,H2AB1_R_sg2,mHV5sg2,H2AB1_F_sg1,IL5,MTAP,CTNNB1_R_sg1","IL7,H2AB1","Kif,mHV5sg6"
+9,"ZNRF-4-dna4,H2D1_R_sg2,Rag1,IL7,Kat2a_F_sg1,Rag-1,CTNNB1_R_sg1,IL5,IL6,PDL-1,mHV5sg7,Mettl14-R-sg1,ZNRF-4-dna3,MTAP,mHV5sg6,IL2g,H2AB1,DIRK,Kif,H2AB1_R_sg2,ELF5_F_sg1,Adam6_F_sg1","Mettl14-F-sg2,mHV5sg2","H2K1-F1-sg2,H2AB1_F_sg1"
