@@ -320,7 +320,7 @@ if __name__ == "__main__":
             # fast_dev_run=True,
 			default_root_dir=pth_save_path,
             devices = [gpu_device],
-			max_epochs=1,
+			max_epochs=100,
 			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',
                                                   monitor="val_cre", mode="min", save_top_k=2),
                         callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])
