@@ -128,7 +128,19 @@ def read_data(OligoID, processed_df, experiments):
     sinlge_col = [col for col in feature_df.columns if not col.startswith('PW_')]
 
     feat_df = feature_df[sinlge_col]
-    feat_df = feature_df.loc[label_df.Identifier.values]
+    feat_df.pop("Indel")
+
+    try:
+        feat_df = feat_df.loc[label_df.Identifier.values]
+    except KeyError:
+        if feat_df.shape[0] != label_df.shape[0]:
+            feat_df = label_df[['Identifier']].merge(feat_df, 
+                            right_index=True, left_on=['Identifier'], how='left')
+            feat_df.fillna(0, inplace=True)
+            feat_df.pop("Identifier")
+        else:
+            raise ValueError(f"Non known feature error, with {OligoID}")
+
 
     return label_df, feat_df
 
@@ -217,6 +229,7 @@ if __name__ == "__main__":
         os.mkdir(feat_dir)
 
     f_start, f_end = [int(x) for x in args.Feature_slice.split(":")]
+    f_end = min(273, f_end)
     feature_slice = slice(f_start, f_end)
 
     gpu_device = 0 if device=='gpu' else 10
@@ -224,7 +237,7 @@ if __name__ == "__main__":
     if args.GPU_devices is not None:
         gpu_device= args.GPU_devices
     
-    print(f"Runing {experiments} using cud: {gpu_device}")
+    print(f"Runing {experiments} using cuda: {gpu_device}")
     pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5_{args.Feature_slice}_{args.Model_Class}_{args.Data_transform}")
     for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
         check_dir(DIR)  
@@ -304,7 +317,7 @@ if __name__ == "__main__":
     trainer = pl.Trainer(
 			auto_lr_find=True,
             accelerator=device,
-            fast_dev_run=True,
+            # fast_dev_run=True,
 			default_root_dir=pth_save_path,
             devices = [gpu_device],
 			max_epochs=1,
@@ -325,7 +338,7 @@ if __name__ == "__main__":
     if to_write_y:
         Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         if not os.path.exists(Forecast_Y):
-            get_identifiers = lambda oligo : read_data(oligo, processed_df, experiments)[['Identifier', 'Frac Sample Reads']].values
+            get_identifiers = lambda oligo : read_data(oligo, processed_df, experiments)[0][['Identifier', 'Frac Sample Reads']].values
 
             Y_ls = [get_identifiers(oligo) for oligo in Test_Oligos]
             # Y_ls = process_map(get_identifiers, Test_Oligos, max_workers=8)

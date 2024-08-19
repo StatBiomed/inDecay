@@ -125,8 +125,6 @@ class ST_datasetv5(ST_dataset):
 
         y = label_df[self.label_col].values
 
-        # self.Identifiers[self.Oligos[i]] = label_df['Identifier']
-
         return torch.from_numpy(x5).float(),torch.from_numpy(y).float()
 
 class inDecay_DataModule(pl.LightningDataModule):
