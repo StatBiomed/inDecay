@@ -688,7 +688,7 @@ class ST_Decay(Base_del_model):
 
     def forward(self, x):
         Out = self.del_regressor(x)  # [b, N_indel, 3633] -> [b, N_indel,1]
-        y_pred = torch.softmax(Out.squeeze(2), dim=1)
+        y_pred = torch.softmax(Out.squeeze(), dim=0)
         return y_pred
 
 

@@ -98,7 +98,7 @@ class ST_dataset(Dataset):
         return torch.from_numpy(x5).float(),torch.from_numpy(y).float()
 
 class ST_datasetv5(ST_dataset):
-    def __init__(self, feature_slice, *args, **kwargs):
+    def __init__(self, *args, feature_slice, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.ft_slice  = feature_slice # a slice object to subset features
@@ -121,7 +121,7 @@ class ST_datasetv5(ST_dataset):
 
         ForeCast_feat = feat_df.values[:,self.ft_slice]
         assert x4.shape[0] == ForeCast_feat.shape[0]
-        x5 = np.stack([x4, ForeCast_feat], axis=1)
+        x5 = np.concatenate([x4, ForeCast_feat], axis=1).astype(np.float32)
 
         y = label_df[self.label_col].values
 

@@ -647,32 +647,6 @@ def ST_decayfeat_v4(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
 
     return X4
 
-def ST_decayfeat_v5(label_df, feat_df, feature_name, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
-    """
-    Construct 25 features for each indel gen dataframe
-
-    DEL : dl, ss, ss-decay, mml, proximal(left), aproximal(right), dl-decay, del_intcpt, n_events
-    INS : insl, C, shift , full_complement ins, n_coevents
-    Input
-    ------------
-    label_df : df by forecast indelgentarget , must contain columns [mh_length, identifier, loc, n_coevent]
-    refseq : taraget sequence
-    cutsite : pamsite -3
-    k1 : ss decay param
-    k2 : dl decay param
-    h : MH strength scaler
-
-    Return
-    ------------
-    x : np.ndarray, [df.shape, 18]
-    """
-    
-    X4 = ST_decayfeat_v4(label_df, refseq, cutsite, k1, k2, h)
-
-    
-
-    return X5
-
 def K_mer(seq,K):
     """
     one_hot encoding on sequence

@@ -124,7 +124,7 @@ def read_data(OligoID, processed_df, experiments):
     if not os.path.exists(feature_path):
         alignmap.fft.calculateFeaturesForGenIndelFile(idfgen_file, refseq, pamsite-3, feature_path)
     
-    feature_df = alignmap.fft.readFeaturesData(feature_path)
+    feature_df, cols = alignmap.fft.readFeaturesData(feature_path)
     sinlge_col = [col for col in feature_df.columns if not col.startswith('PW_')]
 
     feat_df = feature_df[sinlge_col]
@@ -248,10 +248,10 @@ if __name__ == "__main__":
     
     if args.Data_transform == "identity":
         transform = lambda x: x
-        n_features = ndel + nins + nshare
+        n_features = ndel + nins + nshare + f_end - f_start
     elif args.Data_transform == "interaction":
         transform = lambda x: interaction_transform(x, ndel, nins)
-        n_features = ndel + nins + nshare + math.comb(ndel,2) + math.comb(nins,2) + nshare*(ndel+nins)
+        n_features = ndel + nins + nshare + math.comb(ndel,2) + math.comb(nins,2) + nshare*(ndel+nins) + f_end - f_start
     elif ":" in args.Data_transform:
         # decay transform
         raise ValueError("Invalid transform name")
@@ -273,23 +273,29 @@ if __name__ == "__main__":
 
     # dataset    
     normalize = 'Multinomial' not in args.Model_Class 
-    feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
+    feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v4(label_df, refseq, cutsite, k1, k2, h)
 
-    Train_DS = reader.ST_dataset(Train_Oligos,processed_df, experiments, 
+    Train_DS = reader.ST_datasetv5(Train_Oligos,processed_df, experiments, 
                           read_data_fn = read_data,
                           transformation=transform,
                           feat_ext_fn = feature_extraction_fn,
-                          normalize=normalize)
-    Val_DS = reader.ST_dataset(Val_Oligos,processed_df, experiments, 
+                          normalize=normalize,
+                          feature_slice=feature_slice
+                          )
+    Val_DS = reader.ST_datasetv5(Val_Oligos,processed_df, experiments, 
                                read_data_fn = read_data,
                                transformation=transform , 
                                feat_ext_fn = feature_extraction_fn,
-                               normalize=normalize)
-    Test_DS = reader.ST_dataset(Test_Oligos,processed_df, experiments, 
+                               normalize=normalize,
+                               feature_slice=feature_slice
+                               )
+    Test_DS = reader.ST_datasetv5(Test_Oligos,processed_df, experiments, 
                                 read_data_fn = read_data,
                                 transformation=transform,
                                 feat_ext_fn = feature_extraction_fn,
-                                normalize=normalize)
+                                normalize=normalize,
+                                feature_slice=feature_slice
+                                )
 
     Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
     Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
@@ -301,7 +307,7 @@ if __name__ == "__main__":
             fast_dev_run=True,
 			default_root_dir=pth_save_path,
             devices = [gpu_device],
-			max_epochs=100,
+			max_epochs=1,
 			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',
                                                   monitor="val_cre", mode="min", save_top_k=2),
                         callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])
