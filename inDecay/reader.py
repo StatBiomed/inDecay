@@ -88,15 +88,46 @@ class ST_dataset(Dataset):
         mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df, mml_name='mh_length')
         mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df, mml_name='mh_length2', panelty=0)
 
-        x2 = self.feat_ext_fn(label_df, refseq, cutsite)
-        x2 = self.transformation(x2)
+        x5 = self.feat_ext_fn(label_df, refseq, cutsite)
+        x5 = self.transformation(x5)
 
         y = label_df[self.label_col].values
 
         # self.Identifiers[self.Oligos[i]] = label_df['Identifier']
 
-        return torch.from_numpy(x2).float(),torch.from_numpy(y).float()
+        return torch.from_numpy(x5).float(),torch.from_numpy(y).float()
 
+class ST_datasetv5(ST_dataset):
+    def __init__(self, feature_slice, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.ft_slice  = feature_slice # a slice object to subset features
+    
+    def __getitem__(self,i):
+        oligo = self.Oligos[i]
+        Guide, refseq, pamsite, Strand = self.ref_lookup[oligo]
+        cutsite = int(pamsite) - 3 
+
+        assert Strand == 'FORWARD'
+
+        label_df, feat_df = self.read_data_fn(oligo, self.processed_df, self.experiments)
+        # x = label_df[feature_columns].values
+
+        mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df, mml_name='mh_length')
+        mh_mask, label_df = alignmap.label_mh(refseq, cutsite, label_df, mml_name='mh_length2', panelty=0)
+
+        x4 = self.feat_ext_fn(label_df, refseq, cutsite)
+        x4 = self.transformation(x4)
+
+        ForeCast_feat = feat_df.values[:,self.ft_slice]
+        assert x4.shape[0] == ForeCast_feat.shape[0]
+        x5 = np.stack([x4, ForeCast_feat], axis=1)
+
+        y = label_df[self.label_col].values
+
+        # self.Identifiers[self.Oligos[i]] = label_df['Identifier']
+
+        return torch.from_numpy(x5).float(),torch.from_numpy(y).float()
 
 class inDecay_DataModule(pl.LightningDataModule):
     def __init__(self, experiment, indel_type, DS_class, test_oligo_file, batch_size=32, n_worker=8, seed=0,  threshold=1000):
