@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd 
 import torch
 torch.set_num_threads(4)
+from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
@@ -15,7 +16,7 @@ from tqdm.contrib.concurrent import process_map
 to_train = True
 to_predict = True
 to_write_y = True
-num_workers = 12
+num_workers = 6
 
 ndel = 14
 nins = 8
@@ -199,8 +200,28 @@ def decay_transform(X):
     return np.hstack([X_del, X_ins])
 
 def my_collect_fn(batch_list):
-    features = [item[0].requires_grad_() for item in batch_list]
-    ys = [item[1].requires_grad_() for item in batch_list]
+    
+    features = []
+    ys = []
+
+    most_events = np.max([max(item[1].shape) for item in batch_list])
+
+    for item in batch_list:
+        X = item[0]
+        y = item[1]
+
+        n_event = max(y.shape)  # y shape can be [b, e, 1] or [e,1] or [e,]
+        pad_len = most_events - n_event
+        X_padding = (0,0, 0, pad_len)
+
+        y_padding = X_padding if len(y.shape) > 1 else (0,pad_len)
+
+        features.append( F.pad(X, pad=X_padding) )
+        ys.append( F.pad(y, pad=y_padding) )
+
+    features = torch.stack(features).requires_grad_()
+    ys = torch.stack(ys).requires_grad_()
+
     return features, ys
 
 if __name__ == "__main__":
@@ -312,7 +333,7 @@ if __name__ == "__main__":
 
     Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
     Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
-    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
+    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=2, num_workers=num_workers, collate_fn=my_collect_fn)
 
     trainer = pl.Trainer(
 			auto_lr_find=True,

@@ -281,7 +281,7 @@ class Base_del_model(pl.LightningModule):
             cre = torch.stack(cre_list)
 
         elif isinstance(y, torch.Tensor):
-            cre = -1* torch.multiply(torch.log(out+1e-5), y).sum()
+            cre = -1* torch.multiply(torch.log(out+1e-5), y).sum(dim=1).mean()
 
         if reduce is None:
             cre = cre
@@ -352,7 +352,7 @@ class Base_del_model(pl.LightningModule):
         if isinstance(y, list):
             p_pred = [self.forward(x) for x in X]
         else:
-            p_pred = self.forward(X).unsqueeze(0)
+            p_pred = self.forward(X)
         cre = self.compute_Loss(p_pred, y)
 
         # compute all kinds of loss and metrices
@@ -393,7 +393,7 @@ class Base_del_model(pl.LightningModule):
         if isinstance(y, list):
             p_pred = [self.forward(x) for x in X]
         else:
-            p_pred = self.forward(X).unsqueeze(0)
+            p_pred = self.forward(X)
 
         cre = self.compute_Loss(p_pred, y)
 
@@ -406,7 +406,7 @@ class Base_del_model(pl.LightningModule):
             mse = torch.stack([F.mse_loss(pred_i, y_i) for pred_i, y_i in zip(p_pred, y)]).mean()
             kld = torch.stack([self.train_kld(p.unsqueeze(0) + 1e-14, y_i.unsqueeze(0)+ 1e-14) for p, y_i in zip(p_pred, y)]).mean()
         else:
-            mse = F.mse_loss(p_pred, y)
+            mse = F.mse_loss(p_pred.squeeze(), y)
             kld = self.train_kld(p_pred+1e-14, y+1e-14)
 
         self.top5_recall(p_pred, y)
