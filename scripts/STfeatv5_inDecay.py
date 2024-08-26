@@ -333,7 +333,7 @@ if __name__ == "__main__":
 
     Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
     Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
-    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=2, num_workers=num_workers, collate_fn=my_collect_fn)
+    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=1, num_workers=num_workers)
 
     trainer = pl.Trainer(
 			auto_lr_find=True,
@@ -348,6 +348,17 @@ if __name__ == "__main__":
     
 
     if to_train:
+        trainer = pl.Trainer(
+			auto_lr_find=True,
+            accelerator=device,
+            # fast_dev_run=True,
+			default_root_dir=pth_save_path,
+            devices = [gpu_device],
+			max_epochs=100,
+			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',
+                                                  monitor="val_cre", mode="min", save_top_k=2),
+                        callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])
+        
         model.train()
         trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
         print(trainer.ckpt_path)
@@ -377,6 +388,7 @@ if __name__ == "__main__":
         # else:
         ckpt_abspath = find_ckpt(pj(pth_save_path, 'lightning_logs'))
         assert os.path.exists(ckpt_abspath)
+        print(ckpt_abspath)
 
         try:
             model.eval()
@@ -384,6 +396,12 @@ if __name__ == "__main__":
             model = model_class.load_from_checkpoint(ckpt_abspath).to(gpu_device)
             model.eval()
         model.eval()
+
+        try:
+            trainer
+        except NameError:
+            trainer = pl.Trainer(accelerator=device, devices = [gpu_device])
+
         predict_y = trainer.predict(model, Test_DL)
         if isinstance(predict_y[0], list):
             predict_y = sum(predict_y, [])  # to join lists 
