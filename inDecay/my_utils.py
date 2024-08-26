@@ -1,4 +1,4 @@
-import os, io, csv, sys, time
+import os, io, csv, sys, time, re, shutil
 from . import PATH
 import numpy as np
 import pandas as pd
@@ -6,11 +6,6 @@ from scipy import special
 import subprocess
 import pickle as pkl
 from qrguide import transformation, analysis_fn
-# -- selftarget utils --
-# sys.path.append(PATH.STpyutils_dir)
-# -- lindel utils --
-# sys.path.append(PATH.Lindel_dir)
-from selftarget.indel import tokFullIndel
 import matplotlib.pyplot as plt
 
 global data_dir
@@ -23,11 +18,6 @@ global Lindel_only
 ## Some processed file
 ##
 data_dir = PATH.high_dir
-# forecast_dir="/home/wergillius/Project/Lindel/Lindel_data_analysis/data/"
-# combine_train="Lindel_ForeCasT_combined_training.txt"
-# combine_test = "Lindel_ForeCasT_combined_test2.txt"
-# Lindel_test="Lindel_test.txt"
-# Lindel_only="Lindel_training.txt"
 
 
 wb = transformation.wb
@@ -35,6 +25,49 @@ label,rev_index,features,frame_shift = transformation.label, transformation.rev_
 # anything about Y
 Lindel_prereq = os.path.join(PATH.main_dir,"Extended_912_class_Feb06.pkl")
 All_Lindel_class, class_to_loc_lookup = pkl.load(open(Lindel_prereq,'rb'))
+
+def find_ckpt(ckpt_version_dir):
+    """
+    find the latest version, if not finished then return last one
+    """
+    get_v = lambda s: int(s.replace("version_",""))
+    
+    versions = [get_v(subdir) for subdir in os.listdir(ckpt_version_dir)]
+
+    for v in versions:
+        checkpoint_dir = os.path.join(ckpt_version_dir, 'version_%d'%v, 'checkpoints')
+        if not os.path.exists(checkpoint_dir):
+            try:
+                shutil.rmtree(os.path.join(ckpt_version_dir, 'version_%d'%v)) 
+            except:
+                continue
+
+
+    versions = [get_v(subdir) for subdir in os.listdir(ckpt_version_dir) if subdir.startswith('version')]
+    maxv  = np.max(versions)
+
+    # try:
+    #     ckpts = os.listdir()
+    # except FileNotFoundError:
+    #     maxv -= 1
+    ckpts = list(filter(lambda x : x.endswith('.ckpt'), 
+                            os.listdir(os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints')))
+                )
+    
+    while len(ckpts) == 0:
+        maxv -= 1
+        ckpts = list(filter(lambda x : x.endswith('.ckpt'), 
+                            os.listdir(os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints')))
+                            )
+        if maxv == -1:
+            raise FileNotFoundError("no checkpoints found for any versions")
+    
+    if len(ckpts) >1:
+        ckpt = ckpts[-1]
+    else:
+        ckpt = ckpts[0]
+    
+    return os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints', ckpt)
 
 
 ######################################################################################
@@ -45,6 +78,32 @@ All_Lindel_class, class_to_loc_lookup = pkl.load(open(Lindel_prereq,'rb'))
 #  |____/  \___||_| |____/  \___| \___|\__,_| \__, |       |_|    \__,_||_| |_| \___|
 #                                             |___/                                  
 ######################################################################################
+
+
+def tokFullIndel(indel):
+    """
+    This function is taken from SelfTarget 
+    https://github.com/felicityallen/SelfTarget/selftarget_pyutils/selftarget/indel.py
+    """
+    indel_toks = indel.split('_')
+    indel_type, indel_details = indel_toks[0], ''
+    if len(indel_toks) > 1:
+        indel_details =  indel_toks[1]
+    cigar_toks = re.findall(r'([CLRDI]+)(-?\d+)', indel_details)
+    details, muts = {'I':0,'D':0,'C':0}, []
+    for (letter,val) in cigar_toks:
+        details[letter] = eval(val)
+    if len(indel_toks) > 2 or (indel_type == '-' and len(indel_toks) > 1):
+        mut_toks = re.findall(r'([MNDSI]+)(-?\d+)(\[[ATGC]+\])?', indel_toks[-1])
+        for (letter,val,nucl) in mut_toks:
+            if nucl == '':
+                nucl = '[]'
+            muts.append((letter, eval(val), nucl[1:-1]))
+    if indel_type[0] == '-':
+        isize = 0
+    else:
+        isize = eval(indel_type[1:])
+    return indel_type[0],isize,details, muts
 
 def get_indelgen_file(OligoID, Guide):
     indelgen_dir = os.path.join(PATH.data_dir, "Indelgen_result")

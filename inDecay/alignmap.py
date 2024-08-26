@@ -647,6 +647,17 @@ def ST_decayfeat_v4(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
 
     return X4
 
+
+def ST_decayfeat_v5(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
+    X4 =  ST_decayfeat_v4(label_df, refseq, cutsite, k1, k2, h)
+
+    localseq_oh = one_hot(refseq[cutsite-5:cutsite+4]).flatten()
+    seq_oh_matrix = np.stack([localseq_oh]*X4.shape[0])
+    X5 = np.concatenate([X4, seq_oh_matrix], axis=1)
+
+    return X5
+
+
 def K_mer(seq,K):
     """
     one_hot encoding on sequence

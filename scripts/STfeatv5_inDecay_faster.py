@@ -20,7 +20,7 @@ num_workers = 12
 
 ndel = 14
 nins = 8
-nshare = 3
+nshare = 39
 
 # model params
 k1 = 0.5 
@@ -178,30 +178,30 @@ def my_collect_fn(batch_list):
     ys = [item[1].requires_grad_() for item in batch_list]
     return features, ys
 
-def my_collect_fn(batch_list):
+# def my_collect_fn(batch_list):
     
-    features = []
-    ys = []
+#     features = []
+#     ys = []
 
-    most_events = np.max([max(item[1].shape) for item in batch_list])
+#     most_events = np.max([max(item[1].shape) for item in batch_list])
 
-    for item in batch_list:
-        X = item[0]
-        y = item[1]
+#     for item in batch_list:
+#         X = item[0]
+#         y = item[1]
 
-        n_event = max(y.shape)  # y shape can be [b, e, 1] or [e,1] or [e,]
-        pad_len = most_events - n_event
-        X_padding = (0,0, 0, pad_len)
+#         n_event = max(y.shape)  # y shape can be [b, e, 1] or [e,1] or [e,]
+#         pad_len = most_events - n_event
+#         X_padding = (0,0, 0, pad_len)
 
-        y_padding = X_padding if len(y.shape) > 1 else (0,pad_len)
+#         y_padding = X_padding if len(y.shape) > 1 else (0,pad_len)
 
-        features.append( F.pad(X, pad=X_padding) )
-        ys.append( F.pad(y, pad=y_padding) )
+#         features.append( F.pad(X, pad=X_padding) )
+#         ys.append( F.pad(y, pad=y_padding) )
 
-    features = torch.stack(features).requires_grad_()
-    ys = torch.stack(ys).requires_grad_()
+#     features = torch.stack(features).requires_grad_()
+#     ys = torch.stack(ys).requires_grad_()
 
-    return features, ys
+    # return features, ys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
@@ -229,7 +229,7 @@ if __name__ == "__main__":
         gpu_device= args.GPU_devices
     
     print(f"Runing {experiments} using cud: {gpu_device}")
-    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv4_{args.Model_Class}_{args.Data_transform}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5fast_{args.Model_Class}_{args.Data_transform}")
     for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
         check_dir(DIR)  
     # Temp Theta file
@@ -276,8 +276,9 @@ if __name__ == "__main__":
 
 
     # dataset    
-    normalize = 'Multinomial' not in args.Model_Class 
-    feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v4(label_df, refseq, cutsite, k1, k2, h)
+    normalize = ('Multinomial' not in args.Model_Class) & ('weight' not in args.Model_Class)
+    # normalize = 'weight' not in args.Model_Class 
+    feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
 
     Train_DS = reader.ST_dataset(Train_Oligos,processed_df, experiments, 
                           read_data_fn = read_data,
@@ -305,7 +306,7 @@ if __name__ == "__main__":
             # fast_dev_run=True,
 			default_root_dir=pth_save_path,
             devices = [gpu_device],
-			max_epochs=100,
+			max_epochs=1,
 			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',
                                                   monitor="val_cre", mode="min", save_top_k=2),
                         callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])

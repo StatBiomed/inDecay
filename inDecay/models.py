@@ -27,7 +27,7 @@ class Topk_Event_Overlapping(torchmetrics.Metric):
         # preds, target = self._input_format(preds, target)  # type: ignore
         # assert len(preds) == len(target)
 
-        if isinstance(preds, torch.Tensor):
+        if isinstance(preds, torch.Tensor) and (len(target.shape)==1):
             preds = [preds.squeeze()]
             target = [target.squeeze()]
 
@@ -39,9 +39,9 @@ class Topk_Event_Overlapping(torchmetrics.Metric):
             pred_idxs = torch.topk(pred_i, k=k, dim=0).indices.cpu().numpy()
             target_idxs = torch.topk(target_i, k=k, dim=0).indices.cpu().numpy()
 
-            batch_overlap = 0
-            for i_p, i_t in zip(pred_idxs, target_idxs):
-                batch_overlap += len(np.intersect1d(i_p, i_t))
+            batch_overlap = len(np.intersect1d(pred_idxs, target_idxs))
+            # for i_p, i_t in zip(pred_idxs, target_idxs):
+            #     batch_overlap += len(np.intersect1d(i_p, i_t))
 
             self.overlap += batch_overlap  # type: ignore
             self.total += 1  # type: ignore
@@ -281,7 +281,7 @@ class Base_del_model(pl.LightningModule):
             cre = torch.stack(cre_list)
 
         elif isinstance(y, torch.Tensor):
-            cre = -1* torch.multiply(torch.log(out+1e-5), y).sum(dim=1).mean()
+            cre = -1* torch.multiply(torch.log(out+1e-5), y).sum(dim=1)#.mean()
 
         if reduce is None:
             cre = cre
@@ -823,9 +823,32 @@ class ST_DeepDecay_dropout(ST_DeepDecay):
 		self.del_regressor = nn.Sequential(*layer_ls)
 
 
+class ST_DeepDecay_weight(ST_DeepDecay_dropout):
+	"""
+	repeat model
+	"""
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4):
+		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda)
+	
+	def compute_Loss(self, out, y):
+		"""
+		Multi-nomial loss 
+		"""
+		with torch.no_grad():
+			total_count = torch.tensor([yi.sum() for yi in y]).to(y[0].device)
+			
+			weight = torch.clamp(total_count/1000, min=0.3, max=1.0)
+			# weight /= weight.sum()
+        
+		# redunction set to None to return the cre of each sample
+		y_norm = self.normalize_y(y)
+		cre = super().compute_Loss(out, y_norm, reduce=None)
+		loss = torch.multiply(cre, weight).mean()
+		return loss 
+		
 class ST_DeepDecay_Multinomial(ST_DeepDecay):
 	"""
-	repeat Lindel's linear model
+	DeepDecay with Multinomial loss
 	"""
 	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda)
