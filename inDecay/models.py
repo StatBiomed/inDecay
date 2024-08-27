@@ -843,7 +843,7 @@ class ST_DeepDecay_weight(ST_DeepDecay_dropout):
 		# redunction set to None to return the cre of each sample
 		y_norm = self.normalize_y(y)
 		cre = super().compute_Loss(out, y_norm, reduce=None)
-		loss = torch.multiply(cre, weight).mean()
+		loss = torch.multiply(cre, weight).sum() / weight.sum()
 		return loss 
 		
 class ST_DeepDecay_Multinomial(ST_DeepDecay):
