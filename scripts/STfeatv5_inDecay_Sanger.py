@@ -41,6 +41,20 @@ SelfTarget_data_dir = PATH.data_dir
 high_dir = PATH.high_dir
 
 
+def get_idfgen_file(Gene, Refseq, idgen_dir):
+
+    Guide = Refseq[22:42] # with default cutsize 39
+
+    gen_feature_file = os.path.join(idgen_dir, f"{Gene}_{Guide}_features.txt")
+
+    if not os.path.exists(idgen_dir):
+        os.mkdir(idgen_dir)
+
+    if not os.path.exists(gen_feature_file):
+        os.system(f"{PATH.Indelgen} {Refseq} {42} {gen_feature_file}")
+
+    return gen_feature_file
+
 
 def get_sanger_training(data_archive="Sanger_training"):
     """
@@ -62,7 +76,8 @@ def get_sanger_training(data_archive="Sanger_training"):
 
     gene_ref_dict = {}
     for i, row in gene_ref_tab.iterrows():
-        gene_ref_dict[row['gene']] = '-', row['ref'], 42, "FORWARD"
+        guide = row['ref'][22:42]
+        gene_ref_dict[row['gene']] = guide, row['ref'], 42, "FORWARD"
 
     return genes, gene_ref_dict
 
@@ -78,8 +93,8 @@ def save_spliting(genes, kf_indeces):
     split_df = pd.DataFrame(gene_by_fold,
                             columns=['Train_gene', 'Val_gene', 'Test_gene'])
     # save
-    split_df.to_csv("results/Sanger_spliting.csv") # save to result (will updated in github repo)
-    split_df.to_csv(os.path.join(sanger_dir, f"Sanger_spliting_{date}.csv")) # backup locally
+    split_df.to_csv(f"results/{args.data_archive}_spliting.csv") # save to result (will updated in github repo)
+    split_df.to_csv(os.path.join(sanger_dir, f"{args.data_archive}_spliting_{date}.csv")) # backup locally
 
 def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     """
@@ -98,6 +113,13 @@ def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
 
     # read indelgen
     idgen_dir = os.path.join(PATH.data_dir, data_archive, 'Indelgen_result')
+    idfgen_file = get_idfgen_file(gene, refseq, idgen_dir)
+    
+    idfgen = pd.read_table(idfgen_file, index_col=0, skiprows=1, names=['Identifier', 'n_coevent', 'loc', 'indels'])
+    
+
+    label_df = idfgen.merge(label_df[['Identifier', 'Count', 'Frac Sample Reads']], left_on=['Identifier'], right_on=['Identifier'], how='left')
+    label_df = label_df.fillna(0)
     return label_df
 
 def my_collect_fn(batch_list):
