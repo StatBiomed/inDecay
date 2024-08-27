@@ -118,9 +118,9 @@ def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     idfgen = pd.read_table(idfgen_file, index_col=0, skiprows=1, names=['Identifier', 'n_coevent', 'loc', 'indels'])
     
 
-    label_df = idfgen.merge(label_df[['Identifier', 'Count', 'Frac Sample Reads']], left_on=['Identifier'], right_on=['Identifier'], how='left')
-    label_df = label_df.fillna(0)
-    return label_df
+    labelmerge_df = idfgen.merge(label_df[['Identifier', 'Count', 'Frac Sample Reads']], left_on=['Identifier'], right_on=['Identifier'], how='left')
+    labelmerge_df = labelmerge_df.fillna(0)
+    return labelmerge_df
 
 def my_collect_fn(batch_list):
     features = [item[0].requires_grad_() for item in batch_list]
@@ -289,7 +289,7 @@ if __name__ == "__main__":
 
     Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
     Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
-    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
 
     trainer = pl.Trainer(
 			auto_lr_find=True,
@@ -358,7 +358,7 @@ if __name__ == "__main__":
     if to_baseline:
         #  to generate baseline for the pretrained model
 
-        DS = reader.ST_dataset(valided_genes, gene_ref_dict, args.data_archive, 
+        DS = reader.ST_dataset(test_genes, gene_ref_dict, args.data_archive, 
                                 read_data_fn = read_sanger_data,
                                 transformation=transform,
                                 feat_ext_fn = feature_extraction_fn,
@@ -370,7 +370,7 @@ if __name__ == "__main__":
 
         if isinstance(predict_y[0], list):
             predict_y = sum(predict_y, [])  # to join lists 
-        pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(valided_genes)}
+        pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(test_genes)}
         print(len(pred_lookup))
         TestPred = Forecast_Y.replace("ForeCast_TestY.pkl", "Pretrained_Baseline_TestPred.pkl")
 
