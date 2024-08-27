@@ -657,6 +657,39 @@ def ST_decayfeat_v5(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
 
     return X5
 
+def interaction_transform(X, ndel, nins):
+    """
+    Data transformation
+    """
+    n_features = ndel + nins + math.comb(ndel,2) + math.comb(nins,2)
+    n_total = X.shape[1]
+    n_shared = n_total - ndel - nins
+    interaction_del = []
+    interaction_ins = []
+    
+    for i in range(0,ndel):
+        for j in range(0,ndel):
+            if i>=j:
+                continue
+            interaction_del.append(np.multiply(X[:,i],X[:,j]).reshape(-1,1))
+    for i in range(ndel,ndel + nins):
+        for j in range(ndel,ndel + nins): 
+            if i>=j:
+                continue
+            interaction_ins.append(np.multiply(X[:,i],X[:,j]).reshape(-1,1))
+
+    X_inter = np.concatenate([X] + interaction_del + interaction_ins, axis=1)
+    
+    if n_shared > 0:
+        interaction_shared = []
+        for i in range(ndel + nins, n_total):
+            for j in range(ndel + nins):
+                interaction_shared.append(np.multiply(X[:,i],X[:,j]).reshape(-1,1))
+
+        X_inter = np.concatenate([X_inter]+ interaction_shared, axis=1)
+
+    # assert X_inter.shape[1] == n_features 
+    return X_inter
 
 def K_mer(seq,K):
     """
