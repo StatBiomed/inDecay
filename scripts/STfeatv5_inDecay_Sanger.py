@@ -85,14 +85,19 @@ def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     """
     read the identifier and read count of the given genes
     """
+    Guide, refseq, pamsite, Strand = gene_ref_lookup[gene]
+
     # read table of the gene
-    idgen_df_path = os.path.join(PATH.data_dir, data_archive, f"{gene}_SelfTarget.csv")
-    label_df = pd.read_csv(idgen_df_path).query("Identifier != 'Not Present'")
+    sanger_df_path = os.path.join(PATH.data_dir, data_archive, f"{gene}_SelfTarget.csv")
+    label_df = pd.read_csv(sanger_df_path).query("Identifier != 'Not Present'")
 
     # normalize
     total_sum = label_df['Count'].sum()
     label_df['n_coevent'] = label_df['loc'].apply(lambda x: x.count("("))
     label_df['Frac Sample Reads'] = label_df['Count']/total_sum
+
+    # read indelgen
+    idgen_dir = os.path.join(PATH.data_dir, data_archive, 'Indelgen_result')
     return label_df
 
 def my_collect_fn(batch_list):
@@ -103,16 +108,13 @@ def my_collect_fn(batch_list):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
-    parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
-    parser.add_argument("-C","--read_cutoff", type=int, default=500, help='The threshold of total count. Only Guides having total read count over this threshold are used')
-    parser.add_argument("-T","--test_oligos", type=str, default="results/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
+    parser.add_argument("-E","--data_archive", required=True, type=str, default='Sanger_training', help='the folder name of processed sanger data')
+    parser.add_argument("-C","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay", help="inDecay / DeepDecay")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
-    parser.add_argument("-J","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
-    parser.add_argument("-R","--data_archive", required=False, type=str, default='Sanger_training', help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
     args = parser.parse_args()
@@ -142,20 +144,20 @@ if __name__ == "__main__":
 
  # if args.GPU_devices is not None:
     gpu_device= args.GPU_devices
-    print(f"Runing  using cud: {gpu_device}")
+    print(f"Runing {args.data_archive} fold {args.test_split}  using cuda: {gpu_device}")
     
     # Temp Theta file
     date = time.strftime("%B%d")
-    sanger_dir = os.path.join(PATH.data_dir, "Sanger_training")
+    sanger_dir = os.path.join(PATH.data_dir, args.data_archive)
 
     # get gene list
     # and also a gene to table look up
-    genes, gene_ref_dict  = get_sanger_training()
+    genes, gene_ref_dict  = get_sanger_training(args.data_archive)
     
     valided_genes = []
     unused_genes = ''
     for g in genes:
-        label_df = read_sanger_data(g,'', args.data_archive)
+        label_df = read_sanger_data(g, gene_ref_dict, args.data_archive)
         n_event = label_df.query('`Identifier` != "Identifier"')['Identifier'].nunique()
         if n_event < args.threshold:
             unused_genes += f', {g}'
@@ -194,8 +196,8 @@ if __name__ == "__main__":
     if "/" in exp_name:
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
 
-    pth_save_dir = os.path.join(PATH.pth_dir, f"{args.Model_Class}_{args.Data_transform}")
-    pth_save_path = pj(pth_save_dir, f"{args.data_archive}_featv5_{exp_name}_{len(kf_indeces)}fold_{args.test_split}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"{args.data_archive}_featv5_{args.Model_Class}_{args.Data_transform}_C{args.threshold}")
+    pth_save_path = pj(pth_save_dir, f"{exp_name}_{len(kf_indeces)}fold_{args.test_split}")
     
     for DIR in [SelfTarget_data_dir, pth_save_dir, high_dir, save_dir]:
         check_dir(DIR)  
@@ -254,9 +256,9 @@ if __name__ == "__main__":
                                 feat_ext_fn = feature_extraction_fn,
                                 normalize=normalize)
 
-    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=3, num_workers=num_workers)
-    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=3, num_workers=num_workers)
-    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=3, num_workers=num_workers)
+    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
 
     trainer = pl.Trainer(
 			auto_lr_find=True,
@@ -337,7 +339,7 @@ if __name__ == "__main__":
                                 transformation=transform,
                                 feat_ext_fn = feature_extraction_fn,
                                 normalize=normalize)
-        Test_DL = DataLoader(DS, shuffle=False, batch_size=1, num_workers=num_workers)
+        Test_DL = DataLoader(DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
 
         model.eval()
         predict_y = trainer.predict(model, Test_DL)

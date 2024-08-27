@@ -101,7 +101,7 @@ if __name__ == "__main__":
     parser.add_argument("-L","--L1_Lambda", required=False, type=float, default=0, help="the regularization strength")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default='ST_DeepDecay', help="the regularization strength")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="interaction", help="the name of data transformation")
-    parser.add_argument("-J","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
+    parser.add_argument("-C","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
     args = parser.parse_args()
