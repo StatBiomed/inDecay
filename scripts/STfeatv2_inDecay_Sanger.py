@@ -13,7 +13,7 @@ import pickle as pkl
 from Bio import SeqIO
 from inDecay import alignmap, models, reader, my_utils
 from tqdm.contrib.concurrent import process_map
-from scripts.STfeatv2_inDecay_finetune import check_dir, readFeaturesData, find_ckpt, interaction_transform, decay_transform
+from scripts.STfeatv2_inDecay_finetune import check_dir, readFeaturesData, find_ckpt, decay_transform
 
 num_workers = 12
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
         transform = lambda x: x
         n_features = ndel + nins + nshare
     elif args.Data_transform == "interaction":
-        transform = lambda x: interaction_transform(x, ndel, nins)
+        transform = lambda x: alignmap.interaction_transform(x, ndel, nins)
         n_features = ndel + nins + nshare + math.comb(ndel,2) + math.comb(nins,2) + nshare*(ndel+nins)
     elif ":" in args.Data_transform:
         # decay transform

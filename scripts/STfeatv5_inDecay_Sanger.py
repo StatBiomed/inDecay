@@ -12,7 +12,7 @@ import pickle as pkl
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
-from scripts.STfeatv2_inDecay_finetune import check_dir, readFeaturesData, interaction_transform, decay_transform
+from scripts.STfeatv2_inDecay_finetune import check_dir, decay_transform
 
 to_train = True
 to_predict = True
@@ -139,7 +139,6 @@ if __name__ == "__main__":
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
-    
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
     args = parser.parse_args()
 
@@ -236,7 +235,7 @@ if __name__ == "__main__":
         transform = lambda x: x
         n_features = ndel + nins + nshare
     elif args.Data_transform == "interaction":
-        transform = lambda x: interaction_transform(x, ndel, nins)
+        transform = lambda x: alignmap.interaction_transform(x, ndel, nins)
         n_features = ndel + nins + nshare + math.comb(ndel,2) + math.comb(nins,2) + nshare*(ndel+nins)
     elif ":" in args.Data_transform:
         # decay transform
@@ -318,21 +317,17 @@ if __name__ == "__main__":
     if to_write_y:
         Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
 
-        # TODO: comment this later
-        # Forecast_Y = f"{PATH.pth_dir}/ST_featv2_ST_DeepDecay_interaction/Sanger_Y.pkl"
-        # test_genes = genes 
+        # if not os.path.exists(Forecast_Y):
+        get_identifiers = lambda gene : read_sanger_data(gene, gene_ref_dict, args.data_archive)[['Identifier', 'Frac Sample Reads']].values
 
-        if not os.path.exists(Forecast_Y):
-            get_identifiers = lambda gene : read_sanger_data(gene, gene_ref_dict, args.data_archive)[['Identifier', 'Frac Sample Reads']].values
+        Y_ls = [get_identifiers(gene) for gene in test_genes]
+        # Y_ls = process_map(get_identifiers, Test_Oligos, max_workers=8)
+        Y_lookup = {o:Y_ls[i] for i,o in enumerate(test_genes)}
 
-            Y_ls = [get_identifiers(gene) for gene in test_genes]
-            # Y_ls = process_map(get_identifiers, Test_Oligos, max_workers=8)
-            Y_lookup = {o:Y_ls[i] for i,o in enumerate(test_genes)}
-
-            handle = open(Forecast_Y, 'wb')
-            pkl.dump(Y_lookup, handle)    
-            handle.close()
-            print('finished write to ',  Forecast_Y)
+        handle = open(Forecast_Y, 'wb')
+        pkl.dump(Y_lookup, handle)    
+        handle.close()
+        print('finished write to ',  Forecast_Y)
 
 
     if to_predict:
@@ -377,7 +372,7 @@ if __name__ == "__main__":
             predict_y = sum(predict_y, [])  # to join lists 
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(valided_genes)}
         print(len(pred_lookup))
-        TestPred = Forecast_Y.replace(".ckpt", "Pretrained_Baseline_TestPred.pkl")
+        TestPred = Forecast_Y.replace("ForeCast_TestY.pkl", "Pretrained_Baseline_TestPred.pkl")
 
         pred_f = open(TestPred, 'wb')
         pkl.dump(pred_lookup, pred_f)
