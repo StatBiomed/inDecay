@@ -213,6 +213,7 @@ if __name__ == "__main__":
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay", help="inDecay / DeepDecay")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
+    parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
     args = parser.parse_args()
 
     # some save file settings
@@ -229,7 +230,7 @@ if __name__ == "__main__":
         gpu_device= args.GPU_devices
     
     print(f"Runing {experiments} using cud: {gpu_device}")
-    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5fast_{args.Model_Class}_{args.Data_transform}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5fast_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
     for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
         check_dir(DIR)  
     # Temp Theta file
@@ -304,6 +305,7 @@ if __name__ == "__main__":
 			auto_lr_find=True,
             accelerator=device,
             # fast_dev_run=True,
+            enable_progress_bar=eval(args.progress_bar),
 			default_root_dir=pth_save_path,
             devices = [gpu_device],
 			max_epochs=100,
