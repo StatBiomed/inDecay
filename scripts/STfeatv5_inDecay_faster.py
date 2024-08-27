@@ -362,5 +362,3 @@ if __name__ == "__main__":
         pkl.dump(pred_lookup, pred_f)
         pred_f.close()
         print("prediction writed to %s" %TestPred)
-    
-    
