@@ -12,7 +12,7 @@ import pickle as pkl
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
-from scripts.STfeatv2_inDecay_finetune import check_dir, readFeaturesData, find_ckpt, interaction_transform, decay_transform
+from scripts.STfeatv2_inDecay_finetune import check_dir, readFeaturesData, interaction_transform, decay_transform
 
 to_train = True
 to_predict = True
@@ -128,29 +128,34 @@ def my_collect_fn(batch_list):
     return features, ys
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
+    parser = argparse.ArgumentParser("The script for few shot learning with embryonic sanger sesquencing data")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--data_archive", required=True, type=str, default='Sanger_training', help='the folder name of processed sanger data')
     parser.add_argument("-C","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay", help="inDecay / DeepDecay")
+    parser.add_argument("-F","--Fix_params", required=False, type=str, default=None, help="the layers to fix, eg. del_regressor[:2]")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
+    
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
     args = parser.parse_args()
 
     ## Mode ##
     if args.Mode == 'Train':
         to_train = to_write_y = to_predict = True
+        to_baseline = True
 
     elif args.Mode == 'Evaluate':
         to_train = False
+        to_baseline = True
         to_write_y = to_predict = True
     
     elif args.Mode == 'Evaluate_only':
         to_predict = True
+        to_baseline = False
         to_train = to_write_y = False
         
     elif args.Mode == 'Write_Y':
@@ -219,7 +224,7 @@ if __name__ == "__main__":
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
 
     pth_save_dir = os.path.join(PATH.pth_dir, f"{args.data_archive}_featv5_{args.Model_Class}_{args.Data_transform}_C{args.threshold}")
-    pth_save_path = pj(pth_save_dir, f"{exp_name}_{len(kf_indeces)}fold_{args.test_split}")
+    pth_save_path = pj(pth_save_dir, f"{exp_name}_{args.Fix_params}_{len(kf_indeces)}fold_{args.test_split}")
     
     for DIR in [SelfTarget_data_dir, pth_save_dir, high_dir, save_dir]:
         check_dir(DIR)  
@@ -252,6 +257,11 @@ if __name__ == "__main__":
     if args.Pretrain is not None:
         model = model_class.load_from_checkpoint(args.Pretrain)
 
+    if args.Fix_params is not None:
+        for p in eval(f"model.{args.Fix_params}").parameters():
+            p.require_grad = False
+
+        print(args.Fix_params, "is fixed")
 
     # dataset    
     # dataset    
@@ -313,7 +323,7 @@ if __name__ == "__main__":
         # test_genes = genes 
 
         if not os.path.exists(Forecast_Y):
-            get_identifiers = lambda gene : read_sanger_data(gene, gene_ref_dict, "Sanger")[['Identifier', 'Frac Sample Reads']].values
+            get_identifiers = lambda gene : read_sanger_data(gene, gene_ref_dict, args.data_archive)[['Identifier', 'Frac Sample Reads']].values
 
             Y_ls = [get_identifiers(gene) for gene in test_genes]
             # Y_ls = process_map(get_identifiers, Test_Oligos, max_workers=8)
@@ -326,10 +336,7 @@ if __name__ == "__main__":
 
 
     if to_predict:
-        if args.Pretrain is not None:
-            ckpt_abspath = os.path.join(PATH.main_dir, args.Pretrain)
-        else:
-            ckpt_abspath = find_ckpt(pj(pth_save_path, 'lightning_logs'))
+        ckpt_abspath = my_utils.find_ckpt(pj(pth_save_path, 'lightning_logs'))
         assert os.path.exists(ckpt_abspath)
 
         try:
@@ -356,7 +363,7 @@ if __name__ == "__main__":
     if to_baseline:
         #  to generate baseline for the pretrained model
 
-        DS = reader.ST_dataset(valided_genes, gene_ref_dict, "Sanger", 
+        DS = reader.ST_dataset(valided_genes, gene_ref_dict, args.data_archive, 
                                 read_data_fn = read_sanger_data,
                                 transformation=transform,
                                 feat_ext_fn = feature_extraction_fn,
@@ -370,7 +377,7 @@ if __name__ == "__main__":
             predict_y = sum(predict_y, [])  # to join lists 
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(valided_genes)}
         print(len(pred_lookup))
-        TestPred = args.Pretrain.replace(".ckpt", "_TestPred.pkl")
+        TestPred = Forecast_Y.replace(".ckpt", "Pretrained_Baseline_TestPred.pkl")
 
         pred_f = open(TestPred, 'wb')
         pkl.dump(pred_lookup, pred_f)
