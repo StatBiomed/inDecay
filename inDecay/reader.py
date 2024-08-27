@@ -57,7 +57,7 @@ class ST_dataset(Dataset):
         """
         self.Oligos = Oligos
         self.experiments = experiments
-        self.processed_df = processed_df
+        self.processed_df = processed_df # this is also the ref_dict for sanger data
         self.padding = padding
         self.Identifiers = {}
         self.transformation = transformation
@@ -66,7 +66,7 @@ class ST_dataset(Dataset):
         self.read_data_fn = read_data_fn
         self.label_col = 'Frac Sample Reads' if normalize else 'Count'
 
-        if experiments == 'Sanger':
+        if not experiments.startswith("ST"):
             self.ref_lookup = processed_df
         else:
             self.ref_lookup = get_reference()
