@@ -255,6 +255,7 @@ if __name__ == "__main__":
     model = model_class(**model_parsms)
     if args.Pretrain is not None:
         model = model_class.load_from_checkpoint(args.Pretrain)
+        pmodel = model_class.load_from_checkpoint(args.Pretrain)
 
     if args.Fix_params is not None:
         for p in eval(f"model.{args.Fix_params}").parameters():
@@ -365,8 +366,8 @@ if __name__ == "__main__":
                                 normalize=normalize)
         Test_DL = DataLoader(DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
 
-        model.eval()
-        predict_y = trainer.predict(model, Test_DL)
+        pmodel.eval()
+        predict_y = trainer.predict(pmodel, Test_DL)
 
         if isinstance(predict_y[0], list):
             predict_y = sum(predict_y, [])  # to join lists 
