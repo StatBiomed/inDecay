@@ -38,7 +38,7 @@ device = 'gpu' if torch.cuda.is_available() else 'cpu'
 # some path and requisite files
 pj = os.path.join
 SelfTarget_data_dir = PATH.data_dir
-high_dir = PATH.high_dir
+data_dir = PATH.data_dir
 
 
 def get_idfgen_file(Gene, Refseq, idgen_dir):
@@ -217,7 +217,7 @@ if __name__ == "__main__":
         
 
     # some checkpoint settings
-    save_dir = pj(high_dir, "Sanger")
+    save_dir = pj(data_dir, "Sanger")
     exp_name = args.Pretrain.split("ST_June_2017_")[-1].split("_LV7A_DPI7")[0]
     if "/" in exp_name:
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     pth_save_dir = os.path.join(PATH.pth_dir, f"{args.data_archive}_featv5_{args.Model_Class}_{args.Data_transform}_C{args.threshold}")
     pth_save_path = pj(pth_save_dir, f"{exp_name}_{args.Fix_params}_{len(kf_indeces)}fold_{args.test_split}")
     
-    for DIR in [SelfTarget_data_dir, pth_save_dir, high_dir, save_dir]:
+    for DIR in [PATH.pth_dir, pth_save_dir, pth_save_path]:
         check_dir(DIR)  
 
     
@@ -359,13 +359,7 @@ if __name__ == "__main__":
     if to_baseline:
         #  to generate baseline for the pretrained model
 
-        DS = reader.ST_dataset(test_genes, gene_ref_dict, args.data_archive, 
-                                read_data_fn = read_sanger_data,
-                                transformation=transform,
-                                feat_ext_fn = feature_extraction_fn,
-                                normalize=normalize)
-        Test_DL = DataLoader(DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
-
+        pmodel = model_class.load_from_checkpoint(args.Pretrain)
         pmodel.eval()
         predict_y = trainer.predict(pmodel, Test_DL)
 
