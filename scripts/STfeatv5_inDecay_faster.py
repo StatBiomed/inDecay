@@ -213,8 +213,31 @@ if __name__ == "__main__":
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
     parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay", help="inDecay / DeepDecay")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
+    parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
     args = parser.parse_args()
+
+        ## Mode ##
+    if args.Mode == 'Train':
+        to_train = to_write_y = to_predict = True
+
+    elif args.Mode == 'Evaluate':
+        to_train = False
+        to_write_y = to_predict = True
+    
+    elif args.Mode == 'Evaluate_only':
+        to_predict = True
+        to_train = to_write_y = False
+        
+    elif args.Mode == 'Write_Y':
+        to_train = to_predict = False
+        to_write_y = True
+
+    elif args.Mode == 'Baseline':
+        to_train = to_predict = to_write_y = False 
+        to_baseline = True
+    else:
+        raise ValueError("Invalide action combination")
 
     # some save file settings
     experiments = args.experiment
@@ -231,11 +254,13 @@ if __name__ == "__main__":
     
     print(f"Runing {experiments} using cud: {gpu_device}")
     pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5fast_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
-    for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
-        check_dir(DIR)  
+    
     # Temp Theta file
     date = time.strftime("%B%d")
     pth_save_path = pj(pth_save_dir, experiments)
+
+    for DIR in [trainer_log, data_dir, pth_save_dir, save_dir, pth_save_path]:
+        check_dir(DIR)  
 
     processed_df = pd.read_csv(csv_path).query("`in_LdGen` == True").astype({"Count":"int"})
     processed_df = processed_df.query("`Strand` == 'FORWARD'")
@@ -339,10 +364,10 @@ if __name__ == "__main__":
 
 
     if to_predict:
-        # if args.Pretrain is not None:
-        #     ckpt_abspath = os.path.join(PATH.main_dir, args.Pretrain)
-        # else:
-        ckpt_abspath = find_ckpt(pj(pth_save_path, 'lightning_logs'))
+        if args.Pretrain is not None:
+            ckpt_abspath = os.path.join(PATH.main_dir, args.Pretrain)
+        else:
+            ckpt_abspath = find_ckpt(pj(pth_save_path, 'lightning_logs'))
         assert os.path.exists(ckpt_abspath)
 
         try:
