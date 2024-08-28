@@ -288,9 +288,9 @@ if __name__ == "__main__":
                                 feat_ext_fn = feature_extraction_fn,
                                 normalize=normalize)
 
-    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
-    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
-    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=32, num_workers=num_workers, collate_fn=my_collect_fn)
+    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+    Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
 
     trainer = pl.Trainer(
 			auto_lr_find=True,
