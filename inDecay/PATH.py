@@ -1,4 +1,3 @@
-main_dir='/home/wergillius/Project/inDecay'
 
 
 data_dir = f"{main_dir}/data"
@@ -10,4 +9,3 @@ import sys
 sys.path.append(main_dir)
 
 
-Tooldir="/home/wergillius/Project/SelfTarget/indel_analysis/indelmap"
