@@ -11,8 +11,48 @@ import torch.nn.functional as F
 from torch.distributions import multinomial
 import pytorch_lightning as pl  # pytorch-lightning-1.7.7
 
-
 class Topk_Event_Overlapping(torchmetrics.Metric):
+    def __init__(self, k):
+        """
+        Metric to quantify the recall of the top 5 frequent events
+        """
+        super().__init__()
+        self.k = k
+        self.add_state("overlap", default=torch.tensor(0),
+                       dist_reduce_fx="sum")
+        self.add_state("total", default=torch.tensor(0), dist_reduce_fx="sum")
+
+    def update(self, preds: Union[list,torch.Tensor], target: Union[list,torch.Tensor]):
+        # preds, target = self._input_format(preds, target)  # type: ignore
+        # assert len(preds) == len(target)
+
+        if isinstance(preds, torch.Tensor) and (len(target.shape)==1):
+            preds = [preds.squeeze()]
+            target = [target.squeeze()]
+
+        for pred_i, target_i in zip(preds, target):
+
+            assert pred_i.shape == target_i.shape
+            non0k= len(np.where(target_i.cpu().detach().numpy() != 0)[0])
+            k = self.k if self.k <= non0k else non0k
+
+            pred_idxs = torch.topk(pred_i, k=k, dim=0).indices.cpu().numpy()
+            target_idxs = torch.topk(target_i, k=k, dim=0).indices.cpu().numpy()
+
+            batch_overlap = len(np.intersect1d(pred_idxs, target_idxs))
+            # for i_p, i_t in zip(pred_idxs, target_idxs):
+            #     batch_overlap += len(np.intersect1d(i_p, i_t))
+            batch_overlap_nor = batch_overlap / k
+
+            self.overlap = self.overlap.float() + batch_overlap_nor # type: ignore
+            self.total += 1  # type: ignore
+
+    def compute(self):
+        # print(self.overlap.float() *self.k / self.total)
+        return self.overlap.float() *self.k / self.total  # type: ignore
+    
+
+class Topk_Event_Overlapping_wz(torchmetrics.Metric):
     def __init__(self, k):
         """
         Metric to quantify the recall of the top 5 frequent events

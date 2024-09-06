@@ -475,8 +475,40 @@ def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
     
     return Train_Oligos, Val_Oligos, Test_Oligos
 
-
+    n_splits=len(genes)
 def get_Sanger_train_test(genes, seed=0):
+    """
+    K-fold cross validation spliting for sanger data.
+    The number of fold depends on the available sample size.
+    The more data we have , the fewer fold , more sample for testing.
+
+    Args:
+        genes (list): a list of gene names
+        seed (int, optional): random seed. fixed to 0.
+
+    Returns:
+        kf_index_ls (list of tuple): 
+        [(train_idx, val_idx, test_idx) * n_splits]
+    """
+    # decide the number of testing by # of genes
+
+    n_splits=len(genes)
+
+    # split k-fold 
+    kf = KFold(n_splits, shuffle=True, random_state=seed)
+    kf_splits = kf.split(genes)
+
+    # split train val
+    kf_index_ls = []
+    for trainval_idx, test_idx in kf_splits:
+        val_size = int(0.2*len(trainval_idx))
+        train_idx, val_idx = train_test_split(trainval_idx,
+                                      test_size=val_size)
+        kf_index_ls.append(
+            (train_idx, val_idx, test_idx)
+        )
+    return kf_index_ls
+def get_Sanger_train_test_WZ(genes, seed=0):
     """
     K-fold cross validation spliting for sanger data.
     The number of fold depends on the available sample size.
@@ -497,6 +529,7 @@ def get_Sanger_train_test(genes, seed=0):
         n_splits = 5
     else:
         n_splits = 10
+
 
     # split k-fold 
     kf = KFold(n_splits, shuffle=True, random_state=seed)

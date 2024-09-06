@@ -28,7 +28,7 @@ k1 = 0.5
 k2 = 0.6
 h = 1.3
 hidden = [128, 64]
-L2_Lambda = 1e-4
+L2_Lambda = 1e-1
 L1_Lambda = 0
 lr = 3e-4
 
@@ -140,6 +140,7 @@ if __name__ == "__main__":
     parser.add_argument("-T","--test_split", required=True, type=int, help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
+    parser.add_argument("--modelnote", required=True, type=str, default=None, help="the dir to save model")
     args = parser.parse_args()
 
     ## Mode ##
@@ -166,6 +167,8 @@ if __name__ == "__main__":
         to_baseline = True
     else:
         raise ValueError("Invalide action combination")
+
+
 
 
  # if args.GPU_devices is not None:
@@ -221,8 +224,9 @@ if __name__ == "__main__":
     exp_name = args.Pretrain.split("ST_June_2017_")[-1].split("_LV7A_DPI7")[0]
     if "/" in exp_name:
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
-
-    pth_save_dir = os.path.join(PATH.pth_dir, f"{args.data_archive}_featv5_{args.Model_Class}_{args.Data_transform}_C{args.threshold}")
+    if not os.path.exists(os.path.join(PATH.pth_dir, f"{args.modelnote}")):
+        os.mkdir(os.path.join(PATH.pth_dir, f"{args.modelnote}"))
+    pth_save_dir = os.path.join(PATH.pth_dir, f"{args.modelnote}/{args.data_archive}_featv5_{args.Model_Class}_{args.Data_transform}_C{args.threshold}")
     pth_save_path = pj(pth_save_dir, f"{exp_name}_{args.Fix_params}_{len(kf_indeces)}fold_{args.test_split}")
     
     for DIR in [PATH.pth_dir, pth_save_dir, pth_save_path]:
@@ -301,8 +305,8 @@ if __name__ == "__main__":
             devices = [gpu_device],
 			max_epochs=100,
 			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',
-                                                  monitor="val_cre", mode="min", save_top_k=2),
-                        callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])
+                                                  monitor="val_mse", mode="min", save_top_k=2),
+                        callbacks.EarlyStopping(monitor="val_mse", mode="min", patience=20),])
     
 
     if to_train:

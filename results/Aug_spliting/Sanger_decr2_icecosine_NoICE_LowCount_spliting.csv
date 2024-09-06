@@ -1,0 +1,11 @@
+,Train_gene,Val_gene,Test_gene
+0,"Dcbld2,H2AB1-sg1,IL7,IL6,Kat2a,ELF5,Mettl14-sg1,stk4-sg2,Mettl14-sg2,sry,stk4-sg3,ULK4-sg2,Rag1,Adgre1,mHV5-sg7,EPHA2,Rag1-sg1-4,MTAP,PDL1,H2D1-sg1,ZNRF4-sg2,IL2rg,Ctnnb1,H2AB1-sg2,Mrgpra","Adam6,DIRK","H2K1-sg2,IL5,H2D1-sg2"
+1,"IL7,PDL1,Mrgpra,stk4-sg2,MTAP,Adam6,H2D1-sg2,H2AB1-sg1,Mettl14-sg1,ZNRF4-sg2,IL5,Dcbld2,IL6,DIRK,EPHA2,H2K1-sg2,Mettl14-sg2,mHV5-sg7,ELF5,Rag1,H2D1-sg1,sry,stk4-sg3,Adgre1,IL2rg","Kat2a,H2AB1-sg2","Rag1-sg1-4,ULK4-sg2,Ctnnb1"
+2,"Kat2a,MTAP,Ctnnb1,Dcbld2,H2D1-sg2,ZNRF4-sg2,H2D1-sg1,Adam6,stk4-sg2,IL2rg,DIRK,sry,H2AB1-sg1,stk4-sg3,Mettl14-sg2,Adgre1,H2K1-sg2,IL5,EPHA2,H2AB1-sg2,Rag1,IL7,Rag1-sg1-4,Mrgpra,IL6","ULK4-sg2,ELF5","Mettl14-sg1,PDL1,mHV5-sg7"
+3,"Adgre1,H2AB1-sg1,stk4-sg3,Adam6,IL7,Rag1-sg1-4,ZNRF4-sg2,Ctnnb1,Dcbld2,H2D1-sg2,H2K1-sg2,H2D1-sg1,Rag1,IL6,Mettl14-sg2,PDL1,Kat2a,ELF5,ULK4-sg2,mHV5-sg7,Mettl14-sg1,stk4-sg2,DIRK,EPHA2,Mrgpra","H2AB1-sg2,IL5","MTAP,sry,IL2rg"
+4,"Dcbld2,H2AB1-sg2,H2D1-sg2,stk4-sg3,IL2rg,H2AB1-sg1,Mettl14-sg1,ELF5,IL7,Mrgpra,IL5,Rag1,Mettl14-sg2,ULK4-sg2,MTAP,Kat2a,sry,Ctnnb1,IL6,ZNRF4-sg2,Rag1-sg1-4,mHV5-sg7,DIRK,stk4-sg2,H2K1-sg2","PDL1,EPHA2","Adam6,Adgre1,H2D1-sg1"
+5,"H2AB1-sg2,mHV5-sg7,sry,ULK4-sg2,H2AB1-sg1,EPHA2,Ctnnb1,ZNRF4-sg2,H2K1-sg2,stk4-sg3,DIRK,MTAP,Adgre1,H2D1-sg2,stk4-sg2,Mettl14-sg1,IL6,IL5,Kat2a,Rag1-sg1-4,ELF5,PDL1,IL2rg,H2D1-sg1,Rag1","Dcbld2,Adam6","Mettl14-sg2,Mrgpra,IL7"
+6,"PDL1,stk4-sg2,Mrgpra,IL6,ZNRF4-sg2,mHV5-sg7,DIRK,Adgre1,EPHA2,Mettl14-sg2,IL5,H2AB1-sg2,H2K1-sg2,ELF5,IL7,H2AB1-sg1,Dcbld2,H2D1-sg1,Adam6,Mettl14-sg1,H2D1-sg2,MTAP,Ctnnb1,sry,IL2rg","Rag1-sg1-4,ULK4-sg2","stk4-sg3,Rag1,Kat2a"
+7,"Mrgpra,ULK4-sg2,Adam6,Kat2a,Mettl14-sg1,mHV5-sg7,Rag1,PDL1,IL2rg,sry,H2D1-sg2,DIRK,H2K1-sg2,stk4-sg3,H2AB1-sg1,Dcbld2,IL6,Ctnnb1,Adgre1,IL7,H2D1-sg1,EPHA2,Rag1-sg1-4,IL5,H2AB1-sg2","MTAP,Mettl14-sg2","stk4-sg2,ELF5,ZNRF4-sg2"
+8,"Dcbld2,Kat2a,PDL1,sry,Mettl14-sg1,H2AB1-sg1,Ctnnb1,Adgre1,H2D1-sg2,Adam6,IL5,Mrgpra,stk4-sg2,EPHA2,IL7,Mettl14-sg2,stk4-sg3,H2K1-sg2,ULK4-sg2,MTAP,IL2rg,Rag1-sg1-4,ZNRF4-sg2,H2D1-sg1,ELF5","Rag1,mHV5-sg7","IL6,DIRK,H2AB1-sg2"
+9,"IL5,DIRK,Ctnnb1,H2AB1-sg2,ULK4-sg2,Mettl14-sg1,H2D1-sg1,sry,ZNRF4-sg2,H2D1-sg2,Adam6,IL7,IL6,PDL1,Adgre1,stk4-sg3,Rag1-sg1-4,Kat2a,MTAP,Mettl14-sg2,ELF5,stk4-sg2,H2K1-sg2,Mrgpra,IL2rg","Rag1,mHV5-sg7","Dcbld2,H2AB1-sg1,EPHA2"

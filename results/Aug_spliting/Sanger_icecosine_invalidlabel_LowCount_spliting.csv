@@ -1,0 +1,6 @@
+,Train_gene,Val_gene,Test_gene
+0,"PDL1,H2D1-sg2,ZNRF4-sg2,Rag1,MTAP,ULK4-sg2,Mrgpra,EPHA2,H2AB1-sg2,Rag1-sg1-4,Mettl14-sg1,sry,Kif27,Dcbld2,H2K1-sg3,IL5,Adgre1,Ctnnb1,Mettl14-sg2,IL7,mHV5-sg6,IL6,IL2rg,stk4-sg2,stk4-sg3","Adam6,DIRK","H2K1-sg2,ELF5,H2AB1-sg1,Kat2a,TPO,H2D1-sg1,mHV5-sg7"
+1,"H2D1-sg1,ZNRF4-sg2,EPHA2,Mrgpra,stk4-sg2,DIRK,TPO,H2K1-sg2,PDL1,Dcbld2,IL6,H2AB1-sg2,H2D1-sg2,Rag1-sg1-4,stk4-sg3,ULK4-sg2,mHV5-sg7,ELF5,Mettl14-sg1,Kat2a,mHV5-sg6,Mettl14-sg2,sry,H2AB1-sg1,Kif27","MTAP,Rag1","H2K1-sg3,Adam6,IL5,Adgre1,IL2rg,Ctnnb1,IL7"
+2,"Rag1,H2D1-sg1,stk4-sg2,Kat2a,TPO,H2D1-sg2,Adgre1,IL5,H2K1-sg2,ULK4-sg2,ELF5,MTAP,Kif27,Adam6,sry,IL2rg,ZNRF4-sg2,Ctnnb1,Rag1-sg1-4,IL6,mHV5-sg7,DIRK,PDL1,H2AB1-sg1,H2K1-sg3","EPHA2,IL7","Mettl14-sg2,stk4-sg3,Mettl14-sg1,Dcbld2,Mrgpra,H2AB1-sg2,mHV5-sg6"
+3,"TPO,Kat2a,Adgre1,mHV5-sg6,H2AB1-sg1,IL6,IL2rg,Dcbld2,IL5,mHV5-sg7,H2K1-sg2,H2K1-sg3,IL7,Mrgpra,H2D1-sg1,DIRK,Rag1,H2D1-sg2,Mettl14-sg1,H2AB1-sg2,Mettl14-sg2,stk4-sg3,ULK4-sg2,ELF5,Ctnnb1","Adam6,stk4-sg2","Kif27,MTAP,Rag1-sg1-4,sry,PDL1,ZNRF4-sg2,EPHA2"
+4,"IL7,IL2rg,MTAP,H2D1-sg1,sry,Mrgpra,H2K1-sg2,TPO,H2AB1-sg2,Dcbld2,Kat2a,Mettl14-sg1,stk4-sg3,Kif27,ZNRF4-sg2,Adgre1,H2K1-sg3,IL5,PDL1,mHV5-sg6,EPHA2,H2AB1-sg1,Ctnnb1,Adam6,ELF5,mHV5-sg7","Rag1-sg1-4,Mettl14-sg2","IL6,DIRK,Rag1,stk4-sg2,ULK4-sg2,H2D1-sg2"

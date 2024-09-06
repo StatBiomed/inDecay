@@ -1,3 +1,5 @@
+main_dir='/ssd/users/louisayu/inDecay'
+main_dir='/ssd/users/louisayu/inDecay'
 
 
 data_dir = f"{main_dir}/data"
@@ -9,3 +11,4 @@ import sys
 sys.path.append(main_dir)
 
 
+Indelgen="/ssd/users/louisayu/inDecay/tool/indelgentarget"

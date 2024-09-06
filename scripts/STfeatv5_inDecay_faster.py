@@ -110,13 +110,17 @@ def read_data(OligoID, processed_df, experiments):
 
         label_df = idfgen.merge(oligo_df[['OligoID','Identifier', 'Count']], 
                         left_on=['Identifier'], right_on=['Identifier'], suffixes=['', '_filled'], how='left') # type: ignore 
-        label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
+        # label_df['Count']= label_df['Count']
+        # label_df.replace([np.inf, -np.inf], 0, inplace=True)
+        label_df=label_df.fillna(0)# make indels that are not capture with count=0
+        # print(label_df[label_df.isna().any(axis=1)])
         return label_df
     
     label_df = merging(OligoID)
 
     total_sum = label_df['Count'].sum()
     label_df['Frac Sample Reads'] = label_df['Count']/total_sum
+    label_df['Frac Sample Reads'] = label_df['Frac Sample Reads'] if total_sum!=0 else 0
     return label_df
 
 
@@ -204,7 +208,7 @@ def my_collect_fn(batch_list):
     # return features, ys
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
+    parser = argparse.ArgumentParser("The script to train inDecay")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
     parser.add_argument("-C","--read_cutoff", type=int, default=500, help='The threshold of total count. Only Guides having total read count over this threshold are used')
