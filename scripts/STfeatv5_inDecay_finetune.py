@@ -24,9 +24,7 @@ k1 = 0.5
 k2 = 0.6
 h = 1.3
 hidden = [128, 64]
-L2_Lambda = 1e-4
-L1_Lambda = 0
-lr = 3e-4
+lr = 3e-5
 
 # Torch Device
 device = 'gpu' if torch.cuda.is_available() else 'cpu'
@@ -102,7 +100,10 @@ def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
     performance_json.update(IDL_performance)
     performance_json['End_date'] = time.strftime("%b%d-%H:%-M")
     performance_json['ckpt_path'] = ckpt_abspath
-
+    
+    L1_Lambda = args.L1_Lambda
+    L2_Lambda = args.L2_Lambda
+    
     # # model params 
     training_params = {}
     for pm in ["ndel", "nins", "nshare", "k1", "k2", "h", "hidden", "L2_Lambda", "L1_Lambda", "lr", "args.Fix_params"]:
@@ -111,7 +112,7 @@ def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
     performance_json['training_params'] = training_params
     
     # save the metrics
-    result_dir = f"{PATH.main_dir}/results/Transfer/featv5_{args.Model_Class}_{Cellline}"
+    result_dir = f"{PATH.main_dir}/results/Transfer/featv5_{args.Model_Class}_{Cellline}/{args.Fix_params}_RandOligo" #TODO:FIX + RANDOM
     
     if not os.path.exists(os.path.dirname(result_dir)):
         os.mkdir(os.path.dirname(result_dir))
@@ -122,6 +123,12 @@ def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
         json_path = pj(result_dir, f"N{args.N_Finetune}-{date}.json")
     else:
         json_path = pj(result_dir, f"{prefix}-{date}.json")
+
+    re = 1
+    if prefix == "":
+        while os.path.exists(json_path):
+            json_path = pj(result_dir, f"N{args.N_Finetune}-{date}_r{re}.json")
+            re += 1
 
     with open(json_path, "w") as write_file:
         json.dump(performance_json, write_file, indent=4)
@@ -145,6 +152,8 @@ if __name__ == "__main__":
     parser.add_argument("-N","--N_Finetune", required=False, type=str, default="50", help="the number of oligos to use in the finetuning process")
     parser.add_argument("-R","--Rounds", required=False, type=int, default=100, help="Max epoches for finetuning")
     parser.add_argument("-U","--LearningRate", required=False, type=str, default="3e-4", help="the learning rate")
+    parser.add_argument("--L1_Lambda", required=False, type=float, default="0", help="the weight to regulate the L1 loss")
+    parser.add_argument("--L2_Lambda", required=False, type=float, default="1e-4", help="the weight to regulate the L2 loss")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
     args = parser.parse_args()
 
@@ -194,7 +203,7 @@ if __name__ == "__main__":
         check_dir(DIR)  
     # Temp Theta file
     date = time.strftime("%B%d")
-    pth_save_path = pj(pth_save_dir, f"featv5_{experiments}_N{args.N_Finetune}")
+    pth_save_path = pj(pth_save_dir, f"featv5_{experiments}_N{args.N_Finetune}_{args.Fix_params}")
 
     processed_df = pd.read_csv(csv_path).query("`in_LdGen` == True").astype({"Count":"int"})
     processed_df = processed_df.query("`Strand` == 'FORWARD'")
@@ -218,7 +227,19 @@ if __name__ == "__main__":
         size = int(args.N_Finetune)
         Finetune_df=pd.read_csv(f"{PATH.main_dir}/results/Finetune_OligoIndex_Jul19.csv", index_col=0)
         finetune_set = 'FinetuneSet_n%s'%args.N_Finetune                        # For example, select 30 oligos
-        Finetune_Oligos=Finetune_df.query('`%s` == True'%finetune_set).index    # finetune oligos
+        
+
+        ## ONLY USE THE RANDOM
+        Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
+
+        # if finetune_set in Finetune_df.columns:
+        #     Finetune_Oligos = Finetune_df.query('`%s` == True'%finetune_set).index    # finetune oligos
+        # else:
+        #     Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
+        #     Finetune_df[f'FinetuneSet_n{size}'] = Finetune_df.index.isin(Finetune_Oligos)
+        #     Finetune_df.to_csv(f"{PATH.main_dir}/results/Finetune_OligoIndex_Jul19.csv", index=True)
+
+
 
     # train-val for finetuning
     val_size = int(0.1 * size)                               # num. of oligos for finetuning validatoin 
@@ -227,9 +248,7 @@ if __name__ == "__main__":
 
 
 
-
     # DATA TRANSFORMATION
-    
     if args.Data_transform == "identity":
         transform = lambda x: x
         n_features = ndel + nins + nshare
@@ -246,7 +265,7 @@ if __name__ == "__main__":
     # Modeling and Training
     model_class = eval("models.%s" %args.Model_Class)
     model_parsms = dict(inputsize=n_features, outputsize=1,  lr=lr,
-                        L1_lambda=L1_Lambda, L2_lambda=L2_Lambda)
+                        L1_lambda=args.L1_Lambda, L2_lambda=args.L2_Lambda)
     if 'Deep' in args.Model_Class:
         model_parsms['hidden'] = hidden
         
