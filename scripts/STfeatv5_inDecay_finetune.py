@@ -26,7 +26,8 @@ h = 1.3
 hidden = [128, 64]
 L2_Lambda = 1e-4
 L1_Lambda = 0
-lr = 3e-4
+lr = 1e-3
+
 
 # Torch Device
 device = 'gpu' if torch.cuda.is_available() else 'cpu'
@@ -96,7 +97,7 @@ def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
     
     date = time.strftime("%b%d")
     # the metric dict
-    performance_json = analysis_fn.assessment_recipe_forecast(Y_lookup, pred_lookup)
+    performance_json = analysis_fn.assessment_recipe_forecast_cell(Y_lookup, pred_lookup)
     IDL_performance = analysis_fn.assessment_recipe_IDL_forecast(Y_lookup, pred_lookup)
 
     performance_json.update(IDL_performance)
