@@ -1,90 +1,76 @@
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-usage: The script to extract SelfTarget proccessed txt file and map to Lindel classes
-       [-h] -E EXPERIMENT [-C READ_CUTOFF] [-T TEST_OLIGOS] [-G GPU_DEVICES]
-       [-P PRETRAIN] [-M MODEL_CLASS] [-D DATA_TRANSFORM] [-O MODE]
-       [--progress_bar PROGRESS_BAR]
-The script to extract SelfTarget proccessed txt file and map to Lindel classes: error: argument -G/--GPU_devices: expected one argument
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C200/ST_June_2017_BOB_LV7A_DPI7/lightning_logs
+pid for 0 is 3398120, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 1 is 3398566, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 2 is 3399001, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 3 is 3399415, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 4 is 3399837, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 5 is 3400264, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 6 is 3400709, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 7 is 3401135, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285
+    self.major=
+               ^
+SyntaxError: invalid syntax
+finished, moving forward
+pid for 8 is 3401543, waiting
 GPU available: True (cuda), used: True
 TPU available: False, using: 0 TPU cores
 IPU available: False, using: 0 IPUs
@@ -97,206 +83,58 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 0 | train_kld     | KLDivergence           | 0     
 1 | val_kld       | KLDivergence           | 0     
 2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
+3 | top1_recall   | Topk_Event_Overlapping | 0     
+4 | top3_recall   | Topk_Event_Overlapping | 0     
+5 | top5_recall   | Topk_Event_Overlapping | 0     
+6 | top10_recall  | Topk_Event_Overlapping | 0     
+7 | l1_crit       | L1Loss                 | 0     
 ---------------------------------------------------------
 16.3 K    Trainable params
 0         Non-trainable params
 16.3 K    Total params
 0.065     Total estimated model params size (MB)
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C100/ST_June_2017_BOB_LV7A_DPI7/lightning_logs
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/torch/nn/_reduction.py:42: UserWarning: size_average and reduce args will be deprecated, please use reduction='sum' instead.
-  warnings.warn(warning.format(ret))
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C200/ST_June_2017_CHO_LV7A_DPI7/lightning_logs
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C100/ST_June_2017_CHO_LV7A_DPI7/lightning_logs
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C200/ST_June_2017_HAP1_LV7A_DPI7/lightning_logs
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C100/ST_June_2017_HAP1_LV7A_DPI7/lightning_logs
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C100/ST_June_2017_E14TG2A_LV7A_DPI7/lightning_logs
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C100/ST_June_2017_K562_LV7A_DPI7/lightning_logs
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C200/ST_June_2017_E14TG2A_LV7A_DPI7/lightning_logs
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
+Runing mouse fold 8  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mEPHA2']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 324, in <module>
+    trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+    call._call_and_handle_interrupt(
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 38, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+    self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+    results = self._run_stage()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+    self._run_train()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1204, in _run_train
+    self._run_sanity_check()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1276, in _run_sanity_check
+    val_loop.run()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 152, in advance
+    dl_outputs = self.epoch_loop.run(self._data_fetcher, dl_max_batches, kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 137, in advance
+    output = self._evaluation_step(**kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 234, in _evaluation_step
+    output = self.trainer._call_strategy_hook(hook_name, *kwargs.values())
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 390, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 493, in validation_step
+    major=self.compute_major(p_pred, y)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 350, in compute_major
+    y_mask = y >= thre  # (batch_size x num_features)
+TypeError: '>=' not supported between instances of 'list' and 'float'
+finished, moving forward
+pid for 9 is 3402406, waiting
 GPU available: True (cuda), used: True
 TPU available: False, using: 0 TPU cores
 IPU available: False, using: 0 IPUs
@@ -309,20 +147,63 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 0 | train_kld     | KLDivergence           | 0     
 1 | val_kld       | KLDivergence           | 0     
 2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
+3 | top1_recall   | Topk_Event_Overlapping | 0     
+4 | top3_recall   | Topk_Event_Overlapping | 0     
+5 | top5_recall   | Topk_Event_Overlapping | 0     
+6 | top10_recall  | Topk_Event_Overlapping | 0     
+7 | l1_crit       | L1Loss                 | 0     
 ---------------------------------------------------------
 16.3 K    Trainable params
 0         Non-trainable params
 16.3 K    Total params
 0.065     Total estimated model params size (MB)
+Runing mouse fold 9  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mDcbld2']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 324, in <module>
+    trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+    call._call_and_handle_interrupt(
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 38, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+    self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+    results = self._run_stage()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+    self._run_train()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1204, in _run_train
+    self._run_sanity_check()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1276, in _run_sanity_check
+    val_loop.run()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 152, in advance
+    dl_outputs = self.epoch_loop.run(self._data_fetcher, dl_max_batches, kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 137, in advance
+    output = self._evaluation_step(**kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 234, in _evaluation_step
+    output = self.trainer._call_strategy_hook(hook_name, *kwargs.values())
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 390, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 493, in validation_step
+    major=self.compute_major(p_pred, y)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 350, in compute_major
+    y_mask = y >= thre  # (batch_size x num_features)
+TypeError: '>=' not supported between instances of 'list' and 'float'
+finished, moving forward
+pid for 10 is 3403273, waiting
 GPU available: True (cuda), used: True
 TPU available: False, using: 0 TPU cores
 IPU available: False, using: 0 IPUs
 HPU available: False, using: 0 HPUs
 You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-Missing logger folder: /ssd/users/louisayu/inDecay/pl_trainer_log/ST_featv5fast_ST_DeepDecay_identity_C200/ST_June_2017_K562_LV7A_DPI7/lightning_logs
 LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 
   | Name          | Type                   | Params
@@ -330,14 +211,63 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 0 | train_kld     | KLDivergence           | 0     
 1 | val_kld       | KLDivergence           | 0     
 2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
+3 | top1_recall   | Topk_Event_Overlapping | 0     
+4 | top3_recall   | Topk_Event_Overlapping | 0     
+5 | top5_recall   | Topk_Event_Overlapping | 0     
+6 | top10_recall  | Topk_Event_Overlapping | 0     
+7 | l1_crit       | L1Loss                 | 0     
 ---------------------------------------------------------
 16.3 K    Trainable params
 0         Non-trainable params
 16.3 K    Total params
 0.065     Total estimated model params size (MB)
+Runing mouse fold 10  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mGM-sg1']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 324, in <module>
+    trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+    call._call_and_handle_interrupt(
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 38, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+    self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+    results = self._run_stage()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+    self._run_train()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1204, in _run_train
+    self._run_sanity_check()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1276, in _run_sanity_check
+    val_loop.run()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 152, in advance
+    dl_outputs = self.epoch_loop.run(self._data_fetcher, dl_max_batches, kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 137, in advance
+    output = self._evaluation_step(**kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 234, in _evaluation_step
+    output = self.trainer._call_strategy_hook(hook_name, *kwargs.values())
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 390, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 493, in validation_step
+    major=self.compute_major(p_pred, y)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 350, in compute_major
+    y_mask = y >= thre  # (batch_size x num_features)
+TypeError: '>=' not supported between instances of 'list' and 'float'
+finished, moving forward
+pid for 11 is 3404155, waiting
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
 LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 
   | Name          | Type                   | Params
@@ -345,14 +275,63 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 0 | train_kld     | KLDivergence           | 0     
 1 | val_kld       | KLDivergence           | 0     
 2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
+3 | top1_recall   | Topk_Event_Overlapping | 0     
+4 | top3_recall   | Topk_Event_Overlapping | 0     
+5 | top5_recall   | Topk_Event_Overlapping | 0     
+6 | top10_recall  | Topk_Event_Overlapping | 0     
+7 | l1_crit       | L1Loss                 | 0     
 ---------------------------------------------------------
 16.3 K    Trainable params
 0         Non-trainable params
 16.3 K    Total params
 0.065     Total estimated model params size (MB)
+Runing mouse fold 11  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mRagKO-sg1-4--0375']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 324, in <module>
+    trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+    call._call_and_handle_interrupt(
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 38, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+    self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+    results = self._run_stage()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+    self._run_train()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1204, in _run_train
+    self._run_sanity_check()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1276, in _run_sanity_check
+    val_loop.run()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 152, in advance
+    dl_outputs = self.epoch_loop.run(self._data_fetcher, dl_max_batches, kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 137, in advance
+    output = self._evaluation_step(**kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 234, in _evaluation_step
+    output = self.trainer._call_strategy_hook(hook_name, *kwargs.values())
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 390, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 493, in validation_step
+    major=self.compute_major(p_pred, y)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 350, in compute_major
+    y_mask = y >= thre  # (batch_size x num_features)
+TypeError: '>=' not supported between instances of 'list' and 'float'
+finished, moving forward
+pid for 12 is 3405014, waiting
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
 LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 
   | Name          | Type                   | Params
@@ -360,14 +339,63 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 0 | train_kld     | KLDivergence           | 0     
 1 | val_kld       | KLDivergence           | 0     
 2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
+3 | top1_recall   | Topk_Event_Overlapping | 0     
+4 | top3_recall   | Topk_Event_Overlapping | 0     
+5 | top5_recall   | Topk_Event_Overlapping | 0     
+6 | top10_recall  | Topk_Event_Overlapping | 0     
+7 | l1_crit       | L1Loss                 | 0     
 ---------------------------------------------------------
 16.3 K    Trainable params
 0         Non-trainable params
 16.3 K    Total params
 0.065     Total estimated model params size (MB)
+Runing mouse fold 12  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mTTN-sg7']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 324, in <module>
+    trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+    call._call_and_handle_interrupt(
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 38, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+    self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+    results = self._run_stage()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+    self._run_train()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1204, in _run_train
+    self._run_sanity_check()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1276, in _run_sanity_check
+    val_loop.run()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 152, in advance
+    dl_outputs = self.epoch_loop.run(self._data_fetcher, dl_max_batches, kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 137, in advance
+    output = self._evaluation_step(**kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 234, in _evaluation_step
+    output = self.trainer._call_strategy_hook(hook_name, *kwargs.values())
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 390, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 493, in validation_step
+    major=self.compute_major(p_pred, y)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 350, in compute_major
+    y_mask = y >= thre  # (batch_size x num_features)
+TypeError: '>=' not supported between instances of 'list' and 'float'
+finished, moving forward
+pid for 13 is 3405885, waiting
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
 LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 
   | Name          | Type                   | Params
@@ -375,137 +403,310 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
 0 | train_kld     | KLDivergence           | 0     
 1 | val_kld       | KLDivergence           | 0     
 2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
+3 | top1_recall   | Topk_Event_Overlapping | 0     
+4 | top3_recall   | Topk_Event_Overlapping | 0     
+5 | top5_recall   | Topk_Event_Overlapping | 0     
+6 | top10_recall  | Topk_Event_Overlapping | 0     
+7 | l1_crit       | L1Loss                 | 0     
 ---------------------------------------------------------
 16.3 K    Trainable params
 0         Non-trainable params
 16.3 K    Total params
 0.065     Total estimated model params size (MB)
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-
-  | Name          | Type                   | Params
----------------------------------------------------------
-0 | train_kld     | KLDivergence           | 0     
-1 | val_kld       | KLDivergence           | 0     
-2 | del_regressor | Sequential             | 16.3 K
-3 | top5_recall   | Topk_Event_Overlapping | 0     
-4 | top10_recall  | Topk_Event_Overlapping | 0     
-5 | l1_crit       | L1Loss                 | 0     
----------------------------------------------------------
-16.3 K    Trainable params
-0         Non-trainable params
-16.3 K    Total params
-0.065     Total estimated model params size (MB)
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_faster.py:113: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-`Trainer.fit` stopped: `max_epochs=100` reached.
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1,2,3,4,5,6,7]
-usage: The script to train inDecay [-h] -E EXPERIMENT [-C READ_CUTOFF]
-                                   [-T TEST_OLIGOS] [-G GPU_DEVICES]
-                                   [-P PRETRAIN] [-M MODEL_CLASS]
-                                   [-D DATA_TRANSFORM] [-O MODE]
-                                   [--progress_bar PROGRESS_BAR]
-The script to train inDecay: error: unrecognized arguments: c100HAP.out
+Runing mouse fold 13  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mSlc7a10']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 324, in <module>
+    trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 608, in fit
+    call._call_and_handle_interrupt(
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/call.py", line 38, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 650, in _fit_impl
+    self._run(model, ckpt_path=self.ckpt_path)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1112, in _run
+    results = self._run_stage()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1191, in _run_stage
+    self._run_train()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1204, in _run_train
+    self._run_sanity_check()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1276, in _run_sanity_check
+    val_loop.run()
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/dataloader/evaluation_loop.py", line 152, in advance
+    dl_outputs = self.epoch_loop.run(self._data_fetcher, dl_max_batches, kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/loop.py", line 199, in run
+    self.advance(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 137, in advance
+    output = self._evaluation_step(**kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/loops/epoch/evaluation_epoch_loop.py", line 234, in _evaluation_step
+    output = self.trainer._call_strategy_hook(hook_name, *kwargs.values())
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/trainer/trainer.py", line 1494, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+  File "/home/louisayu/.conda/envs/inDecay/lib/python3.10/site-packages/pytorch_lightning/strategies/strategy.py", line 390, in validation_step
+    return self.model.validation_step(*args, **kwargs)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 493, in validation_step
+    major=self.compute_major(p_pred, y)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 350, in compute_major
+    y_mask = y >= thre  # (batch_size x num_features)
+TypeError: '>=' not supported between instances of 'list' and 'float'
+finished, moving forward
+pid for 14 is 3406772, waiting
+Runing mouse fold 14  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mH2D1-sg2']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= comp
+NameError: name 'sef' is not defined. Did you mean: 'self'?
+finished, moving forward
+pid for 15 is 3407298, waiting
+Runing mouse fold 15  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mAdam6']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= comp
+NameError: name 'comp' is not defined
+finished, moving forward
+pid for 16 is 3407814, waiting
+Runing mouse fold 16  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mFABP4']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_maj
+NameError: name 'comp' is not defined
+finished, moving forward
+pid for 17 is 3408371, waiting
+Runing mouse fold 17  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mMettl14-sg2']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_maj
+NameError: name 'compute_maj' is not defined
+finished, moving forward
+pid for 18 is 3408882, waiting
+Runing mouse fold 18  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mIL7']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_maj
+NameError: name 'compute_maj' is not defined
+finished, moving forward
+pid for 19 is 3409413, waiting
+Runing mouse fold 19  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mH2AB1-sg2']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 20 is 3409944, waiting
+Runing mouse fold 20  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mH2AB1-sg1']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 21 is 3410504, waiting
+Runing mouse fold 21  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mIL21R']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 22 is 3411017, waiting
+Runing mouse fold 22  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mSTK4-sg2']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 23 is 3411557, waiting
+Runing mouse fold 23  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mMettl14-sg1']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 24 is 3412071, waiting
+Runing mouse fold 24  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mHV5-sg7']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 25 is 3412623, waiting
+Runing mouse fold 25  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mKat2a']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 26 is 3413131, waiting
+Runing mouse fold 26  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mTTN-sg9']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 27 is 3413672, waiting
+Runing mouse fold 27  using cuda: 4
+number_valided genes: 
+30
+test_genes: ['mRNASE1']
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 268, in <module>
+    model = model_class(**model_parsms)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 938, in __init__
+    super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 865, in __init__
+    super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T)
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 285, in __init__
+    self.compute_major= compute_major
+NameError: name 'compute_major' is not defined
+finished, moving forward
+pid for 28 is 3414193, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 284
+    self.top10_recall = Topk_Event_Overlapping(10
+                                              ^
+SyntaxError: '(' was never closed
+finished, moving forward
+pid for 29 is 3414607, waiting
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 12, in <module>
+    from inDecay import my_utils, alignmap, models, reader, PATH
+  File "/ssd/users/louisayu/inDecay/inDecay/models.py", line 284
+    self.top10_recall = Topk_Event_Overlapping(10
+                                              ^
+SyntaxError: '(' was never closed
+finished, moving forward
+pid for 30 is 3415024, waiting
+Runing mouse fold 30  using cuda: 4
+number_valided genes: 
+30
+Traceback (most recent call last):
+  File "/ssd/users/louisayu/inDecay/scripts/STfeatv5_inDecay_Sanger_nmul.py", line 211, in <module>
+    train_idx, val_idx, test_idx = kf_indeces[args.test_split]
+IndexError: list index out of range
+finished, moving forward
+ 
+=========================
+ALL training finished !!!
+=========================
+ 
