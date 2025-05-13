@@ -144,7 +144,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
-    parser.add_argument("-C","--read_cutoff", type=int, default=500, help='The threshold of total count. Only Guides having total read count over this threshold are used')
+    parser.add_argument("-C","--read_cutoff", type=int, default=1000, help='The threshold of total count. Only Guides having total read count over this threshold are used')
     parser.add_argument("-T","--test_oligos", type=str, default="results/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")

@@ -29,7 +29,7 @@ h = 1.3
 hidden = [128, 64]
 L2_Lambda = 1e-4
 L1_Lambda = 0
-lr = 3e-4
+lr = 1e-4
 
 # Torch Device
 device = 'gpu' if torch.cuda.is_available() else 'cpu'
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     Cellline = experiments.split("_")[3]
     rep = experiments.split("_")[4]
     trainer_log = pj(PATH.main_dir, 'pl_trainer_log')
-    save_dir = pj(data_dir, 'processed_df')
+    save_dir = pj(data_dir, 'somatic')
     csv_path = pj(save_dir,f"{Cellline}_{rep}.csv")
 
     gpu_device = 0 if device=='gpu' else 10
@@ -257,7 +257,7 @@ if __name__ == "__main__":
         gpu_device= args.GPU_devices
     
     print(f"Runing {experiments} using cud: {gpu_device}")
-    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5fast_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv51e4lr_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
     
     # Temp Theta file
     date = time.strftime("%B%d")
