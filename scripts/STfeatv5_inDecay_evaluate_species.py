@@ -39,7 +39,7 @@ device = 'gpu' if torch.cuda.is_available() else 'cpu'
 # some path and requisite files
 pj = os.path.join
 SelfTarget_data_dir = PATH.data_dir
-data_dir = PATH.embryo_data_dir
+data_dir = PATH.data_dir
 
 def get_idfgen_file(Gene, Refseq, idgen_dir):
 
@@ -70,7 +70,7 @@ def get_sanger_training(data_archive):
     assert len(dfs) != 0, f"no samples found under {sanger_dir}\nplese make sure you have put data in the right dir"
 
     # create a lookup table for easy retrival of reference
-    def_table= os.path.join(data_dir, "gene_seq.csv")
+    def_table= os.path.join(sanger_dir,  "gene_seq.csv")
     assert os.path.exists(def_table)
     gene_ref_tab = pd.read_csv(def_table)
 
@@ -93,8 +93,8 @@ def save_spliting(genes, kf_indeces):
     split_df = pd.DataFrame(gene_by_fold,
                             columns=['Train_gene', 'Val_gene', 'Test_gene'])
     # save
-    split_df.to_csv(f"results/{args.data_archive}_spliting.csv") # save to result (will updated in github repo)
-    split_df.to_csv(os.path.join(sanger_dir, f"{args.data_archive}_spliting_{date}.csv")) # backup locally
+    # split_df.to_csv(f"results/{args.data_archive}_spliting.csv") # save to result (will updated in github repo)
+    split_df.to_csv(os.path.join(sanger_dir, f"species_{args.data_archive}_spliting.csv")) # backup locally
 
 def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     """
@@ -166,12 +166,13 @@ if __name__ == "__main__":
     valided_genes = []
     unused_genes = ''
     for g in genes:
-        label_df = read_sanger_data(g, gene_ref_dict, args.data_archive)
-        n_event = label_df.query('`Identifier` != "Identifier"')['Identifier'].nunique()
-        if n_event < args.threshold:
-            unused_genes += f', {g}'
-        else:
-            valided_genes.append(g)
+        if not g.startswith('m'):
+            label_df = read_sanger_data(g, gene_ref_dict, args.data_archive)
+            n_event = label_df.query('`Identifier` != "Identifier"')['Identifier'].nunique()
+            if n_event < args.threshold:
+                unused_genes += f', {g}'
+            else:
+                valided_genes.append(g)
 
     # print("Unused genes : \n" + unused_genes)
     print("number_valided genes: \n" + str(len(valided_genes)))

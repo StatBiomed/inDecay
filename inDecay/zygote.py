@@ -12,9 +12,8 @@ import requests
 import time
 from tqdm import tqdm
 import re
-from inDecay import PATH
+from inDecay import PATH, models, my_utils, analysis_fn
 main_dir= PATH.main_dir
-
 def create(path):
     if not os.path.exists(path):
         os.makedirs(path)
@@ -649,3 +648,130 @@ def decide_r2(seq, r2):
         else:
             remain[current_files.index[i]]=np.mean(extracted_values)
     return rts
+
+def read_pkl(path):
+    with open(path, 'rb') as f:
+        Y = pkl.load(f)
+    f.close()
+    return Y
+
+def evalute_fn(Y_true_path, Y_pred_path, smooth):
+    Y_pred =read_pkl(Y_pred_path)
+    Y = read_pkl(Y_true_path)
+    eval_json = analysis_fn.assessment_recipe_forecast(Y, Y_pred, smooth=smooth,reduction='mean',top_metric=[1,2,3,5])
+    eval_json.update(analysis_fn.assessment_recipe_IDL_forecast(Y, Y_pred, smooth=smooth,reduction='mean',top_metric=[1,2,3,5]))
+
+    eval_df = pd.json_normalize(eval_json)
+    return eval_df
+
+def evalute_fn_pred(Y_true, Y_pred, smooth):
+    eval_json = analysis_fn.assessment_recipe_forecast(Y_true, Y_pred, smooth=smooth,reduction='mean',top_metric=[1,2,3,5])
+    eval_json.update(analysis_fn.assessment_recipe_IDL_forecast(Y_true, Y_pred, smooth=smooth,reduction='mean',top_metric=[1,2,3,5]))
+
+    eval_df = pd.json_normalize(eval_json)
+    return eval_df
+
+def get_ratios_pred(Y_true, Y_pred):
+
+    ratio_json = []
+    for oligo, Y in Y_true.items():
+        Y = Y.T
+
+        pred = Y_pred[oligo]
+        Indel = Y[[0],:]
+        y = Y[[1],:].astype("float32")
+
+        # frameshift
+        y_fs, pred_fs = analysis_fn.forecast_frameshift(y, pred, Indel)
+        y_dr, pred_dr = analysis_fn.forecast_delratio(y, pred, Indel)
+
+        ratio_json.append(
+            {'Gene':oligo, "Rep1_frameshift":y_fs, "Pred_frameshift":pred_fs, "Rep_delratio":y_dr, "Pred_delratio":pred_dr}
+        )
+    
+    return pd.json_normalize(ratio_json)
+
+def get_ratios(Y_true_path, Y_pred_path):
+
+    pred_lookup =read_pkl(Y_pred_path)
+    Y_lookup = read_pkl(Y_true_path)
+
+
+    ratio_json = []
+    for oligo, Y in Y_lookup.items():
+        Y = Y.T
+
+        pred = pred_lookup[oligo]
+        Indel = Y[[0],:]
+        y = Y[[1],:].astype("float32")
+
+        # frameshift
+        y_fs, pred_fs = analysis_fn.forecast_frameshift(y, pred, Indel)
+        y_dr, pred_dr = analysis_fn.forecast_delratio(y, pred, Indel)
+
+        ratio_json.append(
+            {'Gene':oligo, "Rep1_frameshift":y_fs, "Pred_frameshift":pred_fs, "Rep_delratio":y_dr, "Pred_delratio":pred_dr}
+        )
+    
+    return pd.json_normalize(ratio_json)
+
+def ratio_error(row, ratio):
+    error = row[f"Rep_{ratio}"] - row[f'Pred_{ratio}']
+    return np.abs(error).item()
+
+
+def find_pkl_and_evalmouse(temp, modelnote, cells, species, smooth):
+    """
+    given the data_archive name, auto find 
+    """
+    perform = []
+        
+    ratio_df = []
+    for cell in cells:
+        archive_folder = f"{PATH.main_dir}/pl_trainer_log/zygote_{modelnote}_{cell}_featv5_c20_ST_DeepDecay_mul_identity_lr0.001_L20.3_T{temp}/{species}/"
+        foldnum=int(os.listdir(archive_folder)[0].split('fold')[0])
+        foldrange= [int(i.split('_')[-1]) for i in os.listdir(archive_folder)]
+        create(pj(PATH.main_dir, 'pretrained', f"zygote_{modelnote}_mouse_{species}_C20_{cell}_T14_lr1e3"))
+        for k_index in foldrange:
+
+            def annotate_df(df):
+                df['kfold_index'] = k_index
+                df['celltype'] = cell
+
+            second_save_path = f"{foldnum}fold_{k_index}"
+            # auto find pkl files
+            Y_true = pj(archive_folder, second_save_path, "ForeCast_TestY.pkl")
+            Y_baseline = pj(archive_folder, second_save_path, "Pretrained_Baseline_TestPred.pkl")
+            shutil.copyfile(pj(PATH.main_dir,'pretrained/mESC_featv5_c20.ckpt'),pj(PATH.main_dir,'pretrained',f"_{species}_C20_{cell}_T14_lr1e3", str(np.max(foldrange)+1)+'.ckpt'))
+            Y_pred_path = my_utils.find_ckpt(pj(archive_folder, second_save_path, "lightning_logs"))
+            shutil.copyfile(Y_pred_path,pj(PATH.main_dir,'pretrained',f"zygote_{modelnote}_mouse_{species}_C20_{cell}_T14_lr1e3", str(k_index)+'.ckpt'))
+            Y_pred_path = Y_pred_path.replace(".ckpt", "TestPred.pkl")
+        
+            # get all the evaluation metrics            
+            df_k = evalute_fn(Y_true, Y_pred_path, smooth)
+            df_baseline_k = evalute_fn(Y_true, Y_baseline, smooth)
+            df_baseline_k['celltype'] = cell
+
+            # get frameshift / del ratio for each genes
+            ratio_df_k = get_ratios(Y_true, Y_pred_path)
+            ratio_df_baseline_k = get_ratios(Y_true, Y_baseline)
+            ratio_df_baseline_k['celltype'] = cell
+
+            ratio_df_k['Baseline_frameshift'] = ratio_df_baseline_k['Pred_frameshift']
+            ratio_df_k['Baseline_delratio'] = ratio_df_baseline_k['Pred_delratio']
+
+            # annotate
+            for df in [df_k,df_baseline_k,ratio_df_k]:
+                annotate_df(df)
+
+            df_baseline_k['fix_setting'] = 'baseline'
+
+            perform.append(df_k)
+            perform.append(df_baseline_k)
+            ratio_df.append(ratio_df_k)
+            
+    perform  = pd.concat(perform)
+    ratio_df = pd.concat(ratio_df)
+    
+
+    return perform, ratio_df 

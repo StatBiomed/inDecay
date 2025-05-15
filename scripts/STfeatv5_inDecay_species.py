@@ -73,7 +73,7 @@ def get_sanger_training(data_archive="Sanger_training"):
     assert len(dfs) != 0, f"no samples found under {sanger_dir}\nplese make sure you have put data in the right dir"
 
     # create a lookup table for easy retrival of reference
-    def_table= os.path.join(PATH.data_dir, "gene_seq.csv")
+    def_table= os.path.join(sanger_dir, "gene_seq.csv")
     assert os.path.exists(def_table)
     gene_ref_tab = pd.read_csv(def_table)
 
@@ -96,7 +96,7 @@ def save_spliting(genes, kf_indeces):
     split_df = pd.DataFrame(gene_by_fold,
                             columns=['Train_gene', 'Val_gene', 'Test_gene'])
     # save
-    split_df.to_csv(pj(PATH.data_dir, args.data_archive, f"{args.data_archive}_spliting.csv")) # save to result (will updated in github repo)
+    split_df.to_csv(pj(PATH.data_dir, args.data_archive, f"leave{species_dict[args.species]}_spliting.csv")) # save to result (will updated in github repo)
     # split_df.to_csv(os.path.join(sanger_dir, f"{args.data_archive}_spliting_{date}.csv")) # backup locally
 
 def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     parser.add_argument("--temperature", required=False, type=float, default=1, help="the softmax temperature")
     parser.add_argument("--L", required=False, type=float, default=1e-3, help="the lr")
     parser.add_argument("--L2", required=False, type=float, default=3e-1, help="the l2")
-    parser.add_argument("--species", required=True, type=str, default='p', help="leave which species out, current dict{'s' goat, 'c': cattle, 'p': porcine}")
+    parser.add_argument("--species", required=True, type=str, default='p', help="leave which species out, current dict{'s': goat, 'c': cattle, 'p': porcine}")
     args = parser.parse_args()
     lr = args.L
     L2_Lambda =args.L2
@@ -221,17 +221,17 @@ if __name__ == "__main__":
     print("test_genes:",test_genes)
 
 
-    # save train test splits
-    if not os.path.exists(pj(PATH.data_dir, args.data_archive, f"{args.data_archive}_leave{species_dict[args.species]}_spliting.csv")):
-        save_spliting(genes, kf_indeces) # create a 2-dimensional list  then to df
-    else:
-        # sanity check
-        spliting_df = pd.read_csv(pj(PATH.data_dir, args.data_archive, f"{args.data_archive}_spliting.csv"))
-        assert len(kf_indeces) == spliting_df.shape[0], 'the num of fold has changed'
+    # # save train test splits
+    # if not os.path.exists(pj(PATH.data_dir, args.data_archive, f"leave{species_dict[args.species]}_spliting.csv")):
+    #     save_spliting(genes, kf_indeces) # create a 2-dimensional list  then to df
+    # else:
+    #     # sanity check
+    #     spliting_df = pd.read_csv(pj(PATH.data_dir, args.data_archive, f"leave{species_dict[args.species]}_spliting.csv"))
+    #     assert len(kf_indeces) == spliting_df.shape[0], 'the num of fold has changed'
         
-        record_test_genes = spliting_df.iloc[args.test_split]['Test_gene']
-        record_test_genes = np.array(record_test_genes.split(","))
-        assert np.all(record_test_genes == np.array(test_genes)), "the testing gene has changed"
+    #     record_test_genes = spliting_df.iloc[args.test_split]['Test_gene']
+    #     record_test_genes = np.array(record_test_genes.split(","))
+    #     assert np.all(record_test_genes == np.array(test_genes)), "the testing gene has changed"
         
 
     # some checkpoint settings
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
     if not os.path.exists(os.path.join(PATH.pth_dir, f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}")):
         os.mkdir(os.path.join(PATH.pth_dir, f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}"))
-    pth_save_dir = os.path.join(PATH.pth_dir,f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}",f"{species_dict[args.species]}")
+    pth_save_dir = os.path.join(PATH.pth_dir,f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}",f"leave_{species_dict[args.species]}")
     pth_save_path = pj(pth_save_dir, f"{len(kf_indeces)}fold_{args.test_split}")
     
     for DIR in [PATH.pth_dir, pth_save_dir, pth_save_path]:
