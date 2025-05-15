@@ -657,6 +657,58 @@ def ST_decayfeat_v5(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
 
     return X5
 
+def simple_recut(Y_lookup, pred_lookup, size_allow_recut=1, n_recut=1):
+    """
+    Simple recutting. Redistribute small indels to other indels by multiplying a transformation matrix
+
+    Args:
+    ------
+    Y_lookup (dict): {Oligos : [identifier, observed repair probability]}
+    pred_lookup (dict):  {Oligos : [predicted probability]}
+    size_allow_recut (int) : the indel size allowed for recutting
+    n_recut : the times of recutting 
+
+    Output:
+    -----
+    recut_lookup (dict) : {Oligos : [recut repair probability]}
+    """
+    recut_lookup = {}
+
+    # lookup 
+    for oligo, Y in Y_lookup.items():
+
+        oligo_df = pd.DataFrame(Y, columns=['idf','p_obs'])
+        oligo_df['p_pred'] = pred_lookup[oligo].flatten()
+        oligo_df.loc[:,['type','size']] = np.stack(
+            [my_utils.tokFullIndel(idf)[0:2] for idf in oligo_df['idf'].values]
+                )
+        N_event = oligo_df.shape[0]
+
+        # recutting
+        recut_transform = np.diag( oligo_df[['p_pred']].values )
+
+        # retain
+        # recutted indels -> 0, others -> unchanged 
+        recut_transform = np.eye(N=N_event)
+        for i, row in oligo_df.iterrows():
+            if int(row['size']) <= size_allow_recut:
+                # labeld the row location of recutted indels
+                recut_transform[i, :] = oligo_df['p_pred'].values 
+                
+        # 
+        recut_prob = np.broadcast_to( oligo_df[['p_pred']].values, shape=(N_event,N_event) )
+        recut_prob = np.multiply(recut_prob, recut_transform) # element-wise
+
+
+        # print(recut_prob.shape)
+        for n in range(n_recut):
+            recut_prob = np.multiply(recut_prob, recut_transform)
+            # print(recut_prob.shape)
+        
+        recut_lookup[oligo] = recut_prob.sum(axis=0,keepdims=True) 
+
+    return recut_lookup#, recut_transform
+
 def interaction_transform(X, ndel, nins):
     """
     Data transformation

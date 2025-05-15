@@ -26,6 +26,12 @@ label,rev_index,features,frame_shift = transformation.label, transformation.rev_
 Lindel_prereq = os.path.join(PATH.main_dir,"Extended_912_class_Feb06.pkl")
 All_Lindel_class, class_to_loc_lookup = pkl.load(open(Lindel_prereq,'rb'))
 
+def read_pkl(path):
+    with open(path, 'rb') as f:
+        Y = pkl.load(f)
+    f.close()
+    return Y
+
 def find_ckpt(ckpt_version_dir):
     """
     find the latest version, if not finished then return last one
@@ -69,7 +75,46 @@ def find_ckpt(ckpt_version_dir):
     
     return os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints', ckpt)
 
+def loop_allckpt(ckpt_version_dir):
+    """
+    find the latest version, if not finished then return last one
+    """
+    get_v = lambda s: int(s.replace("version_",""))
+    
+    versions = [get_v(subdir) for subdir in os.listdir(ckpt_version_dir)]
 
+    for v in versions:
+        checkpoint_dir = os.path.join(ckpt_version_dir, 'version_%d'%v, 'checkpoints')
+        if not os.path.exists(checkpoint_dir):
+            try:
+                shutil.rmtree(os.path.join(ckpt_version_dir, 'version_%d'%v)) 
+            except:
+                continue
+
+
+    versions = [get_v(subdir) for subdir in os.listdir(ckpt_version_dir) if subdir.startswith('version')]
+    maxv  = np.max(versions)
+
+    # try:
+    #     ckpts = os.listdir()
+    # except FileNotFoundError:
+    #     maxv -= 1
+    ckpts = list(filter(lambda x : x.endswith('.ckpt'), 
+                            os.listdir(os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints')))
+                )
+    
+    while len(ckpts) == 0:
+        maxv -= 1
+        ckpts = list(filter(lambda x : x.endswith('.ckpt'), 
+                            os.listdir(os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints')))
+                            )
+        if maxv == -1:
+            raise FileNotFoundError("no checkpoints found for any versions")
+    
+    if len(ckpts) >1:
+        ckpt = ckpts
+    
+    return [os.path.join(ckpt_version_dir, 'version_%d'%maxv, 'checkpoints', ckpt[i]) for i in range(len(ckpt))] 
 ######################################################################################
 #   ____         _   ____                                   _____                    
 #  |  _ \   ___ | | |  _ \   ___   ___  __ _  _   _        |  ___|_   _  _ __    ___ 

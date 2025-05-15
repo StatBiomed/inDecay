@@ -127,6 +127,36 @@ class ST_datasetv5(ST_dataset):
 
         return torch.from_numpy(x5).float(),torch.from_numpy(y).float()
 
+
+class Sanger_dataset(ST_dataset):
+    """
+    Sanger sequencing dat
+    """
+    def __init__(self, *args, weight_lookup, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.weight_lookup = weight_lookup
+
+    def __getitem__(self,i):
+        x,y = super().__getitem__(i)
+        oligo = self.Oligos[i]
+        weight = self.weight_lookup[oligo] # sample weight
+        return x, y, torch.tensor(weight)
+
+class Sanger_dataset_count10_r2(ST_dataset):
+    """
+    Sanger sequencing dat
+    """
+    def __init__(self, *args, r2_lookup, count_lookup, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.r2_lookup = r2_lookup
+        self.count_lookup = count_lookup
+
+    def __getitem__(self,i):
+        x,y = super().__getitem__(i)
+        oligo = self.Oligos[i]
+        wr2= self.r2_lookup[oligo] # sample weight
+        wcount = self.count_lookup[oligo]
+        return x, y, torch.tensor(wr2), torch.tensor(wcount)
 class inDecay_DataModule(pl.LightningDataModule):
     def __init__(self, experiment, indel_type, DS_class, test_oligo_file, batch_size=32, n_worker=8, seed=0,  threshold=1000):
         """
@@ -452,7 +482,7 @@ def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
     """
     agg_sum_df = df.groupby("OligoID").agg({"Count":"sum"})
     Passed = agg_sum_df.query("`Count` >= @threshold").index
-
+    print(len(Passed))
     # TEST
     # Test_O_file = os.path.join(PATH.main_dir, "result/test_set_oligo_Feb2.txt")
     Test_Oligos = pd.read_table(test_oligo_file, names=['OligoID'])["OligoID"].values # list of str
@@ -475,7 +505,39 @@ def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
     
     return Train_Oligos, Val_Oligos, Test_Oligos
 
-    n_splits=len(genes)
+    # n_splits=len(genes)
+# def get_Sanger_train_test(genes, seed=0):
+#     """
+#     K-fold cross validation spliting for sanger data.
+#     The number of fold depends on the available sample size.
+#     The more data we have , the fewer fold , more sample for testing.
+
+#     Args:
+#         genes (list): a list of gene names
+#         seed (int, optional): random seed. fixed to 0.
+
+#     Returns:
+#         kf_index_ls (list of tuple): 
+#         [(train_idx, val_idx, test_idx) * n_splits]
+#     """
+#     # decide the number of testing by # of genes
+#     n_splits = 5
+
+
+#     # split k-fold 
+#     kf = KFold(n_splits, shuffle=True, random_state=seed)
+#     kf_splits = kf.split(genes)
+
+#     # split train val
+#     kf_index_ls = []
+#     for trainval_idx, test_idx in kf_splits:
+#         val_size = int(0.2*len(trainval_idx))
+#         train_idx, val_idx = train_test_split(trainval_idx,
+#                                       test_size=val_size)
+#         kf_index_ls.append(
+#             (train_idx, val_idx, test_idx)
+#         )
+#     return kf_index_ls
 def get_Sanger_train_test(genes, seed=0):
     """
     K-fold cross validation spliting for sanger data.
@@ -507,6 +569,7 @@ def get_Sanger_train_test(genes, seed=0):
         kf_index_ls.append(
             (train_idx, val_idx, test_idx)
         )
+        # print(genes[test_idx])
     return kf_index_ls
 def get_Sanger_train_test_WZ(genes, seed=0):
     """
