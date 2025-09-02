@@ -1,0 +1,64 @@
+Item,Files,SampleType,Nums,Events
+cGHR,['cGHR_20241127.csv'],Bulk,[30]
+cPRDM14,['cPRDM14_20241127F.csv'],Bulk,[30]
+cRAG2,['cRAG2_20241127.csv'],Bulk,[30]
+gGHR,['gGHR_20250528.csv'],Bulk,[25]
+gPRDM1,['gPRDM1_20250528.csv'],Bulk,[25]
+gPRDM14,['gPRDM14_20250528.csv'],Bulk,[25]
+mAdam6,"['mAdam6_20220816M.csv', 'mAdam6_20220803M.csv']","Clonal,Clonal","[12, 8]"
+mAdgre1,"['mAdgre1_20240513.csv', 'mAdgre1_20240601.csv']","Bulk,Bulk","[21, 21]"
+mCD44,"['mCD44_20241217.csv', 'mCD44_20241211.csv', 'mCD44_20250110.csv']","Clonal,Bulk,Clonal","[8, 20, 15]"
+mCD74,['mCD74_20250417.csv'],Bulk,[25]
+mCTNNB1,"['mCTNNB1_20220608.csv', 'mCTNNB1_20220628.csv', 'mCTNNB1_20220621.csv']","Clonal,Clonal,Clonal","[23, 10, 20]"
+mDIRK,['mDIRK_2024.csv'],Bulk,[30]
+mDcbld2,['mDcbld2_2024.csv'],Bulk,[30]
+mELF5,['mELF5_20220621.csv'],Clonal,[5]
+mEPHA2,"['mEPHA2_20240425.csv', 'mEPHA2_20240730.csv']","Bulk,Clonal","[19, 6]"
+mFABP4,"['mFABP4_20250418R.csv', 'mFABP4_20250417R.csv']","Clonal,Clonal","[32, 6]"
+mGM-sg1,['mGM-sg1_20240911.csv'],Bulk,[35]
+mGM-sg2,['mGM-sg2_20240911.csv'],Bulk,[42]
+mGpbar1,['mGpbar1_20250602.csv'],Clonal,[30]
+mH2AB1-sg1,"['mH2AB1-sg1_20220412R.csv', 'mH2AB1-sg1_20220516.csv', 'mH2AB1-sg1_20220628.csv']","Clonal,Clonal,Clonal","[5, 13, 14]"
+mH2AB1-sg2,['mH2AB1-sg2_20220516.csv'],Clonal,[11]
+mH2D1-sg1,"['mH2D1-sg1_20220628s1.csv', 'mH2D1-sg1_20220504.csv', 'mH2D1-sg1_20220412R.csv']","Clonal,Clonal,Clonal","[6, 1, 4]"
+mH2D1-sg2,"['mH2D1-sg2_20220412R.csv', 'mH2D1-sg2_20240613.csv']","Clonal,Bulk","[5, 19]"
+mH2K1-sg2,['mH2K1-sg2_20220614.csv'],Clonal,[8]
+mH2K1-sg3,['mH2K1-sg3_20220614.csv'],Clonal,[3]
+mHCAR2,"['mHCAR2_20250110.csv', 'mHCAR2_20241211.csv']","Clonal,Bulk","[17, 20]"
+mHSP90,"['mHSP90_20250417s3.csv', 'mHSP90_20250417s2.csv', 'mHSP90_20250417s1.csv']","Clonal,Clonal,Clonal","[1, 6, 8]"
+mHV5-sg2,['mHV5-sg2_20240428.csv'],Bulk,[21]
+mHV5-sg6,"['mHV5-sg6_20240428.csv', 'mHV5-sg6_20240601.csv']","Bulk,Bulk","[21, 23]"
+mHV5-sg7,['mHV5-sg7_20240428.csv'],Bulk,[17]
+mIL21R,['mIL21R_20250417F.csv'],Clonal,[20]
+mIL2rg,['mIL2rg_20231112.csv'],Clonal,[7]
+mIL5,['mIL5_20240428.csv'],Bulk,[19]
+mIL6,"['mIL6_20240428.csv', 'mIL6_20240601.csv']","Bulk,Bulk","[16, 16]"
+mIL7,['mIL7_20240428.csv'],Bulk,[19]
+mKat2a,"['mKat2a_20220621.csv', 'mKat2a_20220608.csv', 'mKat2a_20220628.csv']","Clonal,Clonal,Clonal","[22, 25, 10]"
+mKif27,"['mKif27_20240601.csv', 'mKif27_20240513.csv']","Bulk,Bulk","[17, 17]"
+mMMRN1,['mMMRN1_20241211.csv'],Clonal,[5]
+mMTAP,['mMTAP_20240428.csv'],Bulk,[22]
+mMettl14-sg1,"['mMettl14-sg1_20220516.csv', 'mMettl14-sg1_20220607.csv']","Clonal,Clonal","[21, 61]"
+mMettl14-sg2,"['mMettl14-sg2_20220607.csv', 'mMettl14-sg2_20220526.csv']","Clonal,Clonal","[14, 16]"
+mMrgpra,['mMrgpra_20240602.csv'],Clonal,[7]
+mNAT2,"['mNAT2_20241217.csv', 'mNAT2_20241127R.csv']","Clonal,Bulk","[4, 35]"
+mPDL1,['mPDL1_20231112.csv'],Clonal,[27]
+mRNASE1,['mRNASE1_20241211.csv'],Bulk,[20]
+mRag1,['mRag1_20231112.csv'],Clonal,[9]
+mRagKO-sg1-4--0375,['mRagKO-sg1-4--0375_20240425.csv'],Clonal,[9]
+mSRY,"['mSRY_20240513.csv', 'mSRY_20241219.csv', 'mSRY_20250110.csv', 'mSRY_20240601.csv']","Bulk,Bulk,Clonal,Bulk","[33, 15, 5, 33]"
+mSTARD10,"['mSTARD10_20241211.csv', 'mSTARD10_20241217.csv', 'mSTARD10_20250110.csv']","Bulk,Clonal,Clonal","[12, 11, 4]"
+mSTK4-sg2,"['mSTK4-sg2_20240722s2.csv', 'mSTK4-sg2_20240722s1.csv']","Clonal,Bulk","[7, 29]"
+mSTK4-sg3,['mSTK4-sg3_20240722.csv'],Clonal,[7]
+mSlc7a10,"['mSlc7a10_20250110.csv', 'mSlc7a10_20241127.csv', 'mSlc7a10_20240906.csv']","Clonal,Bulk,Bulk","[18, 35, 35]"
+mSorl1,['mSorl1_20240911.csv'],Bulk,[97]
+mTPO,['mTPO_20240601.csv'],Bulk,[18]
+mTTN-sg7,['mTTN-sg7_20250417.csv'],Clonal,[12]
+mTTN-sg9,['mTTN-sg9_20250417R.csv'],Clonal,[5]
+mULK4-sg2,['mULK4-sg2_20240722.csv'],Clonal,[4]
+pAPN,['pAPN_20241213R.csv'],Bulk,[25]
+pCD163,['pCD163_20241213.csv'],Bulk,[25]
+pGHR,['pGHR_20241213F.csv'],Bulk,[25]
+pPRDM14,['pPRDM14_20241213F.csv'],Bulk,[25]
+sSOCS2-sg83,['sSOCS2-sg83_20240812F.csv'],Clonal,[12]
+sSOCS2-sg96,['sSOCS2-sg96_20240812F.csv'],Clonal,[12]

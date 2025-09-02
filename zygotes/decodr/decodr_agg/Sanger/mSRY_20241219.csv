@@ -1,0 +1,5 @@
+N_gt,loc,indel_size,Indelgen_seq,Identifier,Count
+-37,Not Present,-37,Not Present,Not Present,9.0
+-36,Not Present,-36,Not Present,Not Present,11.07
+-32,Not Present,-32,Not Present,Not Present,11.11
+-11,"[(27,39,),(28,40,),(29,41,),(30,42,),(31,43,),(32,44,),(33,45,),(34,46,)]",-11,AGCTGCTTGCTGATCTCTGTATTTTGCATGCTGGGCCAACTTGTGCCTCTCACCACGGGACCACACCA,D11_L-12C7R7,68.81
