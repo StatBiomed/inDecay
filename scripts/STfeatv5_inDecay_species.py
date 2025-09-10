@@ -8,11 +8,10 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
-# from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
-from scripts.STfeatv2_inDecay_finetune import check_dir, decay_transform
+
 import warnings
 warnings.filterwarnings('ignore')
 to_train = True
@@ -42,7 +41,9 @@ SelfTarget_data_dir = PATH.data_dir
 data_dir = PATH.data_dir
 
 
-
+def check_dir(DIR_NAME):
+    if not os.path.exists(DIR_NAME):
+        os.mkdir(DIR_NAME)
 
 def get_idfgen_file(Gene, Refseq, idgen_dir):
 
@@ -124,6 +125,25 @@ def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     labelmerge_df = idfgen.merge(label_df[['Identifier', 'Count', 'Frac Sample Reads']], left_on=['Identifier'], right_on=['Identifier'], how='left')
     labelmerge_df = labelmerge_df.fillna(0)
     return labelmerge_df
+
+def decay_transform(X):
+    """
+    Data transformation
+    """
+    interaction_del = []
+    interaction_ins = []
+    for i in range(0,5):
+        for j in range(0,5):
+            if i==j:
+                continue
+            interaction_del.append(np.multiply(X[:,i],X[:,j]))
+    for i in range(5,9):
+        for j in range(5,9): 
+            interaction_ins.append(np.multiply(X[:,i],X[:,j]))
+
+    X_del = np.hstack([X[:,:5], interaction_del])
+    X_ins = np.hstack([X[:,:5], interaction_ins])
+    return np.hstack([X_del, X_ins])
 
 def my_collect_fn(batch_list):
     features = [item[0].requires_grad_() for item in batch_list]

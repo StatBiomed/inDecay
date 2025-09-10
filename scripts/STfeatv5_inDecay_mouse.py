@@ -27,7 +27,7 @@ nshare = 39
 # model params
 k1 = 0.5 
 k2 = 0.6
-h = 1.3
+h = 1.3 
 hidden = [128, 64]
 L2_Lambda = 3e-1
 L1_Lambda = 0
@@ -35,20 +35,17 @@ L1_Lambda = 0
 
 # Torch Device
 device = 'gpu' if torch.cuda.is_available() else 'cpu'
-
 # some path and requisite files
 pj = os.path.join
 SelfTarget_data_dir = PATH.data_dir
 data_dir = PATH.data_dir
 
 
-
-
 def get_idfgen_file(Gene, Refseq, idgen_dir):
 
     Guide = Refseq[22:42] # with default cutsize 39
 
-    gen_feature_file = os.path.join(idgen_dir, f"{Gene}_{Guide}_features.txt")
+    gen_feature_file = pj(idgen_dir, f"{Gene}_{Guide}_features.txt")
 
     if not os.path.exists(idgen_dir):
         os.mkdir(idgen_dir)
@@ -59,12 +56,12 @@ def get_idfgen_file(Gene, Refseq, idgen_dir):
     return gen_feature_file
 
 
-def get_sanger_training(data_archive="Sanger_training"):
+def get_sanger_training(data_archive= "mouse"):
     """
     get all the sanger sequencing samples
     """
     # find the dir
-    sanger_dir = os.path.join(PATH.data_dir, data_archive)
+    sanger_dir = pj(PATH.data_dir, data_archive)
     assert os.path.exists(sanger_dir), "the sanger sequencing data is not correctly deposited"
 
     # look for processed tables
@@ -73,7 +70,7 @@ def get_sanger_training(data_archive="Sanger_training"):
     assert len(dfs) != 0, f"no samples found under {sanger_dir}\nplese make sure you have put data in the right dir"
 
     # create a lookup table for easy retrival of reference
-    def_table= os.path.join(PATH.data_dir, args.data_archive, "gene_seq.csv")
+    def_table= pj(PATH.data_dir, "gene_seq.csv")
     assert os.path.exists(def_table)
     gene_ref_tab = pd.read_csv(def_table)
 
@@ -95,9 +92,8 @@ def save_spliting(genes, kf_indeces):
     gene_by_fold = [[','.join(genes[idx]) for idx in idxs] for idxs in kf_indeces]
     split_df = pd.DataFrame(gene_by_fold,
                             columns=['Train_gene', 'Val_gene', 'Test_gene'])
-    # save
-    split_df.to_csv(pj(PATH.data_dir, args.data_archive, f"mouse_{args.data_archive}_spliting.csv")) # save to result (will updated in github repo)
-    # split_df.to_csv(os.path.join(sanger_dir, f"{args.data_archive}_spliting_{date}.csv")) # backup locally
+    split_df.to_csv(pj(PATH.data_dir, args.data_archive, f"{args.data_archive}_spliting.csv")) # save to result (will updated in github repo)
+
 
 def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     """
@@ -106,7 +102,7 @@ def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     Guide, refseq, pamsite, Strand = gene_ref_lookup[gene]
 
     # read table of the gene
-    sanger_df_path = os.path.join(PATH.data_dir, data_archive, f"{gene}_SelfTarget.csv")
+    sanger_df_path = pj(PATH.data_dir, data_archive, f"{gene}_SelfTarget.csv")
     label_df = pd.read_csv(sanger_df_path).query("Identifier != 'Not Present'")
 
     # normalize
@@ -115,7 +111,7 @@ def read_sanger_data(gene, gene_ref_lookup, data_archive='Sanger_training'):
     label_df['Frac Sample Reads'] = label_df['Count']/total_sum
 
     # read indelgen
-    idgen_dir = os.path.join(PATH.data_dir, data_archive, 'Indelgen_result')
+    idgen_dir = pj(PATH.data_dir, data_archive, 'Indelgen_result')
     idfgen_file = get_idfgen_file(gene, refseq, idgen_dir)
     
     idfgen = pd.read_table(idfgen_file, index_col=0, skiprows=1, names=['Identifier', 'n_coevent', 'loc', 'indels'])
@@ -132,25 +128,30 @@ def my_collect_fn(batch_list):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script for few shot learning with embryonic sanger sesquencing data")
-    # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
-    parser.add_argument("-E","--data_archive", required=True, type=str, default='Sanger_training', help='the folder name of processed sanger data')
-    parser.add_argument("-C","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")
+    parser.add_argument("-E","--data_archive", required=True, type=str, default='mouse', help='the folder name of processed sanger data for fewshot learning')
+    parser.add_argument("-C","--threshold", required=False, type=int, default=1, help="the minimum number of events for a sample to be considered valid")
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
-    parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay_Weight", help="inDecay / DeepDecay")
+    parser.add_argument("-M","--Model_Class", required=False, type=str, default="ST_DeepDecay_mul")
     parser.add_argument("-F","--Fix_params", required=False, type=str, default=None, help="the layers to fix, eg. del_regressor[:2]")
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
     parser.add_argument("-T","--test_split", required=False, type=int, help='which fold to used to split train test genes')
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
+    parser.add_argument("--LR", required=False, type=float, default=3e-4, help="the lr")
+    parser.add_argument("--L2", required=False, type=float, default=5e-1, help="the l2 penalty")
+    parser.add_argument("--k1", required=False, type=float, default=0.5)
+    parser.add_argument("--k2", required=False, type=float, default=0.6)
+    parser.add_argument("--h", required=False, type=float, default=1.3)
+    parser.add_argument("--reno_thre", required=False, type=float, default=0.05, help="renormalization threshold during training")
+    parser.add_argument("--extend_guide", type=str, required=False, default="True", help="whether to extend guide, True: 22, False: 20")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
-    parser.add_argument("--modelnote", required=True, type=str, default=None, help="the dir to save model")
-    parser.add_argument("--temperature", required=False, type=float, default=1, help="the softmax temperature")
-    parser.add_argument("--L", required=False, type=float, default=1e-3, help="the lr")
-    parser.add_argument("--L2", required=False, type=float, default=3e-1, help="the l2")
+    parser.add_argument("--temperature", required=False, type=float, default=0.5, help="the softmax temperature")
     args = parser.parse_args()
-    lr = args.L
+
+    lr = args.LR
     L2_Lambda =args.L2
-    
+    ext_guide= str(args.extend_guide)
+
     ## Mode ##
     if args.Mode == 'Train':
         to_train = to_write_y = to_predict = True
@@ -177,15 +178,13 @@ if __name__ == "__main__":
         raise ValueError("Invalide action combination")
 
 
-
-
  # if args.GPU_devices is not None:
     gpu_device= args.GPU_devices
     print(f"Runing {args.data_archive} fold {args.test_split}  using cuda: {gpu_device}")
 
     # Temp Theta file
     date = time.strftime("%B%d")
-    sanger_dir = os.path.join(PATH.data_dir, args.data_archive)
+    sanger_dir = pj(PATH.data_dir, args.data_archive)
 
     # get gene list
     # and also a gene to table look up
@@ -194,13 +193,12 @@ if __name__ == "__main__":
     valided_genes = []
     unused_genes = ''
     for g in genes:
-        if g.startswith('m'):
-            label_df = read_sanger_data(g, gene_ref_dict, args.data_archive)
-            n_event = label_df.query('`Identifier` != "Identifier"')['Identifier'].nunique()
-            if n_event < args.threshold:
-                unused_genes += f', {g}'
-            else:
-                valided_genes.append(g)
+        label_df = read_sanger_data(g, gene_ref_dict, args.data_archive)
+        n_event = label_df.query('`Identifier` != "Identifier"')['Identifier'].nunique()
+        if n_event < args.threshold:
+            unused_genes += f', {g}'
+        else:
+            valided_genes.append(g)
 
     # print("Unused genes : \n" + unused_genes)
     print("number_valided genes: \n" + str(len(valided_genes)))
@@ -217,11 +215,11 @@ if __name__ == "__main__":
 
 
     # save train test splits
-    if not os.path.exists(pj(PATH.data_dir, args.data_archive, f"mouse_{args.data_archive}_spliting.csv")):
+    if not os.path.exists(pj(PATH.data_dir, args.data_archive, f"{args.data_archive}_spliting.csv")):
         save_spliting(genes, kf_indeces) # create a 2-dimensional list  then to df
     else:
         # sanity check
-        spliting_df = pd.read_csv(pj(PATH.data_dir, args.data_archive, f"mouse_{args.data_archive}_spliting.csv"))
+        spliting_df = pd.read_csv(pj(PATH.data_dir, args.data_archive, f"{args.data_archive}_spliting.csv"))
         assert len(kf_indeces) == spliting_df.shape[0], 'the num of fold has changed'
         
         record_test_genes = spliting_df.iloc[args.test_split]['Test_gene']
@@ -234,9 +232,9 @@ if __name__ == "__main__":
     exp_name = args.Pretrain.split("ST_June_2017_")[-1].split("_LV7A_DPI7")[0]
     if "/" in exp_name:
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
-    if not os.path.exists(os.path.join(PATH.pth_dir, f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}")):
-        os.mkdir(os.path.join(PATH.pth_dir, f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}"))
-    pth_save_dir = os.path.join(PATH.pth_dir,f"{args.modelnote}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{args.L}_L2{args.L2}_T{args.temperature}",'mouse')
+    if not os.path.exists(pj(PATH.pth_dir, f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}")):
+        os.mkdir(pj(PATH.pth_dir, f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}"))
+    pth_save_dir = pj(PATH.pth_dir,f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}",args.data_archive)
     pth_save_path = pj(pth_save_dir, f"{len(kf_indeces)}fold_{args.test_split}")
     
     for DIR in [PATH.pth_dir, pth_save_dir, pth_save_path]:
@@ -244,7 +242,6 @@ if __name__ == "__main__":
 
     
     # DATA TRANSFORMATION
-    
     if args.Data_transform == "identity":
         transform = lambda x: x
         n_features = ndel + nins + nshare
@@ -259,10 +256,9 @@ if __name__ == "__main__":
     
     
     # Modeling and Training
-     # Modeling and Training
     model_class = eval("models.%s"%args.Model_Class)
     model_parsms = dict(inputsize=n_features, outputsize=1,  lr=lr,
-                        L1_lambda=L1_Lambda, L2_lambda=L2_Lambda)
+                        L1_lambda=L1_Lambda, L2_lambda=L2_Lambda, T=args.temperature, renormalize_thres=args.reno_thre)
     if 'Deep' in args.Model_Class:
         model_parsms['hidden'] = hidden
         
@@ -278,11 +274,13 @@ if __name__ == "__main__":
         print(args.Fix_params, "is fixed")
 
     # dataset    
-    # dataset    
     normalize = ('Multinomial' not in args.Model_Class) & ('weight' not in args.Model_Class)
 
-    feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
-
+    
+    if eval(ext_guide):
+        feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_feat_v5_extend_guide(label_df, refseq, cutsite, k1, k2, h, cell=exp_name.split('_')[0])
+    else:
+        feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
     Train_DS = reader.ST_dataset(train_genes, gene_ref_dict, 
                             experiments=args.data_archive, 
                             read_data_fn = read_sanger_data,
@@ -318,7 +316,6 @@ if __name__ == "__main__":
 			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',
                                                   monitor="val_cre", mode="min", save_top_k=-1, every_n_epochs=1),
                         callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])
-    
 
     if to_train:
         model.train()
@@ -326,9 +323,8 @@ if __name__ == "__main__":
         print(trainer.ckpt_path)
 
         model.eval()
-        print(test_genes, args.modelnote, trainer.validate(model, Test_DL))
+        print(test_genes, ext_guide, trainer.validate(model, Test_DL))
 
-    # only save once for Y
     # only save once for Y
     if to_write_y:
         Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
@@ -373,7 +369,6 @@ if __name__ == "__main__":
     
     if to_baseline:
         #  to generate baseline for the pretrained model
-
         pmodel = model_class.load_from_checkpoint(args.Pretrain)
         pmodel.eval()
         predict_y = trainer.predict(pmodel, Test_DL)

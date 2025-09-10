@@ -8,11 +8,9 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
-# from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
-from scripts.STfeatv2_inDecay_finetune import check_dir, decay_transform
 import warnings
 warnings.filterwarnings('ignore')
 to_train = True
@@ -40,6 +38,28 @@ device = 'gpu' if torch.cuda.is_available() else 'cpu'
 pj = os.path.join
 SelfTarget_data_dir = PATH.data_dir
 data_dir = PATH.data_dir
+
+def check_dir(DIR_NAME):
+    if not os.path.exists(DIR_NAME):
+        os.mkdir(DIR_NAME)
+def decay_transform(X):
+    """
+    Data transformation
+    """
+    interaction_del = []
+    interaction_ins = []
+    for i in range(0,5):
+        for j in range(0,5):
+            if i==j:
+                continue
+            interaction_del.append(np.multiply(X[:,i],X[:,j]))
+    for i in range(5,9):
+        for j in range(5,9): 
+            interaction_ins.append(np.multiply(X[:,i],X[:,j]))
+
+    X_del = np.hstack([X[:,:5], interaction_del])
+    X_ins = np.hstack([X[:,:5], interaction_ins])
+    return np.hstack([X_del, X_ins])
 
 def get_idfgen_file(Gene, Refseq, idgen_dir):
 
@@ -128,7 +148,7 @@ def my_collect_fn(batch_list):
     return features, ys
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("The script for few shot learning with embryonic sanger sesquencing data")
+    parser = argparse.ArgumentParser("The script runs few shot learning for embryonic sanger sesquencing data")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--data_archive", required=True, type=str, default='Sanger_training', help='the folder name of processed sanger data')
     parser.add_argument("-C","--threshold", required=False, type=int, default=3, help="the minimum number of events for a sample to be considered valid")

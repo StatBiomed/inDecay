@@ -11,8 +11,8 @@ from pytorch_lightning import callbacks
 import pickle as pkl
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
-from qrguide import analysis_fn
-
+from inDecay import analysis_fn
+import random
 num_workers = 12
 
 ndel = 14
@@ -56,18 +56,34 @@ def read_data(OligoID, processed_df, experiments):
 
     def merging(OligoID,idfgen=idfgen):
         oligo_df = processed_df.query("`OligoID` == @OligoID")
-
         label_df = idfgen.merge(oligo_df[['OligoID','Identifier', 'Count']], 
                         left_on=['Identifier'], right_on=['Identifier'], suffixes=['', '_filled'], how='left') # type: ignore 
-        label_df.fillna(0, inplace=True) # make indels that are not capture with count=0
+        label_df['OligoID']=label_df['OligoID'].fillna(OligoID) # make indels that are not capture with count=0
+        label_df['Count']=label_df['Count'].fillna(0)
         return label_df
     
     label_df = merging(OligoID)
-
     total_sum = label_df['Count'].sum()
     label_df['Frac Sample Reads'] = label_df['Count']/total_sum
     return label_df
 
+def transform_pkl(model, Y_lookup, pred_lookup):
+
+    dicts={}
+    for oligo, Y in Y_lookup.items():
+        Y = Y.T
+        indel = Y[0, :]
+        y = Y[1, :].astype('float32')
+        pred= pred_lookup[oligo][0]
+        df = pd.DataFrame({
+        'Indel': indel,
+        'observed': y,
+        model: pred,
+    })
+        df = df.sort_values('observed', ascending=False)
+        df.set_index('Indel', inplace=True)
+        dicts[oligo] = df
+    return dicts
 
 def decay_transform(X):
     """
@@ -93,14 +109,47 @@ def my_collect_fn(batch_list):
     ys = [item[1].requires_grad_() for item in batch_list]
     return features, ys
 
-def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
+import numbers
+def mean_numeric_dict(dict_list):
+    # Collect sums and counts for each key
+    sums = {}
+    counts = {}
+
+    for d in dict_list:
+        for key, value in d.items():
+            # Check if value is numeric (int, float)
+            if isinstance(value, numbers.Number):
+                sums[key] = sums.get(key, 0) + value
+                counts[key] = counts.get(key, 0) + 1
+            else:
+                # Ignore non-numeric values
+                pass
+
+    # Compute mean for each key
+    mean_dict = {}
+    for key in sums:
+        if counts[key] > 0:
+            mean_dict[key] = sums[key] / counts[key]
+        else:
+            mean_dict[key] = None  # or float('nan'), or skip key
+
+    return mean_dict
+
+def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix=""):
     
     date = time.strftime("%b%d")
-    # the metric dict
-    performance_json = analysis_fn.assessment_recipe_forecast_cell(Y_lookup, pred_lookup)
-    IDL_performance = analysis_fn.assessment_recipe_IDL_forecast(Y_lookup, pred_lookup)
 
-    performance_json.update(IDL_performance)
+    performance_json={}
+    performs= []
+    perform_IDLs= []
+    for oligo, df_raw in df_lookup.items():
+
+        perform= analysis_fn.assessment_recipe_forecast(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
+        perform_IDL = analysis_fn.assessment_recipe_41IDL(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
+        performs.append(perform['predict'])
+        perform_IDLs.append(perform_IDL['predict'])
+    performance_json.update(mean_numeric_dict(performs))
+    performance_json.update(mean_numeric_dict(perform_IDLs))
     performance_json['End_date'] = time.strftime("%b%d-%H:%-M")
     performance_json['ckpt_path'] = ckpt_abspath
     
@@ -115,12 +164,12 @@ def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
     performance_json['training_params'] = training_params
     
     # save the metrics
-    result_dir = f"{PATH.main_dir}/results/Transfer/featv5_{args.Model_Class}_{Cellline}/{args.Fix_params}_RandOligo" #TODO:FIX + RANDOM
+    result_dir = f"{PATH.main_dir}/results/Transfer/C{args.read_cutoff}/{date}_V{args.Val_size}_{args.Model_Class}_{Cellline}_{L2_Lambda}_randinit/" 
     
-    if not os.path.exists(os.path.dirname(result_dir)):
-        os.mkdir(os.path.dirname(result_dir))
+    # if not os.path.exists(os.path.dirname(result_dir)):
+    #     os.mkdir(os.path.dirname(result_dir))
     if not os.path.exists(result_dir):
-        os.mkdir(result_dir)
+        os.makedirs(result_dir)
 
     if prefix == "":
         json_path = pj(result_dir, f"N{args.N_Finetune}-{date}.json")
@@ -140,11 +189,66 @@ def write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix=""):
     print("performance json saved to %s" %json_path)
     print("="*20)
 
+# def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix=""):
+    
+#     date = time.strftime("%b%d")
+#     df_lookup= transform_pkl(model='predict',Y_lookup=Y_lookup, pred_lookup= pred_lookup )
+
+#     performance_json={}
+#     performs= []
+#     perform_IDLs= []
+#     for oligo, df_raw in df_lookup.items():
+
+#         perform= analysis_fn.assessment_recipe_forecast(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
+#         perform_IDL = analysis_fn.assessment_recipe_41IDL(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
+#         performs.append(perform['predict'])
+#         perform_IDLs.append(perform_IDL['predict'])
+#     performance_json.update(mean_numeric_dict(performs))
+#     performance_json.update(mean_numeric_dict(perform_IDLs))
+#     performance_json['End_date'] = time.strftime("%b%d-%H:%-M")
+#     performance_json['ckpt_path'] = ckpt_abspath
+    
+#     L1_Lambda = args.L1_Lambda
+#     L2_Lambda = args.L2_Lambda
+    
+#     # # model params 
+#     training_params = {}
+#     for pm in ["ndel", "nins", "nshare", "k1", "k2", "h", "hidden", "L2_Lambda", "L1_Lambda", "lr", "args.Fix_params"]:
+#         training_params[pm] = eval(pm)
+
+#     performance_json['training_params'] = training_params
+    
+#     # save the metrics
+#     result_dir = f"{PATH.main_dir}/results/Transfer/C{args.read_cutoff}/{date}_V{args.Val_size}_{args.Model_Class}_{Cellline}_{L2_Lambda}_randinit/" 
+    
+#     # if not os.path.exists(os.path.dirname(result_dir)):
+#     #     os.mkdir(os.path.dirname(result_dir))
+#     if not os.path.exists(result_dir):
+#         os.makedirs(result_dir)
+
+#     if prefix == "":
+#         json_path = pj(result_dir, f"N{args.N_Finetune}-{date}.json")
+#     else:
+#         json_path = pj(result_dir, f"{prefix}-{date}.json")
+
+#     re = 1
+#     if prefix == "":
+#         while os.path.exists(json_path):
+#             json_path = pj(result_dir, f"N{args.N_Finetune}-{date}_r{re}.json")
+#             re += 1
+
+#     with open(json_path, "w") as write_file:
+#         json.dump(performance_json, write_file, indent=4)
+    
+#     print("\n"+"="*20)
+#     print("performance json saved to %s" %json_path)
+#     print("="*20)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
     # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
-    parser.add_argument("-C","--read_cutoff", type=int, default=1000, help='The threshold of total count. Only Guides having total read count over this threshold are used')
+    parser.add_argument("-C","--read_cutoff", type=int, default=100, help='The threshold of total count. Only Guides having total read count over this threshold are used')
     parser.add_argument("-T","--test_oligos", type=str, default="results/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
     parser.add_argument("-G","--GPU_devices", type=int, default=None, help='The gpu to use')
     parser.add_argument("-P","--Pretrain", required=False, type=str, default=None, help="the pretrained parameter theta")
@@ -153,8 +257,9 @@ if __name__ == "__main__":
     parser.add_argument("-D","--Data_transform", required=False, type=str, default="identity", help="the name of data transformation")
     parser.add_argument("-O","--Mode", required=False, type=str, default="Train", help="the action of this script, can be `Train`, `Evaluate`, `Evaluate_only`, `Baseline` and `Write_Y`")
     parser.add_argument("-N","--N_Finetune", required=False, type=str, default="50", help="the number of oligos to use in the finetuning process")
-    parser.add_argument("-R","--Rounds", required=False, type=int, default=100, help="Max epoches for finetuning")
+    parser.add_argument("-R","--Rounds", required=False, type=int, default=1, help="Max epoches for finetuning") #100
     parser.add_argument("-U","--LearningRate", required=False, type=str, default="3e-4", help="the learning rate")
+    parser.add_argument("-V","--Val_size", type=float, default=0.1, help='The ratio of sample used for validation')
     parser.add_argument("--L1_Lambda", required=False, type=float, default="0", help="the weight to regulate the L1 loss")
     parser.add_argument("--L2_Lambda", required=False, type=float, default="1e-4", help="the weight to regulate the L2 loss")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
@@ -182,8 +287,8 @@ if __name__ == "__main__":
         to_write_y = True
 
     elif args.Mode == 'Baseline':
-        to_train = to_predict = to_write_y = False 
-        to_baseline = True
+        to_train = to_predict = False
+        to_write_y = to_baseline = True
     else:
         raise ValueError("Invalide action combination")
 
@@ -192,7 +297,7 @@ if __name__ == "__main__":
     Cellline = experiments.split("_")[3]
     rep = experiments.split("_")[4]
     trainer_log = pj(PATH.main_dir, 'pl_trainer_log')
-    save_dir = pj(data_dir, 'processed_df')
+    save_dir = pj(data_dir, 'somatic')
     csv_path = pj(save_dir,f"{Cellline}_{rep}.csv")
 
     gpu_device = 0 if device=='gpu' else 10
@@ -200,26 +305,27 @@ if __name__ == "__main__":
     if args.GPU_devices is not None:
         gpu_device= args.GPU_devices
     
-    print(f"Runing {experiments} using cud: {gpu_device}")
-    pth_save_dir = os.path.join(PATH.pth_dir, f"ST_featv5fast_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
+    print(f"Runing {experiments} using cuda: {gpu_device}")
+    pth_save_dir = os.path.join(PATH.pth_dir, f"v5_fintune_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
     for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
         check_dir(DIR)  
     # Temp Theta file
     date = time.strftime("%B%d")
-    pth_save_path = pj(pth_save_dir, f"featv5_{experiments}_N{args.N_Finetune}_{args.Fix_params}")
+    pth_save_path = pj(pth_save_dir, f"{experiments}_V{args.Val_size}_N{args.N_Finetune}_{args.Fix_params}_L2{args.L2_Lambda}")
 
     processed_df = pd.read_csv(csv_path).query("`in_LdGen` == True").astype({"Count":"int"})
-    processed_df = processed_df.query("`Strand` == 'FORWARD'")
+    processed_df = processed_df.query("`Strand` == 'FORWARD' & `Identifier` != 'Not Present' ")
     
 
     # split training and testing data
     Train_Oligos, Val_Oligos, Test_Oligos = reader.get_Train_Val_Test(
-        processed_df, 
+        e = experiments,
+        df=processed_df, 
         test_oligo_file = os.path.join(PATH.main_dir, args.test_oligos),
         seed = 0,
-        threshold = args.read_cutoff
+        threshold = args.read_cutoff,
+        count_predictable=False
         )
-
     # load predefined finetuning set
     if "R" in args.N_Finetune:
         # random 
@@ -233,19 +339,21 @@ if __name__ == "__main__":
         
 
         ## ONLY USE THE RANDOM
+
+        random.seed(np.random.randint(0,1000))
         Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
 
         # if finetune_set in Finetune_df.columns:
         #     Finetune_Oligos = Finetune_df.query('`%s` == True'%finetune_set).index    # finetune oligos
         # else:
         #     Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
-        #     Finetune_df[f'FinetuneSet_n{size}'] = Finetune_df.index.isin(Finetune_Oligos)
+            # Finetune_df[f'FinetuneSet_n{size}'] = Finetune_df.index.isin(Finetune_Oligos)
         #     Finetune_df.to_csv(f"{PATH.main_dir}/results/Finetune_OligoIndex_Jul19.csv", index=True)
 
 
 
     # train-val for finetuning
-    val_size = int(0.1 * size)                               # num. of oligos for finetuning validatoin 
+    val_size = int(args.Val_size * size)                               # num. of oligos for finetuning validatoin 
     Finetune_Oligos_val = np.random.choice(Finetune_Oligos, size=val_size)
     Finetune_Oligos_train = [oligo for oligo in Finetune_Oligos if oligo not in Finetune_Oligos_val]
 
@@ -282,6 +390,11 @@ if __name__ == "__main__":
         model = model_class.load_from_checkpoint(args.Pretrain)
         # ckpt = torch.load(args.Pretrain)
         # model.load_state_dict(ckpt['state_dict'])
+        last_layer_w = model.del_regressor[2].weight.data
+        model.del_regressor[2].weight.data += torch.randn_like(last_layer_w)
+
+        last_layer_b = model.del_regressor[2].bias.data
+        model.del_regressor[2].bias.data += torch.randn_like(last_layer_b)
 
     if args.Fix_params is not None:
         for p in eval(f"model.{args.Fix_params}").parameters():
@@ -326,7 +439,7 @@ if __name__ == "__main__":
                                                   monitor="val_cre", mode="min", save_top_k=2),
                         callbacks.EarlyStopping(monitor="val_cre", mode="min", patience=20),])
     
-
+    Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
     if to_train:
         model.train()
         trainer.fit(model, Train_DL, val_dataloaders=Val_DL)
@@ -337,7 +450,6 @@ if __name__ == "__main__":
 
     # only save once for Y
     if to_write_y:
-        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         if not os.path.exists(Forecast_Y):
             get_identifiers = lambda oligo : read_data(oligo, processed_df, experiments)[['Identifier', 'Frac Sample Reads']].values
 
@@ -369,7 +481,6 @@ if __name__ == "__main__":
             predict_y = sum(predict_y, [])  # to join lists 
         
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(Test_Oligos)} # type: ignore
-
         TestPred = ckpt_abspath.replace(".ckpt", "TestPred.pkl")
         pred_f = open(TestPred, 'wb')
         pkl.dump(pred_lookup, pred_f)
@@ -378,12 +489,10 @@ if __name__ == "__main__":
 
 
         ## evaluate in the test set
-        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         f = open(Forecast_Y, 'rb')
         Y_lookup = pkl.load(f)  # forecast : ST
         f.close()
-
-        write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix="")
+        write_evaluate_json(Y_lookup, pred_lookup,'', ckpt_abspath, args, prefix="")
 
     if to_baseline:
         #  to generate baseline for the pretrained model
@@ -398,7 +507,6 @@ if __name__ == "__main__":
         pred_lookup = {o:predict_y[i].cpu().numpy() for i,o in enumerate(Test_Oligos)}
         print(len(pred_lookup))
         TestPred = Forecast_Y.replace("ForeCast_TestY.pkl", "Pretrained_Baseline_TestPred.pkl")
-
         pred_f = open(TestPred, 'wb')
         pkl.dump(pred_lookup, pred_f)
         pred_f.close()
@@ -406,12 +514,13 @@ if __name__ == "__main__":
 
 
         ## evaluate in the test set
-        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
+    
+        
         f = open(Forecast_Y, 'rb')
         Y_lookup = pkl.load(f)  # forecast : ST
         f.close()
 
-        write_evaluate_json(Y_lookup, pred_lookup, ckpt_abspath, args, prefix="Baseline")
+        write_evaluate_json(Y_lookup, pred_lookup, '', args.Pretrain, args, prefix="Baseline")
 
         
 
