@@ -1,6 +1,7 @@
 user_dir='/home/louisayu/ssd'
 main_dir=f"{user_dir}/inDecay"
 data_dir = f"{main_dir}/data"
+somatic_dir = f"{data_dir}/somatic"
 embryo_raw_dir = f"{main_dir}/zygote/"
 high_dir = data_dir
 pth_dir = f"{main_dir}/pl_trainer_log"

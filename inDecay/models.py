@@ -275,7 +275,7 @@ class Base_del_model(pl.LightningModule):
 	optim_class : str, the class of optimizer
 	"""
 
-	def __init__(self, T = 0.5,  lr: Union[float, int] = 3e-4, L1_lambda: float = 0, L2_lambda: float = 1e-9, renormalize_thres:float = 0.0, optim_class="Adam"):
+	def __init__(self, T = 0.5,  lr: Union[float, int] = 3e-4, L1_lambda: float = 0, L2_lambda: float = 1e-9, renormalize_thres:float = 0.05, optim_class="Adam"):
 		super().__init__()
 		self.save_hyperparameters()
 		self.T = T
@@ -510,8 +510,8 @@ class Base_del_model(pl.LightningModule):
 			p_pred = self.forward(X)
 
 		cre = self.compute_Loss(p_pred, train_batch)
-		major15=self.compute_major(p_pred, y, 0.15)
-		major20=self.compute_major(p_pred, y, 0.20)
+		major30=self.compute_major(p_pred, y, 0.30)
+		major25=self.compute_major(p_pred, y, 0.25)
 		# compute all kinds of loss and metrices
 		# if torch.any(y.sum(1) != 1):
 		#	 y = y / y.sum(dim=1, keepdim=True)
@@ -532,8 +532,8 @@ class Base_del_model(pl.LightningModule):
 		self.log('val_mse', mse, batch_size=len(y))
 		self.log('val_cre', cre, batch_size=len(y))
 		self.log('val_kld', kld, batch_size=len(y))
-		self.log('val_major15', major15, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		self.log('val_major20', major20, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
+		self.log('val_major30', major30, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
+		self.log('val_major25', major25, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top1recall', self.top1_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top3recall', self.top3_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top5recall', self.top5_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -873,7 +873,7 @@ class ST_DeepDecay(Base_del_model):
 	"""
 	inDecay's MLP model
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=0.5, renormalize_thres=0):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=0.5, renormalize_thres=0.05):
 		super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 		self.lr = lr
 		self.T = T
@@ -897,7 +897,7 @@ class ST_delfeat_DeepDecay(ST_DeepDecay):
 	"""
 	DeepDecay multi-ev model
 	"""
-	def __init__(self, del_feat, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, renormalize_thres=0):
+	def __init__(self, del_feat, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, renormalize_thres=0.05):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, renormalize_thres=renormalize_thres)
 
 		# deletion model
@@ -932,7 +932,7 @@ class ST_DeepDecay_dropout(ST_DeepDecay):
 	"""
 	repeat Lindel's linear model
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4,T=1, renormalize_thres=0.0):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 
 		layer_size = [inputsize] + hidden 
