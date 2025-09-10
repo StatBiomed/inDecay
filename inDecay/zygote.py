@@ -13,14 +13,24 @@ import time
 from tqdm import tqdm
 import re
 from inDecay import PATH, models, my_utils, analysis_fn
-main_dir= PATH.main_dir
+from pathlib import Path
+from typing import Dict, List
+pj=os.path.join
+
+def parent_dir(path: Path | str, levels: int = 1) -> Path:
+    """Return ancestor directory `levels` above *path*."""
+    p = Path(path)
+    for _ in range(levels):
+        p = p.parent
+    return p
+
+
 def create(path):
     if not os.path.exists(path):
         os.makedirs(path)
     else:
         shutil.rmtree(path)
         os.mkdir(path)
-        
 def copy_if_empty(src_dir, target_dir, basename, save_name):
     """
     Copy a file from src_dir to target_dir if the file does not already exist in target_dir.
@@ -378,7 +388,7 @@ class getselftarget:
         selftarget (str): Command string for indelgentarget analysis.
     """
     
-    def __init__(self, guidedisc, gene):
+    def __init__(self, raw_dir, cwd_dir, guidedisc, gene):
         """
         Initialize self-targeting analysis for a gene.
 
@@ -387,12 +397,17 @@ class getselftarget:
                         Requires guidedisc dictionary containing guide sequences.
         """
         self.gene = gene
+        self.raw_dir = raw_dir
+        self.cwd_dir = cwd_dir
+        self.st_dir = pj(self.cwd_dir, 'SelfTarget')
         self.guidedisc = guidedisc
         self.dir = gene.split('---')[0]
         self.guide = guidedisc[self.gene]  # guidedisc must be predefined
         self.FW, self.RC = self.read_control()
         self.shorten_ref = self.process_guide()
-        self.selftarget = self.getst()
+        self.st = self.getst()
+        
+        
 
     def read_control(self):
         """
@@ -403,17 +418,17 @@ class getselftarget:
 
         Raises:
             AssertionError: If multiple control files found.
+
         """
-        raw_dir = f"{PATH.embryo_raw_dir}/process/decodr/"
-        controlfiles=[e for e in os.listdir(os.path.join(raw_dir,self.dir)) if 'WT' in e or '.txt' in e]
+        controlfiles=[e for e in os.listdir(pj(self.raw_dir, self.dir)) if 'WT' in e or '.txt' in e]
         assert len(controlfiles)==1, [self.gene, controlfiles]
         self.control= controlfiles[0]
         if self.control.endswith("ab1"):
-            seqRecord = SeqIO.read(f"{raw_dir+self.dir+'/'+self.control}", "abi")
+            seqRecord = SeqIO.read(pj(self.raw_dir,self.dir,self.control), "abi")
             self.FW, self.RC = str(seqRecord.seq), str(seqRecord.seq.reverse_complement())
             
         elif self.control.endswith("txt"):
-            with open(f"{raw_dir+self.dir+'/'+self.control}", 'r') as f:
+            with open(pj(self.raw_dir,self.dir,self.control), 'r') as f:
                 self.FW = f.readlines()[0]
             self.RC = str(Seq.Seq(self.FW).reverse_complement())
         return self.FW, self.RC
@@ -442,8 +457,6 @@ class getselftarget:
         if self.shorten_ref=="":
             return False
 
-        # ... (rest of method)
-
     def getst(self):
         """
         Generate indelgentarget command for self-targeting analysis.
@@ -452,17 +465,19 @@ class getselftarget:
             str: Command string formatted for indelgentarget tool:
                  "indelmap/indelgentarget [reference] [position] [output_path]"
         """
-        self.selftarget=f"{'indelmap/indelgentarget'} {self.shorten_ref} {str(42)} {os.path.join(PATH.embryo_raw_dir,'process/SelfTarget',self.dir)}.txt"
-        return self.selftarget  
+        self.st=f"{'indelmap/indelgentarget'} {self.shorten_ref} {str(42)} {os.path.join(self.st_dir,self.dir)}.txt"
+        return self.st
 
 
 from collections import defaultdict
+
 def complement(c):
-    if c == 'A': return 'T'
-    if c == 'T': return 'A'
-    if c == 'C': return 'G'
-    if c == 'G': return 'C'
-    else: return c
+  if c == 'A': return 'T'
+  if c == 'T': return 'A'
+  if c == 'C': return 'G'
+  if c == 'G': return 'C'
+  else: return c
+  
 def remove_dash(seq):
     seq = seq.replace("|","")
     seq_ls = seq.split("–")
@@ -491,7 +506,7 @@ class genepro_dec(getselftarget):
         agg_df (pd.DataFrame): Aggregated DataFrame of validated indels and their frequencies.
     """
 
-    def __init__(self, guidedisc, gene, ana_dir, selftargetpath, sanger_dir):
+    def __init__(self,raw_dir, cwd_dir, guidedisc, gene):
         """
         Initialize the genepro_dec pipeline for a given gene.
 
@@ -499,16 +514,53 @@ class genepro_dec(getselftarget):
             gene (str): Gene identifier (e.g., 'dir---GENE').
             sanger_dir (str): Output directory for aggregated results.
         """
-        super().__init__(guidedisc, gene)
-        self.sanger_dir = sanger_dir
-        self.result = ana_dir + '/' + self.gene + '.csv'
-        self.dir = self.gene.split('---')[0]
-        self.selftarget = selftargetpath + self.dir + '.txt'
+        super().__init__( raw_dir, cwd_dir, guidedisc, gene)
+        self.raw_dir = raw_dir
+        self.cwd_dir = cwd_dir
+        self.guidedisc = guidedisc
+        self.gene = gene
+        self.dir = gene.split('---')[0]
+        
+        self._sanger_dir = None
+        self._ana_dir = None
+        self._selftargetpath = None
+        self.setup()
+        
+    def setup(self):
         self.finallist = self.read_ice()
         self.finallist_dash = self.count_by_dash()
         self.indel_gen_df = self.read_indel_gen_df()
         self.agg_df = self.sanger_training()
 
+
+    @property
+    def ana_dir(self):
+        """Input directory for analysis results"""
+        if self._ana_dir is None:
+            self._ana_dir = pj(self.cwd_dir,'decodr', 'decodr_outputs')
+        return self._ana_dir
+    @property
+    def sanger_dir(self):
+        """Output directory for aggregated results"""
+        if self._sanger_dir is None:
+            self._sanger_dir = pj(self.cwd_dir, 'decodr', 'decodr_labeled')
+        return self._sanger_dir
+
+    @property
+    def selftargetpath(self):
+        """Path to self-targeting predictions"""
+        if self._selftargetpath is None:
+            self._selftargetpath = pj(self.cwd_dir, 'SelfTarget')
+        return self._selftargetpath
+    @property
+    def result(self):
+        """Auto-generated from ana_dir and gene"""
+        return pj(self.ana_dir, self.gene + '.csv')
+
+    @property
+    def selftarget(self):
+        """Auto-generated from selftargetpath and dir"""
+        return pj(self.selftargetpath, self.dir + '.txt')
     def read_ice(self):
         """
         Parse decodr analysis results and adjust sequences for strand orientation.
@@ -521,6 +573,7 @@ class genepro_dec(getselftarget):
                 - 'TG_ice': Sequence context (reverse-complemented if on RC strand)
         """
         df = pd.read_csv(self.result)
+    
         self.finallist = []
         for row in range(df.shape[0]):
             list1 = {}
@@ -614,36 +667,262 @@ class genepro_dec(getselftarget):
         df['Indelgen_seq'] = df['Dash_range'].map(idf_seq_map)
         df['loc'] = df['Dash_range'].map(idf_loc_map)
         agg_df = df.groupby(["Identifier", "N_gt", "indel_size", "Indelgen_seq", "loc"]).agg({"ratio": "sum"})
-        agg_df.rename({"ratio": "Count"}, axis=1).to_csv(f"{self.sanger_dir}/{self.gene}_SelfTarget.csv")
+        if not all(identifier == 'Not Present' for identifier in agg_df['Identifier']):
+            agg_df.rename({"ratio": "Count"}, axis=1).to_csv(pj(self.sanger_dir, f"{self.gene}_SelfTarget.csv"))
         return agg_df
 
-def decide_duplicate(dfolder, seq):
-    current_files=pd.read_csv('DEC_sum/NUM_'+seq+'.csv',index_col=0)
-    rts={}
+class genepro_ice(getselftarget):
+    """
+    Class for integrating ICE sequencing analysis results with self-targeting indel predictions.
+    This class processes ICE result files, annotates indels with genomic positions, matches them to
+    computational predictions (from indelgentarget), and aggregates the results for downstream analysis.
+
+    Attributes:
+        sanger_dir (str): Output directory for aggregated ICE results.
+        ana_dir (str): Input directory for ICE outputs.
+        selftargetpath (str): Input directory for indelgentarget predictions.
+        result (str): Path to ICE analysis CSV file.
+        selftarget (str): Path to indelgentarget prediction file.
+        finallist (list): Processed ICE results with strand-corrected sequences.
+        finallist_dash (list): ICE results annotated with genomic positions for indels.
+        indel_gen_df (pd.DataFrame): DataFrame of predicted indels from indelgentarget.
+        agg_df (pd.DataFrame): Aggregated DataFrame of validated indels and their frequencies.
+    """
+
+    def __init__(self, raw_dir, cwd_dir, guidedisc, gene):
+        """
+        Initialize the genepro_ice pipeline for a given gene.
+
+        Args:
+            raw_dir (str): Path to raw ICE data directory.
+            cwd_dir (str): Current working directory.
+            guidedisc (dict): Guide dictionary.
+            gene (str): Gene identifier (e.g., 'dir---GENE').
+        """
+        super().__init__(raw_dir, cwd_dir, guidedisc, gene)
+        self.raw_dir = raw_dir
+        self.cwd_dir = cwd_dir
+        self.guidedisc = guidedisc
+        self.gene = gene
+        self.dir = gene.split('---')[0]
+        
+        self._sanger_dir = None
+        self._ana_dir = None
+        self._selftargetpath = None
+        self.setup()
+        
+    def setup(self):
+        self.finallist = self.read_ice()
+        self.finallist_dash = self.count_by_dash()
+        self.indel_gen_df = self.read_indel_gen_df()
+        self.agg_df = self.sanger_training()
+
+
+    @property
+    def ana_dir(self):
+        """Input directory for analysis results"""
+        if self._ana_dir is None:
+            self._ana_dir = pj(self.cwd_dir, 'synthego', 'ice_outputs')
+        return self._ana_dir
+    @property
+    def sanger_dir(self):
+        """Output directory for aggregated results"""
+        if self._sanger_dir is None:
+            self._sanger_dir = pj(self.cwd_dir,'synthego', 'ice_labeled')
+        return self._sanger_dir
+
+    @property
+    def selftargetpath(self):
+        """Path to self-targeting predictions"""
+        if self._selftargetpath is None:
+            self._selftargetpath = pj(self.cwd_dir, 'SelfTarget')
+        return self._selftargetpath
+    @property
+    def result(self):
+        """Auto-generated from ana_dir and gene"""
+        return pj(self.ana_dir, self.gene + '.csv')
+
+    @property
+    def selftarget(self):
+        """Auto-generated from selftargetpath and dir"""
+        return pj(self.selftargetpath, self.dir + '.txt')
+
+    def read_ice(self):
+        """
+        Parse ICE analysis results and adjust sequences for strand orientation.
+
+        Returns:
+            list: Each entry is a dict with keys:
+                - 'label': Gene name
+                - 'ratio': Event frequency (as percentage, float)
+                - 'N_gt': Indel size (int)
+                - 'TG_ice': Sequence context (reverse-complemented if on RC strand)
+        """
+        df=pd.read_csv(self.result)
+        self.finallist=[]
+        for row in range(df.shape[0]):
+            list1 = {}
+            list1['label'] = self.gene
+            list1['ratio'] = df['ratio'].iloc[row]*100
+            list1['N_gt'] = int(df['event'].iloc[row].split('[')[0])
+            if self.Strand=='FW':
+                list1['TG_ice']=str(df['ori_seq'].iloc[row])
+            elif self.Strand=='RC':
+                seq=''.join(map(complement, reversed(df['ori_seq'].iloc[row])))
+                if list1['N_gt']>0:
+                    nindex= seq.index("n")
+                    cindex= seq.index("|")
+                    seq=seq[0:nindex]+"|"+ list1['N_gt']*'n'+seq[cindex+1:]
+
+                list1['TG_ice']=seq
+            self.finallist.append(list1)
+        
+        return self.finallist
+    def count_by_dash(self):
+        self.finallist_dash=[]
+        for row in self.finallist.__iter__():
+            seq = row['TG_ice']
+            
+            cut_site = seq.index("|")
+            if int(row['N_gt']) < 0:
+                fist_dash = seq.replace("|","").index("-")
+                dash_len = seq.replace("|","").count("-")
+                dash_start = fist_dash - cut_site + 39 
+                # for some reason, it;s -1
+                dash_range = "(" + str(dash_start - 1) + ","  +str(dash_start + dash_len) + ',' + ")"
+            else:
+                # insertion
+                dash_range = "(38,39," + seq[cut_site+1:cut_site+int(row['N_gt']) +1] + ")"
+            row['Dash_range']=dash_range   
+            self.finallist_dash.append(row)
+        return self.finallist_dash 
+    def read_indel_gen_df(self):
+        """
+        Load indelgentarget predictions into a DataFrame.
+
+        Returns:
+            pd.DataFrame: Columns:
+                - 'Identifier': Unique indel ID
+                - 'n_collapse': Collapsed count
+                - 'loc': Genomic location
+                - 'indelgen_seq': Predicted sequence
+        """
+        self.indel_gen_df = pd.read_csv(
+            self.selftarget,
+            sep='\t',
+            names=['Identifier', 'n_collapse', 'loc', 'indelgen_seq'],
+            skiprows=1
+        )
+        return self.indel_gen_df
+
+    def sanger_training(self):
+        """
+        Integrate decodr results with predicted indels and aggregate frequencies.
+
+        Returns:
+            pd.DataFrame: Aggregated results with columns:
+                - 'Identifier': Matched indel ID
+                - 'N_gt'/'indel_size': Indel size
+                - 'Indelgen_seq': Predicted sequence
+                - 'loc': Genomic location
+                - 'Count': Aggregated frequency
+
+        Outputs:
+            {sanger_dir}/{gene}_SelfTarget.csv: Aggregated results file.
+        """
+        df = pd.DataFrame(self.finallist_dash)
+        df['indel_size'] = df['N_gt']
+        df['not_aligned'] = df['TG_ice'].apply(remove_dash)
+        idf_map = defaultdict(def_value)
+        idf_loc_map = defaultdict(def_value)
+        idf_seq_map = defaultdict(def_value)
+        # Annotate
+        for i, row in df.iterrows():
+            for j, indel_gen_row in self.indel_gen_df.iterrows():
+                if row['Dash_range'] in indel_gen_row['loc']:
+                    idf_map[row['Dash_range']] = indel_gen_row['Identifier']
+                    idf_seq_map[row['Dash_range']] = indel_gen_row['indelgen_seq']
+                    idf_loc_map[row['Dash_range']] = indel_gen_row['loc']
+        df['Identifier'] = df['Dash_range'].map(idf_map)
+        df['Indelgen_seq'] = df['Dash_range'].map(idf_seq_map)
+        df['loc'] = df['Dash_range'].map(idf_loc_map)
+        agg_df = df.groupby(["Identifier", "N_gt", "indel_size", "Indelgen_seq", "loc"]).agg({"ratio": "sum"})
+        if not all(identifier == 'Not Present' for identifier in agg_df['Identifier']):
+            agg_df.rename({"ratio": "Count"}, axis=1).to_csv(pj(self.sanger_dir, f"{self.gene}_SelfTarget.csv"))
+        return agg_df
+ 
+
+def extract_float_values(text: str) -> List[float]:
+    """Extract all float values from a string."""
+    return [float(value) for value in re.findall(r'0\.\d+', text)]
+
+def decide_duplicate(current_files: pd.DataFrame, dfolder: pd.DataFrame) -> Dict[str, str]:
+    """
+    Determine which duplicate files to keep based on their extracted values.
+    
+    Args:
+    current_files: DataFrame 
+        dfolder: DataFrame containing folder information
+        seq: Sequencing type ('Sanger' or other)
+        
+    Returns:
+        Dictionary mapping best file indices to datemarks
+    """
+    
+    results = {}
+    
     for fd in set(dfolder['datemark']):
-        current_check= current_files[current_files.index.str.startswith(fd)]
-        # print(fd, current_check)
-        compare=[]
-        for i in range(current_check.shape[0]):
-            extracted_values = re.findall(r'0\.\d+', current_check['files'][i])
-            extracted_values = [float(value) for value in extracted_values]
-            compare.append(sum(extracted_values))
+        current_check = current_files[current_files.index.str.startswith(fd)]
+        if current_check.empty:
+            continue
+            
+        # Calculate sum of extracted values for each file
+        value_sums = [
+            sum(extract_float_values(file_str))
+            for file_str in current_check['files']
+        ]
+        
+        # Select file with maximum sum
+        best_file = current_check.index[np.argmax(value_sums)]
+        results[best_file] = fd
+        
+        print(f"Selected {best_file} for datemark {fd}")
+    
+    return results   
 
-
-        rts.update({current_check.index[np.argmax(compare)]: fd})
-        print(current_check.index[np.argmax(compare)])
-
-    return rts      
-
-def decide_r2(seq, r2):
-    current_files=pd.read_csv('DEC_sum/SUM_'+seq+'.csv',index_col=0)
+def process_duplicates(num_table: pd.DataFrame, summary: pd.DataFrame) -> List[str]:
+    """
+    Process duplicate files and return clean indices.
+    
+    Args:
+        num_table: DataFrame containing number of counts
+        summary: DataFrame containing folder information
+        
+    Returns:
+        List of clean indices to keep
+    """
+    
+    dup_summ = summary[summary['duplicate'] == 1].copy()
+    dup_summ['datemark'] = dup_summ['folder'].str[:-1]
+    
+    summary = summary.set_index("folder")
+    duplicate_decisions = decide_duplicate(num_table, dup_summ)
+    
+    clean_indices = [
+        f for f in num_table.index
+        if not (summary.loc[f, "duplicate"] and f not in duplicate_decisions)
+    ]
+    
+    return clean_indices
+def decide_r2(current_files, seq, r2):
+    
     rts={}
     remain={}
-
     for i in range(current_files.shape[0]):
-        extracted_values = re.findall(r'0\.\d+', current_files['files'][i])
+        
+        extracted_values = re.findall(r'(?:0\.\d+|1\.0)', current_files['files'][i])
         extracted_values = [float(value) for value in extracted_values]
-        if np.mean(extracted_values)<r2:
+        if np.mean(extracted_values)<=r2:
             rts[current_files.index[i]]=np.mean(extracted_values)
         else:
             remain[current_files.index[i]]=np.mean(extracted_values)
@@ -775,3 +1054,19 @@ def find_pkl_and_evalmouse(temp, modelnote, cells, species, smooth):
     
 
     return perform, ratio_df 
+
+def create(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+    else:
+        shutil.rmtree(path)
+        os.mkdir(path)
+
+def exp_to_guide(filepath):
+    df=pd.read_excel(filepath,index_col=0)
+    return df.to_dict()["Guide Sequence(s)"]
+def guide_to_exp(exp_to_guide):
+    return {e:g for g,e in exp_to_guide.items()}
+
+def def_value(): 
+    return "Not Present"

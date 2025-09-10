@@ -21,9 +21,7 @@ frameshift_912 = np.array([fs%3!=0 for fs in all_frameshift])
 
 # some metrics
 
-# TODO: Topk coarse
-# KL , entropy
-# p_i * |pi-pi^pred| ; weight mean aboslute error
+
 class Topk_Event_Overlapping(torchmetrics.Metric):
     def __init__(self, k):
         """

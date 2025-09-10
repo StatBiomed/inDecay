@@ -94,6 +94,7 @@ class ST_dataset(Dataset):
         y = label_df[self.label_col].values
 
         # self.Identifiers[self.Oligos[i]] = label_df['Identifier']
+        # label_df = label_df.sort_values(self.label_col, ascending=False)
 
         return torch.from_numpy(x5).float(),torch.from_numpy(y).float()
 
@@ -458,10 +459,7 @@ def load_lookup(experiment):
             f.close()
         lookups.append(lookup)
     return lookups
-
-
-
-def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
+def get_Train_Val_Test(df, e, test_oligo_file:str, seed:int=0, threshold=1000, count_predictable=True):
     """
     For all the oligo (guide-target pair) in the dataframe, we first select valid oligos passing the total count threshold.
     Then we 
@@ -475,24 +473,56 @@ def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
         int, random seed 
     threshold:
         int, the threshold for the total count. Only guides passing this threshold will be used in training and testing.
+    count_predictable:
+        bool, wheter we only count reads that are from predictable reads to pass the threshold
     Return
     ---------
     Oligos:
         tuple of list, each list contain the name of oligos. They are return in the order of train, val, test.
     """
+    
     agg_sum_df = df.groupby("OligoID").agg({"Count":"sum"})
     Passed = agg_sum_df.query("`Count` >= @threshold").index
-    print(len(Passed))
+    
+    if count_predictable:
+        if not os.path.exists(f"{PATH.data_dir}/somatic/Real_Passed_"+str(e)+"_"+str(threshold)):
+            Real_Passed=[]
+
+            for OligoID in tqdm(Passed):
+                Guide, refseq, pamsite, Strand = ref_lookup[OligoID]
+                idfgen_file = my_utils.get_indelgen_file(OligoID, Guide)
+                idfgen = pd.read_table(idfgen_file, skiprows=1, names=['Identifier', 'n_coevent', 'loc'])
+                def merging(OligoID,idfgen=idfgen):
+                    oligo_df = df.query("`OligoID` == @OligoID")
+                    label_df = idfgen.merge(oligo_df[['OligoID','Identifier', 'Count']], 
+                                    left_on=['Identifier'], right_on=['Identifier'], suffixes=['', '_filled'], how='left') # type: ignore 
+                    label_df['OligoID']=label_df['OligoID'].fillna(OligoID) # make indels that are not capture with count=0
+                    label_df['Count']=label_df['Count'].fillna(0)
+                    return label_df
+                label_df = merging(OligoID)
+                total_sum = label_df['Count'].sum()
+                if total_sum>=threshold:
+                    Real_Passed.append(OligoID)
+
+            with open(f"{PATH.data_dir}/somatic/Real_Passed_"+str(e)+"_"+str(threshold), "wb") as fp:   #Pickling
+                pkl.dump(Real_Passed, fp)
+        else:
+            with open(f"{PATH.data_dir}/somatic/Real_Passed_"+str(e)+"_"+str(threshold), "rb") as fp:   # Unpickling
+                Real_Passed = pkl.load(fp)
+    else:
+        Real_Passed = Passed
+            
+
     # TEST
     # Test_O_file = os.path.join(PATH.main_dir, "result/test_set_oligo_Feb2.txt")
     Test_Oligos = pd.read_table(test_oligo_file, names=['OligoID'])["OligoID"].values # list of str
     N_test = len(Test_Oligos)
 
-    N_passed_test = np.sum([(oligo in Test_Oligos) for oligo in Passed])
+    N_passed_test = np.sum([(oligo in Test_Oligos) for oligo in Real_Passed])
     print(f"Valid TestSet :{N_passed_test}, {round(N_passed_test/N_test,3)}")
 
     # TRAIN-VAL : the remaining valid guides
-    TrainVal_Oligos = [oligo for oligo in Passed if oligo not in Test_Oligos]
+    TrainVal_Oligos = [oligo for oligo in Real_Passed if oligo not in Test_Oligos]
     empty_oligos = ['Oligo48008','Oligo17384','Oligo33698','Oligo17541','Oligo48644','Oligo17195','Oligo17189','Oligo48756','Oligo18899','Oligo46611','Oligo17887', 'Oligo46958']
     TrainVal_Oligos = [oligo for oligo in TrainVal_Oligos if oligo not in empty_oligos]
 
@@ -504,6 +534,52 @@ def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
     Val_Oligos = TrainVal_Oligos[train_size:]
     
     return Train_Oligos, Val_Oligos, Test_Oligos
+
+
+
+# def get_Train_Val_Test(df, test_oligo_file:str, seed:int=0, threshold=1000):
+#     """
+#     For all the oligo (guide-target pair) in the dataframe, we first select valid oligos passing the total count threshold.
+#     Then we 
+#     Input
+#     ---------
+#     df
+#         pandas.DataFrame: must contain column ["OligoID", "Count"]
+#     test_oligo_fle
+#         str, path of txt. It defines the test set
+#     seed:
+#         int, random seed 
+#     threshold:
+#         int, the threshold for the total count. Only guides passing this threshold will be used in training and testing.
+#     Return
+#     ---------
+#     Oligos:
+#         tuple of list, each list contain the name of oligos. They are return in the order of train, val, test.
+#     """
+#     agg_sum_df = df.groupby("OligoID").agg({"Count":"sum"})
+#     Passed = agg_sum_df.query("`Count` >= @threshold").index
+#     print(len(Passed))
+#     # TEST
+#     # Test_O_file = os.path.join(PATH.main_dir, "result/test_set_oligo_Feb2.txt")
+#     Test_Oligos = pd.read_table(test_oligo_file, names=['OligoID'])["OligoID"].values # list of str
+#     N_test = len(Test_Oligos)
+
+#     N_passed_test = np.sum([(oligo in Test_Oligos) for oligo in Passed])
+#     print(f"Valid TestSet :{N_passed_test}, {round(N_passed_test/N_test,3)}")
+
+#     # TRAIN-VAL : the remaining valid guides
+#     TrainVal_Oligos = [oligo for oligo in Passed if oligo not in Test_Oligos]
+#     empty_oligos = ['Oligo48008','Oligo17384','Oligo33698','Oligo17541','Oligo48644','Oligo17195','Oligo17189','Oligo48756','Oligo18899','Oligo46611','Oligo17887', 'Oligo46958']
+#     TrainVal_Oligos = [oligo for oligo in TrainVal_Oligos if oligo not in empty_oligos]
+
+#     # Split Train Val 
+#     np.random.seed(seed) # setting different seeds among repeats 
+#     np.random.shuffle(TrainVal_Oligos)
+#     train_size = int(len(TrainVal_Oligos)*0.9)
+#     Train_Oligos = TrainVal_Oligos[:train_size]
+#     Val_Oligos = TrainVal_Oligos[train_size:]
+    
+#     return Train_Oligos, Val_Oligos, Test_Oligos
 
     # n_splits=len(genes)
 # def get_Sanger_train_test(genes, seed=0):

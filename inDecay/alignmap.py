@@ -62,15 +62,27 @@ def get_ins_weight_bias():
     global ins_wb
     ins_wb = w1, b1
 
-def del_ins_intercept(guide):
+def del_ins_intercept(guide, weight=None):
     """
     The linear ratio model
     """
     
-    if ins_wb is None:
+    if weight is None:
+        # default weight
         get_ins_weight_bias()
+        w1, b1 = ins_wb
+    
+    elif type(weight) is str:
+        assert os.path.exists(weight)
+        w1, b1 = pkl.load(open(weight, 'rb'))
+    
+    elif type(weight) is tuple:
+        assert len(weight) == 2, "must be two elements : w and bias"
+        w1, b1 = weight
 
-    w1, b1 = ins_wb
+    else:
+        raise ValueError('the given weight is not accurate')
+
     guide_oh = onehotencoder(guide)
     ds_bias, ins_bias = special.softmax(np.dot(guide_oh, w1)+ b1)
     return ds_bias, ins_bias
@@ -587,7 +599,7 @@ def ST_decayfeat_v4(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     distal_mask = get_distal(label_df, cutsite)
     proximal_mask = get_proximal(label_df, cutsite)
 
-    # prior knowledge  
+    # prior knowledge 
     guide = refseq[cutsite-17:cutsite+3]
     guide_gc = compute_gc_ratio(guide)
     
@@ -650,12 +662,36 @@ def ST_decayfeat_v4(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
 
 def ST_decayfeat_v5(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3):
     X4 =  ST_decayfeat_v4(label_df, refseq, cutsite, k1, k2, h)
-
     localseq_oh = one_hot(refseq[cutsite-5:cutsite+4]).flatten()
     seq_oh_matrix = np.stack([localseq_oh]*X4.shape[0])
     X5 = np.concatenate([X4, seq_oh_matrix], axis=1)
 
     return X5
+
+def ST_feat_v5_extend_guide(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3, cell='CHO'):
+    """
+    wrapper of ST feat v5 function, change the del and ins ration to 22bp prediction result
+    """
+
+    # get 
+    X5 = ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
+    extend_guide = refseq[cutsite-18:cutsite+4]
+    # ratio_weight=f"/home/louisayu/ssd/inDecay/pretrained/CHO_C20_ratio_weight.pkl"
+    ratio_weight=f"/home/louisayu/ssd/inDecay/pretrained/{cell}_C20_ratio_weight.pkl"
+    
+    del_intcpt, ins_intcpt = del_ins_intercept(extend_guide, weight=ratio_weight)
+
+    # align intcept by indel type
+    for i,idf in enumerate(label_df['Identifier'].values):
+        
+        indel_type, indel_size,  details, muts  = my_utils.tokFullIndel(idf)
+        if indel_type == 'D':
+            X5[i, 12] = del_intcpt
+        elif indel_type == 'I':
+            X5[i, 18] = ins_intcpt
+    
+    return X5
+
 
 def simple_recut(Y_lookup, pred_lookup, size_allow_recut=1, n_recut=1):
     """

@@ -151,7 +151,7 @@ def tokFullIndel(indel):
     return indel_type[0],isize,details, muts
 
 def get_indelgen_file(OligoID, Guide):
-    indelgen_dir = os.path.join(PATH.data_dir, "Indelgen_result")
+    indelgen_dir = os.path.join(PATH.somatic_dir, "Indelgen_result")
     genindel = os.path.join(indelgen_dir, f"{OligoID}_{Guide}_genindels.txt")
     return genindel
 
