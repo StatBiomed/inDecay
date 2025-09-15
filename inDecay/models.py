@@ -48,47 +48,8 @@ class Topk_Event_Overlapping(torchmetrics.Metric):
 			self.total += 1  # type: ignore
 
 	def compute(self):
-		# print(self.overlap.float() *self.k / self.total)
 		return self.overlap.float() *self.k / self.total  # type: ignore
 	
-
-class Topk_Event_Overlapping_wz(torchmetrics.Metric):
-	def __init__(self, k):
-		"""
-		Metric to quantify the recall of the top 5 frequent events
-		"""
-		super().__init__()
-		self.k = k
-		self.add_state("overlap", default=torch.tensor(0),
-					   dist_reduce_fx="sum")
-		self.add_state("total", default=torch.tensor(0), dist_reduce_fx="sum")
-
-	def update(self, preds: Union[list,torch.Tensor], target: Union[list,torch.Tensor]):
-		# preds, target = self._input_format(preds, target)  # type: ignore
-		# assert len(preds) == len(target)
-
-		if isinstance(preds, torch.Tensor) and (len(target.shape)==1):
-			preds = [preds.squeeze()]
-			target = [target.squeeze()]
-
-		for pred_i, target_i in zip(preds, target):
-
-			assert pred_i.shape == target_i.shape
-			k = self.k if self.k <= target_i.shape[0] else target_i.shape[0]
-
-			pred_idxs = torch.topk(pred_i, k=k, dim=0).indices.cpu().numpy()
-			target_idxs = torch.topk(target_i, k=k, dim=0).indices.cpu().numpy()
-
-			batch_overlap = len(np.intersect1d(pred_idxs, target_idxs))
-			# for i_p, i_t in zip(pred_idxs, target_idxs):
-			#	 batch_overlap += len(np.intersect1d(i_p, i_t))
-
-			self.overlap += batch_overlap  # type: ignore
-			self.total += 1  # type: ignore
-
-	def compute(self):
-		return self.overlap.float() / self.total  # type: ignore
-
 class FrameShift_R2_557(torchmetrics.Metric):
 	def __init__(self):
 		"""
@@ -468,9 +429,7 @@ class Base_del_model(pl.LightningModule):
 
 		L1 = self.compute_L1()
 		L2 = self.compute_L2()
-		# major15=self.compute_major(p_pred, y, 0.15)
-		# major20=self.compute_major(p_pred, y, 0.2)
-		
+
 		if isinstance(y, list):
 			mse = torch.stack([F.mse_loss(pred_i, y_i) for pred_i, y_i in zip(p_pred, y)]).mean()
 			kld = torch.stack([self.train_kld(p.unsqueeze(0) + 1e-14, y_i.unsqueeze(0)+ 1e-14) for p, y_i in zip(p_pred, y)]).mean()
@@ -479,10 +438,8 @@ class Base_del_model(pl.LightningModule):
 			kld = self.train_kld(p_pred+1e-14, y+1e-14)
 		
 		self.top1_recall(p_pred, y)
-		self.top3_recall(p_pred, y)
 		self.top5_recall(p_pred, y)
 		self.top10_recall(p_pred, y)
-		# self.log('my_loss', loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
 		# logging
 		self.log('train_mse', mse, sync_dist=False, batch_size=len(y))
 		self.log('train_cre', cre, sync_dist=False, batch_size=len(y))
@@ -490,11 +447,8 @@ class Base_del_model(pl.LightningModule):
 		self.log('train_L2', L2, sync_dist=False, batch_size=len(y))
 		self.log('train_kld', kld, batch_size=len(y))
 		self.log('train_top1recall', self.top1_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		self.log('train_top3recall', self.top3_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('train_top5recall', self.top5_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		# self.log('train_major15', major15, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		# self.log('train_major20', major20, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		# self.log('train_top10recall', self.top10_recall, batch_size=len(y))
+		self.log('train_top10recall', self.top10_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
 		# the final loss is defined here
 		loss = cre + L1*self.L1_lambda + L2*self.L2_lambda
@@ -510,11 +464,6 @@ class Base_del_model(pl.LightningModule):
 			p_pred = self.forward(X)
 
 		cre = self.compute_Loss(p_pred, train_batch)
-		# major30=self.compute_major(p_pred, y, 0.30)
-		# major25=self.compute_major(p_pred, y, 0.25)
-		# compute all kinds of loss and metrices
-		# if torch.any(y.sum(1) != 1):
-		#	 y = y / y.sum(dim=1, keepdim=True)
 		y = self.normalize_y(y)
 
 		if isinstance(y, list):
@@ -524,7 +473,6 @@ class Base_del_model(pl.LightningModule):
 			mse = F.mse_loss(p_pred.squeeze(), y)
 			kld = self.train_kld(p_pred+1e-14, y+1e-14)
 		self.top1_recall(p_pred, y)
-		self.top3_recall(p_pred, y)
 		self.top5_recall(p_pred, y)
 		self.top10_recall(p_pred, y)
 
@@ -532,12 +480,9 @@ class Base_del_model(pl.LightningModule):
 		self.log('val_mse', mse, batch_size=len(y))
 		self.log('val_cre', cre, batch_size=len(y))
 		self.log('val_kld', kld, batch_size=len(y))
-		# self.log('val_major30', major30, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		# self.log('val_major25', major25, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top1recall', self.top1_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		self.log('val_top3recall', self.top3_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top5recall', self.top5_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		# self.log('val_top10recall', self.top10_recall, batch_size=len(y))
+		self.log('val_top10recall', self.top10_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		return cre
 
 	def predict_step(self, batch, batch_idx):
@@ -1015,118 +960,6 @@ class ST_DeepDecay_r2(ST_DeepDecay):
 		else:
 			raise ValueError("invalid reduce of NLL loss")
 		return cre
-class ST_DeepDecay_count10_r2(ST_DeepDecay):
-	"""
-	reweight sample loss based on decodR/ICE r2 score
-	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
-		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
-
-	def compute_Loss(self, out, batch, reduce='mean'):
-		"""
-		Multi-nomial loss 
-		"""
-
-		y = batch[1]  
-		r2 = batch[2]  
-		count= batch[3]
-		with torch.no_grad():
-			total_count = torch.tensor([counti.sum() for counti in count]).to(count[0].device)
-			count= torch.clamp(total_count/100, min=1.0)
-		if isinstance(y, list):
-			cre_list = []
-			for pred_i, y_i, r2_i, count_i  in zip(out, y, r2, count):
-				# print('count_i:', count_i)   #  iterate over each sample
-				cre_list.append(
-					-1 * count_i* r2_i * torch.multiply(torch.log(pred_i+1e-5), y_i).sum() # neg log likelihood
-					#-1 * r2_i * torch.log(pred_i+1e-5).sum()
-					)
-			cre = torch.stack(cre_list)
-
-		elif isinstance(y, torch.Tensor):
-			cre = torch.sum(-1* torch.multiply(torch.log(out+1e-5),torch.Tensor(count).to(y.device) ))
-		if reduce is None:
-			cre = cre
-		elif reduce == 'mean':
-			cre = cre.mean()
-		elif reduce == 'sum':
-			cre = cre.sum()
-		else:
-			raise ValueError("invalid reduce of NLL loss")
-		return cre
-class ST_DeepDecay_count10(ST_DeepDecay):
-	"""
-	reweight sample loss based on decodR/ICE r2 score
-	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
-		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
-
-	def compute_Loss(self, out, batch, reduce='mean'):
-		"""
-		Multi-nomial loss 
-		"""
-
-		y = batch[1]  
-		count = batch[2]  
-		with torch.no_grad():
-			total_count = torch.tensor([counti.sum() for counti in count]).to(count[0].device)
-			count= torch.clamp(total_count/100, min=1.0)
-		if isinstance(y, list):
-			cre_list = []
-			for pred_i, y_i, count_i in zip(out, y, count):
-				# print('count_i:', count_i)   #  iterate over each sample
-				cre_list.append(
-					-1 * count_i* torch.multiply(torch.log(pred_i+1e-5), y_i).sum() # neg log likelihood
-					#-1 * r2_i * torch.log(pred_i+1e-5).sum()
-					)
-			cre = torch.stack(cre_list)
-
-		elif isinstance(y, torch.Tensor):
-			cre = torch.sum(-1* torch.multiply(torch.log(out+1e-5),torch.Tensor(count).to(y.device) ))
-		if reduce is None:
-			cre = cre
-		elif reduce == 'mean':
-			cre = cre.mean()
-		elif reduce == 'sum':
-			cre = cre.sum()
-		else:
-			raise ValueError("invalid reduce of NLL loss")
-		return cre
-class ST_DeepDecay_mul_r2(ST_DeepDecay):
-	"""
-	reweight sample loss based on decodR/ICE r2 score
-	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
-		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
-
-	def compute_Loss(self, out, batch, reduce='mean'):
-		"""
-		Multi-nomial loss 
-		"""
-		y = batch[1]  
-		r2 = batch[2]  
-		with torch.no_grad():
-			total_count = torch.tensor([yi.sum() for yi in y]).to(y[0].device)
-			count= torch.clamp(total_count/100, min=1.0)
-			# weight /= weight.sum()
-		if isinstance(y, list):
-			cre_list = []
-			for pred_i, y_i, count_i, r2_i in zip(out, y, count, r2):   #  iterate over each sample
-				cre_list.append(-1 * r2_i * torch.multiply(torch.log(pred_i+1e-5), torch.div(y_i, count_i)).sum() )
-			cre = torch.stack(cre_list)
-
-		elif isinstance(y, torch.Tensor):
-			cre = torch.sum(-1* torch.multiply(torch.log(out+1e-5), torch.div(y, count)) * torch.Tensor(r2).to(y.device) )
-		if reduce is None:
-			cre = cre
-		elif reduce == 'mean':
-			cre = cre.mean()
-		elif reduce == 'sum':
-			cre = cre.sum()
-		else:
-			raise ValueError("invalid reduce of NLL loss")
-		return cre
-
 
 class ST_DeepDecay_weight(ST_DeepDecay_dropout):
 	"""
@@ -1152,29 +985,6 @@ class ST_DeepDecay_weight(ST_DeepDecay_dropout):
 		loss = torch.multiply(cre, weight).sum() / weight.sum()
 		return loss 
 	
-class ST_DeepDecay_noT(Base_del_model):
-	"""
-	inDecay's MLP model
-	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1):
-		super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda)
-		self.lr = lr
-		layer_size = [inputsize] + hidden 
-		layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
-				for din, dout in zip(layer_size[:-1] , layer_size[1:])]
-		layer_ls += [nn.Linear(hidden[-1],1)]
-		self.del_regressor = nn.Sequential(*layer_ls)
-
-
-		self.l1_crit = nn.L1Loss(size_average=False) 
-		self.train_kld = torchmetrics.KLDivergence()
-		self.val_kld = torchmetrics.KLDivergence()
-	
-	def forward(self, x):
-		Out = self.del_regressor(x) # [b, N_indel, 3633] -> [b, N_indel,1]
-		y_pred = torch.softmax(Out.squeeze(), dim=0)
-		return y_pred
-
 class ST_DeepDecay_Multinomial(ST_DeepDecay_noT):
 	"""
 	DeepDecay with Multinomial loss
