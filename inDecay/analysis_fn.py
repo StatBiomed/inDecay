@@ -75,43 +75,6 @@ def topk_recall_fn(x, y, k, reduction='mean'):
             top = top.item()
     return top
 
-
-import numpy as np
-from functools import partial
-
-# def topk_kendall(x, y, k, reduction='mean'):
-    
-#     # Pad if needed
-#     if x.shape[0] < k:
-#         to_pad = k - x.shape[0]
-#         x = np.concatenate([x, np.zeros(to_pad)], axis=0)
-#         y = np.concatenate([y, np.zeros(to_pad)], axis=0)
-
-#     fn = partial(topk_kendall_fn, k=k, reduction=reduction)
-#     top = fn(x, y)
-
-#     if hasattr(top, '__iter__') and not isinstance(top, (str, bytes, np.ndarray)):
-#         # In practice, probably better to explicitly check for list/tuple
-#         if len(top) == 1:
-#             top = top[0]
-#     elif isinstance(top, np.ndarray) and top.size == 1:
-#         top = top.item()
-#     return top
-
-# def topk_kendall(x,y,k, reduction='mean'):
-#     if x.shape[1] < k:
-#         to_pad = k - x.shape[1]
-#         x = np.concatenate([x, np.zeros((1,to_pad))], axis=1)
-#         y = np.concatenate([y, np.zeros((1,to_pad))], axis=1)
-
-#     fn = partial(topk_kendall_fn, k=k, reduction=reduction)
-
-#     top = fn(x,y)
-#     if "__iter__" in dir(top):
-#         if len(top) == 1:
-#             top = top.item()
-#     return top
-
 def topk_kendall(x,y,k, reduction='mean'):
     if x.shape[1] < k:
         k= x.shape[1]
@@ -134,30 +97,6 @@ def topk_kendall_fn(x, y, k, reduction='mean'):
     rank_y = [[list(idx_yi).index(i)+1 if i in idx_yi else k+1 for i in combined_indices] for idx_yi in idx_y]
     tau, _ = kendalltau(rank_x, rank_y)
     return tau
-
-# Usage:
-# x = np.array([5,3,1,4])
-# y = np.array([2,8,6,1])
-# print(topk_kendall(x, y, k=3))
-
-# def topk_kendall_fn(x, y, k, reduction='mean'):
-#     x_top_idx = x.argpartition(-1*k, axis=1)[:,-1*k:]
-#     y_top= y[:, x_top_idx[0]]
-#     x_top= x[:, x_top_idx[0]]
-#     # print("x:",x_top,"y:",y_top)
-#     Ktau, p = kendalltau(x_top, y_top)
-
-#     if reduction == 'mean':
-#         tau = np.mean(Ktau)
-#     elif reduction == 'sum':
-#         tau = np.sum(Ktau)
-#     elif reduction == 'none':
-#         tau = np.array(Ktau)
-#     else:
-#         raise ValueError("Invalid argument for reduction")
-#     return tau
-
-
 def kld_fn(x, y, reduction='mean'):
     X = torch.from_numpy(x+1e-8)
     Y = torch.from_numpy(y+1e-8)
@@ -167,22 +106,32 @@ def kld_fn(x, y, reduction='mean'):
         return kld_instance(X,Y).numpy().item()
     else:
         return kld_instance(X,Y).numpy()
-
 def forecast_frameshift(ya, pre, indels):
-    if '_' in indels[0]:
-        indel_lengths = [tokFullIndel(idfr)[1] for idfr in indels] # ForeCast's func for getting indel length
-    else: 
-        indel_lengths = [int(idfr[1:]) for idfr in indels]
+    if len(indels) >1: 
+        indel_lengths = [tokFullIndel(idfr)[1] if '_' in idfr else int(idfr[1:]) for idfr in indels] # ForeCast's func for getting indel length
+    else:
+        indel_lengths = [tokFullIndel(idfr)[1] for idfr in indels[0]] # ForeCast's func for getting indel length
     is_frameshift = [idl%3!=0 for idl in indel_lengths]      #  mod 3 != 0
     
     y_fs = ya @ is_frameshift
     pred_fs = pre @ is_frameshift
     
     return y_fs[0], pred_fs[0]
+# def forecast_frameshift(ya, pre, indels):
+#     indel_lengths = [tokFullIndel(idfr)[1] for idfr in indels[0]] # ForeCast's func for getting indel length
+#     is_frameshift = [idl%3!=0 for idl in indel_lengths]      #  mod 3 != 0
+    
+#     y_fs = ya @ is_frameshift
+#     pred_fs = pre @ is_frameshift
+    
+#     return y_fs[0], pred_fs[0]
 
 def forecast_delratio(ya, pre, indels):
-    
-    is_del = [idl.startswith('D') for idl in indels]      #  mod 3 != 0
+    if len(indels) >1: 
+        indel_lengths = [tokFullIndel(idfr)[0] if '_' in idfr else idfr[0] for idfr in indels] # ForeCast's func for getting indel length
+    else:
+        indel_lengths = [tokFullIndel(idfr)[0] for idfr in indels[0]] # ForeCast's func for getting indel length
+    is_del = [idl.startswith('D') for idl in indel_lengths]      #  mod 3 != 0
     
     y_fs = ya @ is_del
     pred_fs = pre @ is_del
@@ -190,7 +139,7 @@ def forecast_delratio(ya, pre, indels):
     return y_fs[0], pred_fs[0]
 def major_events_recall_ratio(x: np.ndarray, 
                              y: np.ndarray, 
-                             thre: float = 0.25, 
+                             thre: float = 0.15, 
                              reduction: str = 'mean') -> float | np.ndarray:
     """
     Calculate overlap ratio between indices of elements > threshold in x and y for each row.
@@ -286,7 +235,7 @@ def assessment_recipe_forecast_zygote(
             metrics = {name: topk_recall_fn(y, pred, k, reduction) 
                        for name, k in zip(metrics_name, top_metric)}
             metrics['KL Divergence'] = kld_fn(y, pred, reduction)
-            # metrics['Top1 major event recall'] =top1_recall_major(y, pred)
+
             for thre in major_metric:
                 per_model_major_metric[(model, thre)].append(
                     major_events_recall_ratio(y, pred, thre, reduction)
@@ -320,7 +269,7 @@ def assessment_recipe_forecast_zygote(
         for thre in major_metric:
             major_key = f'Major({thre}) event recall'
             vals = per_model_major_metric[(model, thre)]# Complete solution with error handling
-            flat_vals = np.array([float(x) if np.isscalar(x) else x.item() for x in vlist])
+            flat_vals = np.array([float(x) if np.isscalar(x) else x.item() for x in vals])
             res[major_key] = reduction_fn(flat_vals) if reduction != 'none' else vals
         
         res['OligoID'] = per_model_oligoid[model]
@@ -344,7 +293,6 @@ def assessment_recipe_forecast_zygote(
 def transform_r2(x,y, transform_matrix): 
     X = x @ transform_matrix
     Y = y @ transform_matrix
-    print(x,y,pearsonr(X,Y)[0])
     return pearsonr(X,Y)[0]**2
 
 def assessment_recipe_32IDL(
@@ -353,7 +301,7 @@ def assessment_recipe_32IDL(
     major_metric=[0.25], tau_metric=[3,5],
     class_names=None):
     """
-    Compute 41-binned IDL metrics for each sample/model.
+    Compute 32-binned IDL metrics for each sample/model in zygote forecast.
     Arguments:
         df_lookup: dict of DataFrames, indexed by oligo.
         reduction: string, reduction method ('mean', 'sum', 'none').
@@ -393,8 +341,6 @@ def assessment_recipe_32IDL(
             
             # KLD
             kld = kld_fn(Ytrue_IDL, Ypred_IDL, reduction=reduction)
-            y_major, pred_major = major_events(Ytrue_IDL, Ypred_IDL)
-            # Cos = cosine_similarity(y_major, pred_major)
 
             # Top-k overlaps and errors
             metrics = {name: topk_recall_fn(Ytrue_IDL, Ypred_IDL, k, reduction) 
@@ -406,24 +352,11 @@ def assessment_recipe_32IDL(
             for t in tau_metric:
                 metrics[f'Kendall_Top{t}_IDL'] = topk_kendall(Ytrue_IDL, Ypred_IDL, t, reduction)
 
-
-            # Deletion ratio R²
-            # # try:
-            # Del_transform = Indel_Len_to_InDel_ratio()[:,0]
-            # print("Ytrue_IDL[0], Ypred_IDL[0]", Indel_IDL, Ytrue_IDL.shape, Ypred_IDL.shape)
-            # del_r2 = transform_r2(Ytrue_IDL[0], Ypred_IDL[0], Del_transform)
-            
-            # except Exception:
-            #     del_r2 = float('nan')
-
-            # Kendall's tau
             Ktau, _ = kendalltau(Ytrue_IDL, Ypred_IDL)
 
             # Collect for model
             per_model_oligoid[model].append(oligo)
             per_model_metrics[model]['KLD_IDL'].append(kld)
-            # per_model_metrics[model]['CosineSimilarity_IDL'].append(Cos if np.isscalar(Cos) else Cos[0][0])
-            # per_model_metrics[model]['delratio_r2_IDL'].append(del_r2)
             per_model_metrics[model]['Kendall_tau_IDL'].append(Ktau)
             for k, v in metrics.items():
                 per_model_metrics[model][k].append(v)
@@ -447,7 +380,7 @@ def assessment_recipe_32IDL(
 
 def assessment_recipe_forecast(Y_lookup, pred_lookup, reduction='mean'):
     """
-    This function compute the metrics for every samples
+    This function compute the metrics for somatic samples from qrguide
     """
 
     metrics_fn = [kld_fn, top1_recall_fn, top5_recall_fn, top10_recall_fn]
@@ -457,7 +390,6 @@ def assessment_recipe_forecast(Y_lookup, pred_lookup, reduction='mean'):
     pred_framshift = []
     y_delratio = []
     pred_delratio = []
-    cal_Cos=[]
     assert len(Y_lookup) == len(pred_lookup), "samples are not matched"
     for oligo, Y in Y_lookup.items():
         
@@ -492,11 +424,10 @@ def assessment_recipe_forecast(Y_lookup, pred_lookup, reduction='mean'):
         perform_json = perform_df[metrics_name].mean(axis=0).to_dict()
     else:
         perform_json = {col:perform_df[col].values for col in perform_df.columns}
-    
     r = pearsonr(perform_df['Rep1_frameshift'].values, perform_df['Pred_frameshift'].values)[0]
 
-    perform_json['Rep1_frameshift']= perform_df['Rep1_frameshift'].values
-    perform_json['Pred_frameshift']= perform_df['Pred_frameshift'].values
+    perform_json['Rep1_frameshift']= perform_df['Rep1_frameshift'].values.tolist()
+    perform_json['Pred_frameshift']= perform_df['Pred_frameshift'].values.tolist()
     perform_json['R2 of Frameshift ratio'] = r**2
 
     Coll_I_TopK = Forecast_collapse_Ins_TopK(Y_lookup, pred_lookup, reduction=reduction)
@@ -514,6 +445,7 @@ def Forecast_collapse_Ins_TopK(Y_lookup, pred_lookup, reduction='mean'):
     """
     top_1_ls = []
     major25ls= []
+    major15ls = []
     top_5_ls = []
     top_10_ls = []
     top_5_tau = []
@@ -529,26 +461,30 @@ def Forecast_collapse_Ins_TopK(Y_lookup, pred_lookup, reduction='mean'):
         collapse_ins_df = Y_df.groupby("Collapse_ins").agg({'Probability':'sum', 'Predicted':'sum'})
         coll_y = collapse_ins_df.values[:,[0]].T
         coll_pred = collapse_ins_df.values[:,[1]].T
-        if major_events_recall_ratio(coll_y, coll_pred, 0.25, reduction)!='nan':
-            major25ls.append(major_events_recall_ratio(coll_y, coll_pred, 0.15, reduction))
         top_1_ls.append( top1_recall_fn(coll_y, coll_pred, reduction) )
         top_5_ls.append( top5_recall_fn(coll_y, coll_pred, reduction) )
         top_10_ls.append( top10_recall_fn(coll_y, coll_pred, reduction) )
         top_5_tau.append( topk_kendall_fn(coll_y, coll_pred, 5, reduction='mean'))
         top_10_tau.append( topk_kendall_fn(coll_y, coll_pred, 10, reduction='mean'))
+        major25ls.append( major_events_recall_ratio(coll_y, coll_pred, 0.25, reduction))
+        major15ls.append( major_events_recall_ratio(coll_y, coll_pred, 0.15, reduction))
+        
 
     if reduction != 'none':
-        reduction_fn = eval(f"np.{reduction}")
+        reduction_fn = getattr(np, f"nan{reduction}")
         
         top_1_ls = reduction_fn(top_1_ls)
         top_5_ls = reduction_fn(top_5_ls)
         top_10_ls = reduction_fn(top_10_ls)
-        major25ls = reduction_fn(major25ls)
+        uniform_list = [x.item() if hasattr(x, 'item') else x for x in major25ls]
+        major25_ls = reduction_fn(uniform_list)
+        uniform_list = [x.item() if hasattr(x, 'item') else x for x in major15ls]
+        major15_ls = reduction_fn(uniform_list)
         top_5_tau = reduction_fn(top_5_tau)
         top_10_tau = reduction_fn(top_10_tau)
 
 
-    return {"Top5 events tau": top_5_tau,"Top10 events tau": top_10_tau, "Coll_I_Top1": top_1_ls,"Coll_I_Top5": top_5_ls, "Coll_I_Top10":top_10_ls, "Major0.25": major25ls}
+    return {"Top5 events tau": top_5_tau,"Top10 events tau": top_10_tau, "Coll_I_Top1": top_1_ls,"Coll_I_Top5": top_5_ls, "Coll_I_Top10":top_10_ls,"Major(0.15) event recall": major15_ls, "Major(0.25) event recall": major25_ls}
 
 
 def top1_recall_fn(x,y,reduction='mean'):
@@ -593,50 +529,6 @@ def top10_recall_fn(x,y,reduction='mean'):
             top10 = top10.item()
     return top10
 
-# def top10_kendall(x,y, reduction='mean'):
-#     if x.shape[1] < 10:
-#         to_pad = 10 - x.shape[1]
-#         x = np.concatenate([x, np.zeros((1,to_pad))], axis=1)
-#         y = np.concatenate([y, np.zeros((1,to_pad))], axis=1)
-
-#     fn = partial(topk_kendall, k=10, reduction=reduction)
-
-#     top10 = fn(x,y)
-#     if "__iter__" in dir(top10):
-#         if len(top10) == 1:
-#             top10 = top10.item()
-#     return top10
-
-# def top5_kendall(x,y, reduction='mean'):
-#     if x.shape[1] < 5:
-#         to_pad = 5 - x.shape[1]
-#         x = np.concatenate([x, np.zeros((1,to_pad))], axis=1)
-#         y = np.concatenate([y, np.zeros((1,to_pad))], axis=1)
-
-#     fn = partial(topk_kendall, k=5, reduction=reduction)
-
-#     top5 = fn(x,y)
-#     if "__iter__" in dir(top5):
-#         if len(top5) == 1:
-#             top5 = top5.item()
-#     return top5
-
-# def topk_kendall(x, y, k, reduction='mean'):
-#     x_top_idx = x.argpartition(-1*k, axis=1)[:,-1*k:]
-#     y_top= y[:, x_top_idx[0]]
-#     x_top= x[:, x_top_idx[0]]
-#     # print("x:",x_top,"y:",y_top)
-#     Ktau, p = kendalltau(x_top, y_top)
-
-#     if reduction == 'mean':
-#         tau = np.mean(Ktau)
-#     elif reduction == 'sum':
-#         tau = np.sum(Ktau)
-#     elif reduction == 'none':
-#         tau = np.array(Ktau)
-#     else:
-#         raise ValueError("Invalid argument for reduction")
-#     return Ktau
 def assessment_recipe_41IDL(Ytrue_IDL, Ypred_IDL, class_names, reduction='mean'):
     
     if Ytrue_IDL.shape[1] in [557, 912]:
@@ -653,7 +545,6 @@ def assessment_recipe_41IDL(Ytrue_IDL, Ypred_IDL, class_names, reduction='mean')
         assert Ypred_IDL.shape[1] == 41
 
     kld = kld_fn(Ytrue_IDL, Ypred_IDL, reduction=reduction)
-    Cos = cosine_similarity(Ytrue_IDL, Ypred_IDL)
     # overlapping of most frequent events
     top10_overlap = top10_recall_fn(Ytrue_IDL, Ypred_IDL, reduction=reduction)
     top5_overlap = top5_recall_fn(Ytrue_IDL, Ypred_IDL, reduction=reduction)
@@ -681,7 +572,47 @@ def assessment_recipe_41IDL(Ytrue_IDL, Ypred_IDL, class_names, reduction='mean')
         "Kendall_tau_IDL":Ktau
     }
     return metric_dict
+def assessment_recipe_41IDL_forecast(Y_lookup, pred_lookup, reduction='mean'):
+    """
+    convert Y lookup to 41 dimension Indel size distribution
+    then assess several metrices in somatic
+    """
 
+    Ytrue_IDL,  Ypred_IDL = Indel_Len_Distribution_All(Y_lookup, pred_lookup)
+
+    Ytrue_IDL = Ytrue_IDL.astype(float)
+    Ypred_IDL = Ypred_IDL.astype(float)
+
+    metrics_dict = assessment_recipe_41IDL(Ytrue_IDL, Ypred_IDL, class_557, reduction=reduction)
+    return metrics_dict
+def Indel_Len_Distribution_All(Y_lookup, Pred_lookup, Oligos=None):
+    """
+    Get Indel length distribution for all testset Oligos in the lookup objects.
+    Input
+    --------
+    Y_lookup : dict, oligo -> ndarray of shape (n,2). [[Identifier name, frequency]]. The lookup item storing true labels with identifiers.
+    Pred_lookup : dict, oligo -> ndarray of shape (1,n). The lookup item storing predicted values. [1, frequency]. 
+    
+    Return
+    --------
+    M_IDLen : Matrix of Indel Length distribution. (1133, 41). The indel is ordered like : Deltion [0-37] | Insertion [38-40].
+    """
+    # use parital func to fix two params
+    IDLen_of_ = partial(Indel_Len_Transform, Y_lookup=Y_lookup, Pred_lookup=Pred_lookup)
+
+    # oligos orders
+    Oligos = list(Y_lookup.keys()) if Oligos is None else Oligos
+
+    list_IDLen_true = []
+    list_IDLen_pred = []
+    for oligo in Oligos:
+        M_IDLen_true, M_IDLen_pred = IDLen_of_(Oligo=oligo)
+        list_IDLen_true.append( M_IDLen_true ) 
+        list_IDLen_pred.append( M_IDLen_pred )
+    list_IDLen_true = np.stack(list_IDLen_true) 
+    list_IDLen_pred = np.stack(list_IDLen_pred) 
+
+    return list_IDLen_true, list_IDLen_pred
 
 def Fix_class_W1_distance(Y1, Y2, reduction='mean'):
     """

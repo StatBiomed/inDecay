@@ -267,7 +267,7 @@ class Base_del_model(pl.LightningModule):
 	"""
 	The base pl model that takes in (x), y , c and then predict the probabity
 	Args:
-	T : temporature of the softmax function
+	T : temperature of the softmax function
 	lr : learning, 
 	L1_lambda : L1 regularization loss,
 	L2_lambda : L2 regularization loss,
@@ -275,7 +275,7 @@ class Base_del_model(pl.LightningModule):
 	optim_class : str, the class of optimizer
 	"""
 
-	def __init__(self, T = 0.5,  lr: Union[float, int] = 3e-4, L1_lambda: float = 0, L2_lambda: float = 1e-9, renormalize_thres:float = 0.05, optim_class="Adam"):
+	def __init__(self, T : float = 1.0,  lr: Union[float, int] = 3e-4, L1_lambda: float = 0, L2_lambda: float = 1e-9, renormalize_thres:float = 0.0, optim_class="Adam"):
 		super().__init__()
 		self.save_hyperparameters()
 		self.T = T
@@ -345,7 +345,7 @@ class Base_del_model(pl.LightningModule):
 		return cre
 	
 
-	def compute_major(self, y, out, thre=0.15, reduction='mean'):
+	def compute_major(self, y, out, thre=0.25, reduction='mean'):
 		"""
 		Compute the recall ratio of major events (values >= thre) in y and out.
 		Args:
@@ -468,8 +468,8 @@ class Base_del_model(pl.LightningModule):
 
 		L1 = self.compute_L1()
 		L2 = self.compute_L2()
-		major15=self.compute_major(p_pred, y, 0.15)
-		major20=self.compute_major(p_pred, y, 0.2)
+		# major15=self.compute_major(p_pred, y, 0.15)
+		# major20=self.compute_major(p_pred, y, 0.2)
 		
 		if isinstance(y, list):
 			mse = torch.stack([F.mse_loss(pred_i, y_i) for pred_i, y_i in zip(p_pred, y)]).mean()
@@ -492,8 +492,8 @@ class Base_del_model(pl.LightningModule):
 		self.log('train_top1recall', self.top1_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('train_top3recall', self.top3_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('train_top5recall', self.top5_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		self.log('train_major15', major15, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		self.log('train_major20', major20, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
+		# self.log('train_major15', major15, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
+		# self.log('train_major20', major20, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		# self.log('train_top10recall', self.top10_recall, batch_size=len(y))
 
 		# the final loss is defined here
@@ -510,8 +510,8 @@ class Base_del_model(pl.LightningModule):
 			p_pred = self.forward(X)
 
 		cre = self.compute_Loss(p_pred, train_batch)
-		major30=self.compute_major(p_pred, y, 0.30)
-		major25=self.compute_major(p_pred, y, 0.25)
+		# major30=self.compute_major(p_pred, y, 0.30)
+		# major25=self.compute_major(p_pred, y, 0.25)
 		# compute all kinds of loss and metrices
 		# if torch.any(y.sum(1) != 1):
 		#	 y = y / y.sum(dim=1, keepdim=True)
@@ -532,8 +532,8 @@ class Base_del_model(pl.LightningModule):
 		self.log('val_mse', mse, batch_size=len(y))
 		self.log('val_cre', cre, batch_size=len(y))
 		self.log('val_kld', kld, batch_size=len(y))
-		self.log('val_major30', major30, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
-		self.log('val_major25', major25, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
+		# self.log('val_major30', major30, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
+		# self.log('val_major25', major25, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top1recall', self.top1_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top3recall', self.top3_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 		self.log('val_top5recall', self.top5_recall, batch_size=len(y), on_step=False, on_epoch=True, prog_bar=True, logger=True)
@@ -541,7 +541,7 @@ class Base_del_model(pl.LightningModule):
 		return cre
 
 	def predict_step(self, batch, batch_idx):
-		X, y = batch[:2]
+		X, y = batch
 		p_pred = [self.forward(x).unsqueeze(0) for x in X]
 		return p_pred
 
@@ -873,10 +873,11 @@ class ST_DeepDecay(Base_del_model):
 	"""
 	inDecay's MLP model
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=0.5, renormalize_thres=0.05):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0):
 		super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 		self.lr = lr
 		self.T = T
+		
 		layer_size = [inputsize] + hidden 
 		layer_ls = [nn.Sequential(nn.Linear(din, dout, bias=True), nn.Mish())
 				for din, dout in zip(layer_size[:-1] , layer_size[1:])]
@@ -897,7 +898,7 @@ class ST_delfeat_DeepDecay(ST_DeepDecay):
 	"""
 	DeepDecay multi-ev model
 	"""
-	def __init__(self, del_feat, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, renormalize_thres=0.05):
+	def __init__(self, del_feat, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, renormalize_thres=0.0):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda, renormalize_thres=renormalize_thres)
 
 		# deletion model
@@ -946,7 +947,7 @@ class ST_DeepDecay_mul(ST_DeepDecay):
 	"""
 	repeat model
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.05):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 
 	def compute_Loss(self, out, batch, reduce='mean'):
@@ -1018,7 +1019,7 @@ class ST_DeepDecay_count10_r2(ST_DeepDecay):
 	"""
 	reweight sample loss based on decodR/ICE r2 score
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.05):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 
 	def compute_Loss(self, out, batch, reduce='mean'):
@@ -1057,7 +1058,7 @@ class ST_DeepDecay_count10(ST_DeepDecay):
 	"""
 	reweight sample loss based on decodR/ICE r2 score
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.05):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 
 	def compute_Loss(self, out, batch, reduce='mean'):
@@ -1095,7 +1096,7 @@ class ST_DeepDecay_mul_r2(ST_DeepDecay):
 	"""
 	reweight sample loss based on decodR/ICE r2 score
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.05):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1, renormalize_thres=0.0):
 		super().__init__(inputsize=inputsize, outputsize=outputsize, hidden=hidden, lr=lr,L1_lambda=L1_lambda,L2_lambda=L2_lambda, T=T, renormalize_thres=renormalize_thres)
 
 	def compute_Loss(self, out, batch, reduce='mean'):
@@ -1155,7 +1156,7 @@ class ST_DeepDecay_noT(Base_del_model):
 	"""
 	inDecay's MLP model
 	"""
-	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=0.5):
+	def __init__(self, inputsize=9, outputsize=1, hidden=[16], lr=3e-4, L1_lambda=3e-4, L2_lambda=3e-4, T=1):
 		super().__init__(lr=lr, L1_lambda=L1_lambda, L2_lambda=L2_lambda)
 		self.lr = lr
 		layer_size = [inputsize] + hidden 
