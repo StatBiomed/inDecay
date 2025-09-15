@@ -8,7 +8,6 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning import callbacks 
 import pickle as pkl
-# from models. import Base_del_model, ST_Decay, ST_DeepDecay, ST_Decay_Scaler, ST_DeepDecay_dropout, ST_DeepDecay_Multinomial
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
@@ -369,6 +368,7 @@ if __name__ == "__main__":
     
     if to_baseline:
         #  to generate baseline for the pretrained model
+        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         pmodel = model_class.load_from_checkpoint(args.Pretrain)
         pmodel.eval()
         predict_y = trainer.predict(pmodel, Test_DL)

@@ -140,16 +140,8 @@ def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix
     date = time.strftime("%b%d")
 
     performance_json={}
-    performs= []
-    perform_IDLs= []
-    for oligo, df_raw in df_lookup.items():
-
-        perform= analysis_fn.assessment_recipe_forecast(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
-        perform_IDL = analysis_fn.assessment_recipe_41IDL(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
-        performs.append(perform['predict'])
-        perform_IDLs.append(perform_IDL['predict'])
-    performance_json.update(mean_numeric_dict(performs))
-    performance_json.update(mean_numeric_dict(perform_IDLs))
+    performance_json.update(analysis_fn.assessment_recipe_forecast(Y_lookup, pred_lookup))
+    performance_json.update(analysis_fn.assessment_recipe_41IDL_forecast(Y_lookup, pred_lookup))
     performance_json['End_date'] = time.strftime("%b%d-%H:%-M")
     performance_json['ckpt_path'] = ckpt_abspath
     
@@ -166,8 +158,6 @@ def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix
     # save the metrics
     result_dir = f"{PATH.main_dir}/results/Transfer/C{args.read_cutoff}/{date}_V{args.Val_size}_{args.Model_Class}_{Cellline}_{L2_Lambda}_randinit/" 
     
-    # if not os.path.exists(os.path.dirname(result_dir)):
-    #     os.mkdir(os.path.dirname(result_dir))
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
 
@@ -181,72 +171,23 @@ def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix
         while os.path.exists(json_path):
             json_path = pj(result_dir, f"N{args.N_Finetune}-{date}_r{re}.json")
             re += 1
+    new_performance_json = performance_json.copy()
 
+    array_data = {}
+    for key in ['Rep1_frameshift', 'Pred_frameshift']:
+        if key in new_performance_json:
+            array_data[key] = new_performance_json.pop(key)
+    new_performance_json.update(array_data)
     with open(json_path, "w") as write_file:
-        json.dump(performance_json, write_file, indent=4)
+        json.dump(new_performance_json, write_file, indent=4)
     
     print("\n"+"="*20)
     print("performance json saved to %s" %json_path)
     print("="*20)
 
-# def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix=""):
-    
-#     date = time.strftime("%b%d")
-#     df_lookup= transform_pkl(model='predict',Y_lookup=Y_lookup, pred_lookup= pred_lookup )
-
-#     performance_json={}
-#     performs= []
-#     perform_IDLs= []
-#     for oligo, df_raw in df_lookup.items():
-
-#         perform= analysis_fn.assessment_recipe_forecast(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
-#         perform_IDL = analysis_fn.assessment_recipe_41IDL(df_lookup={oligo: df_raw},top_metric=[5,10], tau_metric=[5,10])
-#         performs.append(perform['predict'])
-#         perform_IDLs.append(perform_IDL['predict'])
-#     performance_json.update(mean_numeric_dict(performs))
-#     performance_json.update(mean_numeric_dict(perform_IDLs))
-#     performance_json['End_date'] = time.strftime("%b%d-%H:%-M")
-#     performance_json['ckpt_path'] = ckpt_abspath
-    
-#     L1_Lambda = args.L1_Lambda
-#     L2_Lambda = args.L2_Lambda
-    
-#     # # model params 
-#     training_params = {}
-#     for pm in ["ndel", "nins", "nshare", "k1", "k2", "h", "hidden", "L2_Lambda", "L1_Lambda", "lr", "args.Fix_params"]:
-#         training_params[pm] = eval(pm)
-
-#     performance_json['training_params'] = training_params
-    
-#     # save the metrics
-#     result_dir = f"{PATH.main_dir}/results/Transfer/C{args.read_cutoff}/{date}_V{args.Val_size}_{args.Model_Class}_{Cellline}_{L2_Lambda}_randinit/" 
-    
-#     # if not os.path.exists(os.path.dirname(result_dir)):
-#     #     os.mkdir(os.path.dirname(result_dir))
-#     if not os.path.exists(result_dir):
-#         os.makedirs(result_dir)
-
-#     if prefix == "":
-#         json_path = pj(result_dir, f"N{args.N_Finetune}-{date}.json")
-#     else:
-#         json_path = pj(result_dir, f"{prefix}-{date}.json")
-
-#     re = 1
-#     if prefix == "":
-#         while os.path.exists(json_path):
-#             json_path = pj(result_dir, f"N{args.N_Finetune}-{date}_r{re}.json")
-#             re += 1
-
-#     with open(json_path, "w") as write_file:
-#         json.dump(performance_json, write_file, indent=4)
-    
-#     print("\n"+"="*20)
-#     print("performance json saved to %s" %json_path)
-#     print("="*20)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("The script to extract SelfTarget proccessed txt file and map to Lindel classes")
-    # parser.add_argument("--Set", required=True, type=str, help="either `TestSet1` or `TestSet2`")
     parser.add_argument("-E","--experiment", type=str, required=True, help='The dir name of dataset')
     parser.add_argument("-C","--read_cutoff", type=int, default=100, help='The threshold of total count. Only Guides having total read count over this threshold are used')
     parser.add_argument("-T","--test_oligos", type=str, default="results/test_set_oligo_Feb2.txt", help='The file deciding which oligos are used in the training set')
@@ -342,14 +283,6 @@ if __name__ == "__main__":
 
         random.seed(np.random.randint(0,1000))
         Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
-
-        # if finetune_set in Finetune_df.columns:
-        #     Finetune_Oligos = Finetune_df.query('`%s` == True'%finetune_set).index    # finetune oligos
-        # else:
-        #     Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
-            # Finetune_df[f'FinetuneSet_n{size}'] = Finetune_df.index.isin(Finetune_Oligos)
-        #     Finetune_df.to_csv(f"{PATH.main_dir}/results/Finetune_OligoIndex_Jul19.csv", index=True)
-
 
 
     # train-val for finetuning
@@ -450,6 +383,7 @@ if __name__ == "__main__":
 
     # only save once for Y
     if to_write_y:
+        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         if not os.path.exists(Forecast_Y):
             get_identifiers = lambda oligo : read_data(oligo, processed_df, experiments)[['Identifier', 'Frac Sample Reads']].values
 
@@ -467,6 +401,7 @@ if __name__ == "__main__":
         # if args.Pretrain is not None:
         #     ckpt_abspath = os.path.join(PATH.main_dir, args.Pretrain)
         # else:
+        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         ckpt_abspath = my_utils.find_ckpt(pj(pth_save_path, 'lightning_logs'))
         assert os.path.exists(ckpt_abspath)
 
@@ -496,7 +431,7 @@ if __name__ == "__main__":
 
     if to_baseline:
         #  to generate baseline for the pretrained model
-
+        Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
         pmodel = model_class.load_from_checkpoint(args.Pretrain)
 
         pmodel.eval()
@@ -514,8 +449,6 @@ if __name__ == "__main__":
 
 
         ## evaluate in the test set
-    
-        
         f = open(Forecast_Y, 'rb')
         Y_lookup = pkl.load(f)  # forecast : ST
         f.close()
