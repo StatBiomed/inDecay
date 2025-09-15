@@ -1,0 +1,21 @@
+,variable,model,value
+0,KLD_IDL,FORECasT,0.9591994848516252
+1,KLD_IDL,Lindel,2.09132538901435
+2,KLD_IDL,fewshot,0.5874713708957037
+3,KLD_IDL,inDelphi,0.9739325079652998
+4,KLD_IDL,pretrained,0.9030285146501329
+5,Major(0.25) event recall,FORECasT,0.3333333333333333
+6,Major(0.25) event recall,Lindel,0.3888888888888889
+7,Major(0.25) event recall,fewshot,0.8333333333333334
+8,Major(0.25) event recall,inDelphi,0.6111111111111112
+9,Major(0.25) event recall,pretrained,0.4444444444444444
+10,Top1 event recall,FORECasT,0.7777777777777778
+11,Top1 event recall,Lindel,0.6666666666666666
+12,Top1 event recall,fewshot,0.8888888888888888
+13,Top1 event recall,inDelphi,0.6666666666666666
+14,Top1 event recall,pretrained,0.4444444444444444
+15,abs frameshift error,FORECasT,0.15490329474796305
+16,abs frameshift error,Lindel,0.16546532522308477
+17,abs frameshift error,fewshot,0.0901208589427091
+18,abs frameshift error,inDelphi,0.08791431863459383
+19,abs frameshift error,pretrained,0.14883669257119436

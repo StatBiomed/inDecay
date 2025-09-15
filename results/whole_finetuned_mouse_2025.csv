@@ -1,0 +1,181 @@
+,variable,value,model
+0,Major(0.25) event recall,0.0,pretrained
+1,Major(0.25) event recall,1.0,pretrained
+2,Major(0.25) event recall,1.0,pretrained
+3,Major(0.25) event recall,0.0,pretrained
+4,Major(0.25) event recall,0.0,pretrained
+5,Major(0.25) event recall,0.0,pretrained
+6,Major(0.25) event recall,1.0,pretrained
+7,Major(0.25) event recall,1.0,pretrained
+8,Major(0.25) event recall,0.0,pretrained
+9,Top1 event recall,0.0,pretrained
+10,Top1 event recall,1.0,pretrained
+11,Top1 event recall,1.0,pretrained
+12,Top1 event recall,0.0,pretrained
+13,Top1 event recall,0.0,pretrained
+14,Top1 event recall,0.0,pretrained
+15,Top1 event recall,1.0,pretrained
+16,Top1 event recall,1.0,pretrained
+17,Top1 event recall,0.0,pretrained
+18,abs frameshift error,0.5235040291311179,pretrained
+19,abs frameshift error,0.1385112354928424,pretrained
+20,abs frameshift error,0.11581807951642986,pretrained
+21,abs frameshift error,0.039790423484191706,pretrained
+22,abs frameshift error,0.04971592478841558,pretrained
+23,abs frameshift error,0.1293878712967853,pretrained
+24,abs frameshift error,0.13193559746559913,pretrained
+25,abs frameshift error,0.0698334369362783,pretrained
+26,abs frameshift error,0.14103363502908906,pretrained
+27,KLD_IDL,1.508858323097229,pretrained
+28,KLD_IDL,0.8559861779212952,pretrained
+29,KLD_IDL,1.0100135803222656,pretrained
+30,KLD_IDL,0.764869749546051,pretrained
+31,KLD_IDL,0.9677804112434387,pretrained
+32,KLD_IDL,0.5976172685623169,pretrained
+33,KLD_IDL,0.9595009684562683,pretrained
+34,KLD_IDL,0.45706796646118164,pretrained
+35,KLD_IDL,1.00556218624115,pretrained
+36,Major(0.25) event recall,1.0,fewshot
+37,Major(0.25) event recall,1.0,fewshot
+38,Major(0.25) event recall,1.0,fewshot
+39,Major(0.25) event recall,0.5,fewshot
+40,Major(0.25) event recall,0.5,fewshot
+41,Major(0.25) event recall,1.0,fewshot
+42,Major(0.25) event recall,1.0,fewshot
+43,Major(0.25) event recall,1.0,fewshot
+44,Major(0.25) event recall,0.5,fewshot
+45,Top1 event recall,1.0,fewshot
+46,Top1 event recall,1.0,fewshot
+47,Top1 event recall,1.0,fewshot
+48,Top1 event recall,0.0,fewshot
+49,Top1 event recall,1.0,fewshot
+50,Top1 event recall,1.0,fewshot
+51,Top1 event recall,1.0,fewshot
+52,Top1 event recall,1.0,fewshot
+53,Top1 event recall,1.0,fewshot
+54,abs frameshift error,0.3260210613837202,fewshot
+55,abs frameshift error,0.052819288205682824,fewshot
+56,abs frameshift error,0.05339239411870267,fewshot
+57,abs frameshift error,0.02942201219195084,fewshot
+58,abs frameshift error,0.022831856784499394,fewshot
+59,abs frameshift error,0.08405761781335741,fewshot
+60,abs frameshift error,0.052377725045545276,fewshot
+61,abs frameshift error,0.012173826733445914,fewshot
+62,abs frameshift error,0.17799194820747744,fewshot
+63,KLD_IDL,1.1539452075958252,fewshot
+64,KLD_IDL,0.5790613293647766,fewshot
+65,KLD_IDL,0.2138068526983261,fewshot
+66,KLD_IDL,0.5493319630622864,fewshot
+67,KLD_IDL,0.5137360692024231,fewshot
+68,KLD_IDL,0.4648416042327881,fewshot
+69,KLD_IDL,0.39617061614990234,fewshot
+70,KLD_IDL,0.8580303192138672,fewshot
+71,KLD_IDL,0.5583183765411377,fewshot
+72,Major(0.25) event recall,0.0,FORECasT
+73,Major(0.25) event recall,0.0,FORECasT
+74,Major(0.25) event recall,1.0,FORECasT
+75,Major(0.25) event recall,0.0,FORECasT
+76,Major(0.25) event recall,0.0,FORECasT
+77,Major(0.25) event recall,0.0,FORECasT
+78,Major(0.25) event recall,1.0,FORECasT
+79,Major(0.25) event recall,1.0,FORECasT
+80,Major(0.25) event recall,0.0,FORECasT
+81,Top1 event recall,0.0,FORECasT
+82,Top1 event recall,1.0,FORECasT
+83,Top1 event recall,1.0,FORECasT
+84,Top1 event recall,0.0,FORECasT
+85,Top1 event recall,1.0,FORECasT
+86,Top1 event recall,1.0,FORECasT
+87,Top1 event recall,1.0,FORECasT
+88,Top1 event recall,1.0,FORECasT
+89,Top1 event recall,1.0,FORECasT
+90,abs frameshift error,0.36164176561363004,FORECasT
+91,abs frameshift error,0.1832829883166427,FORECasT
+92,abs frameshift error,0.174418604651163,FORECasT
+93,abs frameshift error,0.004065297870645801,FORECasT
+94,abs frameshift error,0.18654591116522012,FORECasT
+95,abs frameshift error,0.24259789130777643,FORECasT
+96,abs frameshift error,0.07052630833889328,FORECasT
+97,abs frameshift error,0.12843396207101143,FORECasT
+98,abs frameshift error,0.04261692339668477,FORECasT
+99,KLD_IDL,1.485611081123352,FORECasT
+100,KLD_IDL,1.233962893486023,FORECasT
+101,KLD_IDL,0.833644688129425,FORECasT
+102,KLD_IDL,0.6425755620002747,FORECasT
+103,KLD_IDL,0.9331367015838623,FORECasT
+104,KLD_IDL,1.154176950454712,FORECasT
+105,KLD_IDL,0.3552940785884857,FORECasT
+106,KLD_IDL,0.5820586085319519,FORECasT
+107,KLD_IDL,1.4123347997665405,FORECasT
+108,Major(0.25) event recall,1.0,inDelphi
+109,Major(0.25) event recall,1.0,inDelphi
+110,Major(0.25) event recall,1.0,inDelphi
+111,Major(0.25) event recall,0.0,inDelphi
+112,Major(0.25) event recall,0.5,inDelphi
+113,Major(0.25) event recall,0.0,inDelphi
+114,Major(0.25) event recall,1.0,inDelphi
+115,Major(0.25) event recall,1.0,inDelphi
+116,Major(0.25) event recall,0.0,inDelphi
+117,Top1 event recall,1.0,inDelphi
+118,Top1 event recall,1.0,inDelphi
+119,Top1 event recall,1.0,inDelphi
+120,Top1 event recall,0.0,inDelphi
+121,Top1 event recall,1.0,inDelphi
+122,Top1 event recall,0.0,inDelphi
+123,Top1 event recall,1.0,inDelphi
+124,Top1 event recall,1.0,inDelphi
+125,Top1 event recall,0.0,inDelphi
+126,abs frameshift error,0.11109047818987983,inDelphi
+127,abs frameshift error,0.11230863600908658,inDelphi
+128,abs frameshift error,0.07202478610696061,inDelphi
+129,abs frameshift error,0.11877003699197675,inDelphi
+130,abs frameshift error,0.001422229247272866,inDelphi
+131,abs frameshift error,0.10332846897567205,inDelphi
+132,abs frameshift error,0.07880111572211979,inDelphi
+133,abs frameshift error,0.026040143526809056,inDelphi
+134,abs frameshift error,0.16744297294156696,inDelphi
+135,KLD_IDL,1.5534071922302246,inDelphi
+136,KLD_IDL,2.844762086868286,inDelphi
+137,KLD_IDL,0.4179028272628784,inDelphi
+138,KLD_IDL,0.7665438652038574,inDelphi
+139,KLD_IDL,0.3440403342247009,inDelphi
+140,KLD_IDL,0.6166649460792542,inDelphi
+141,KLD_IDL,0.45096883177757263,inDelphi
+142,KLD_IDL,0.8297340869903564,inDelphi
+143,KLD_IDL,0.9413684010505676,inDelphi
+144,Major(0.25) event recall,0.0,Lindel
+145,Major(0.25) event recall,1.0,Lindel
+146,Major(0.25) event recall,1.0,Lindel
+147,Major(0.25) event recall,0.0,Lindel
+148,Major(0.25) event recall,0.5,Lindel
+149,Major(0.25) event recall,0.0,Lindel
+150,Major(0.25) event recall,0.0,Lindel
+151,Major(0.25) event recall,1.0,Lindel
+152,Major(0.25) event recall,0.0,Lindel
+153,Top1 event recall,0.0,Lindel
+154,Top1 event recall,1.0,Lindel
+155,Top1 event recall,1.0,Lindel
+156,Top1 event recall,0.0,Lindel
+157,Top1 event recall,1.0,Lindel
+158,Top1 event recall,1.0,Lindel
+159,Top1 event recall,0.0,Lindel
+160,Top1 event recall,1.0,Lindel
+161,Top1 event recall,1.0,Lindel
+162,abs frameshift error,0.4013951919204727,Lindel
+163,abs frameshift error,0.10398332461686,Lindel
+164,abs frameshift error,0.182469181305978,Lindel
+165,abs frameshift error,0.08556108460993905,Lindel
+166,abs frameshift error,0.1607779107656544,Lindel
+167,abs frameshift error,0.1627771716866805,Lindel
+168,abs frameshift error,0.15117428139676348,Lindel
+169,abs frameshift error,0.13648453872582644,Lindel
+170,abs frameshift error,0.10456524197958839,Lindel
+171,KLD_IDL,2.4900965690612793,Lindel
+172,KLD_IDL,4.134008407592773,Lindel
+173,KLD_IDL,1.0333144664764404,Lindel
+174,KLD_IDL,2.1608469486236572,Lindel
+175,KLD_IDL,0.7002429366111755,Lindel
+176,KLD_IDL,3.1392204761505127,Lindel
+177,KLD_IDL,1.3984171152114868,Lindel
+178,KLD_IDL,2.9303011894226074,Lindel
+179,KLD_IDL,0.8354803919792175,Lindel
