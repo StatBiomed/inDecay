@@ -32,11 +32,8 @@ pip install -e ./
 ## Data download
 To get the data for re-producing the model or developing related tools, you can easily download the processed data via
 
-The script will ask for the directory to place the data. You the script will create the folder if not existed. 
-
 ```shell
 # Enter the a path where you want to save the data: 
-# i.e simply type data
 bash scripts/Data_download.sh
 ```
 
@@ -77,5 +74,16 @@ python scripts/STfeatV2_predict.py -S <INPUTE_SEQUENCES.txt> -M <MODEL_WEIGHT.pt
 To reproduce the result, you can 
 Under the main directory , run
 ```shell
-python scripts/STfeatv2_inDecay.py --experiment ST_June_2017_BOB_LV7A_DPI7 --read_cutoff 500 --Model_Class ST_DeepDecay --Data_transform interaction
+python scripts/STfeatv5_inDecay.py --experiment ST_June_2017_BOB_LV7A_DPI7 --read_cutoff 500 --Model_Class ST_DeepDecay --Data_transform interaction
+```
+
+
+## Finetune model with Sanger sequencing data
+
+
+&nbsp;  
+
+For example, to finetune the model with livestock data, run
+```shell
+python scripts/STfeatv5_inDecay_mouse.py --data_archive species -G 0  -P pretrained/mESC_featv5_c20.ckpt -T 1 
 ```
