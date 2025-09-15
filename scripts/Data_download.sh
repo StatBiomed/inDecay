@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd data
 echo "ready to download pre-training data"
 wget --user-agent="Mozilla/5.0" \
      --content-disposition \
