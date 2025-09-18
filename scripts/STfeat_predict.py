@@ -19,7 +19,7 @@ def indelgen(Refseq, cutsite, output_path=None):
         indelgen_dir = os.path.join(PATH.main_dir,'predict_ouput')
         gen_feature_file = os.path.join(indelgen_dir, f"{Guide}_predict_out.csv")
     else:
-        indelgen_dir = os.path.dirname(output_path)
+        indelgen_dir = os.path.dirname(output_path) if "/" in output_path else "./"
         gen_feature_file = output_path
 
     if not os.path.exists(indelgen_dir):
@@ -125,4 +125,6 @@ if __name__ == "__main__":
     output_df = label_df[['Identifier', 'indels', 'predict_frequency']]
     output_df = output_df.sort_values(by='predict_frequency', ascending=False)
     output_df.to_csv(indelgen_path, index=False)
-
+    print("\n"+"="*10)
+    print(f"Done! \nprediction saved to : \n {indelgen_path}")
+    print("="*10)
