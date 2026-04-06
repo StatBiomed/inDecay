@@ -126,6 +126,69 @@ def forecast_frameshift(ya, pre, indels):
     
 #     return y_fs[0], pred_fs[0]
 
+def forecast_frame_ratios(ya, pre, indels):
+    """
+    Compute per-reading-frame (mod 3) ratios for observed and predicted.
+    Frame 0 = in-frame (+0), Frame 1 = +1 frameshift, Frame 2 = +2 frameshift.
+
+    Args:
+        ya   : ndarray (1, N_events), observed probabilities
+        pre  : ndarray (1, N_events), predicted probabilities
+        indels: list of indel identifier strings, or list-of-list (single-item)
+
+    Returns:
+        dict mapping frame int (0,1,2) -> (y_ratio, pred_ratio)
+    """
+    if len(indels) > 1:
+        indel_lengths = [tokFullIndel(idfr)[1] if '_' in idfr else int(idfr[1:]) for idfr in indels]
+    else:
+        indel_lengths = [tokFullIndel(idfr)[1] for idfr in indels[0]]
+
+    frames = np.array([l % 3 for l in indel_lengths], dtype=float)
+    result = {}
+    for frame in [0, 1, 2]:
+        mask = (frames == frame).astype(float)
+        result[frame] = (float((ya @ mask).flat[0]), float((pre @ mask).flat[0]))
+    return result
+
+
+def assessment_recipe_frame_breakdown(Y_lookup, pred_lookup, reduction='mean'):
+    """
+    Compute per-reading-frame R² (Pearson r²) between observed and predicted
+    frame ratios across all oligos.
+
+    Returns dict with keys 'frame0_r2', 'frame1_r2', 'frame2_r2', and per-oligo
+    lists 'frame{i}_y', 'frame{i}_pred'.
+    """
+    per_frame_y    = {0: [], 1: [], 2: []}
+    per_frame_pred = {0: [], 1: [], 2: []}
+
+    for oligo, Y in Y_lookup.items():
+        Y = Y.T
+        Indel = Y[[0], :]
+        y = Y[[1], :].astype("float32")
+        pred = pred_lookup[oligo]
+
+        frame_dict = forecast_frame_ratios(y, pred, Indel)
+        for frame, (y_r, pred_r) in frame_dict.items():
+            per_frame_y[frame].append(y_r)
+            per_frame_pred[frame].append(pred_r)
+
+    result = {}
+    for frame in [0, 1, 2]:
+        y_arr    = np.array(per_frame_y[frame])
+        pred_arr = np.array(per_frame_pred[frame])
+        if np.std(y_arr) > 0 and np.std(pred_arr) > 0:
+            r, _ = pearsonr(y_arr, pred_arr)
+            result[f'frame{frame}_r2'] = r ** 2
+        else:
+            result[f'frame{frame}_r2'] = float('nan')
+        result[f'frame{frame}_y']    = per_frame_y[frame]
+        result[f'frame{frame}_pred'] = per_frame_pred[frame]
+
+    return result
+
+
 def forecast_delratio(ya, pre, indels):
     if len(indels) >1: 
         indel_lengths = [tokFullIndel(idfr)[0] if '_' in idfr else idfr[0] for idfr in indels] # ForeCast's func for getting indel length

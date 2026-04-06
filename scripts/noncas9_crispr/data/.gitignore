@@ -1,0 +1,5 @@
+# Raw downloaded data — large files, do not commit
+raw/
+
+# Processed data is committed (small, version-controlled outputs)
+!processed/

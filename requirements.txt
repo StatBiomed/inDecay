@@ -138,7 +138,7 @@ requests-oauthlib
 rfc3339-validator
 rfc3986-validator
 rsa
-scanpy
+# scanpy
 scikit-learn
 scipy
 seaborn
@@ -163,8 +163,8 @@ tqdm
 traitlets
 txt2tags
 typing-extensions
-umap-learn
-umi-tools
+# umap-learn
+# umi-tools
 uri-template
 urllib3
 webcolors

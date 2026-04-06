@@ -52,7 +52,8 @@ def read_data(OligoID, processed_df, experiments):
     # read features
     Guide, refseq, pamsite, Strand = ref_lookup[OligoID]
     idfgen_file = my_utils.get_indelgen_file(OligoID, Guide)
-    idfgen = pd.read_table(idfgen_file, skiprows=1, names=['Identifier', 'n_coevent', 'loc'])
+    idfgen = pd.read_table(idfgen_file, skiprows=1, header=None, sep='\t').iloc[:, :3]
+    idfgen.columns = ['Identifier', 'n_coevent', 'loc']
 
     def merging(OligoID,idfgen=idfgen):
         oligo_df = processed_df.query("`OligoID` == @OligoID")
@@ -162,15 +163,9 @@ def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix
         os.makedirs(result_dir)
 
     if prefix == "":
-        json_path = pj(result_dir, f"N{args.N_Finetune}-{date}.json")
+        json_path = pj(result_dir, f"N{args.N_Finetune}_rep{args.repeat}-{date}.json")
     else:
-        json_path = pj(result_dir, f"{prefix}-{date}.json")
-
-    re = 1
-    if prefix == "":
-        while os.path.exists(json_path):
-            json_path = pj(result_dir, f"N{args.N_Finetune}-{date}_r{re}.json")
-            re += 1
+        json_path = pj(result_dir, f"N{args.N_Finetune}_rep{args.repeat}_{prefix}-{date}.json")
     new_performance_json = performance_json.copy()
 
     array_data = {}
@@ -178,8 +173,18 @@ def write_evaluate_json(Y_lookup, pred_lookup, model, ckpt_abspath, args, prefix
         if key in new_performance_json:
             array_data[key] = new_performance_json.pop(key)
     new_performance_json.update(array_data)
+    class _NpEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, np.floating):
+                return float(obj)
+            if isinstance(obj, np.integer):
+                return int(obj)
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return super().default(obj)
+
     with open(json_path, "w") as write_file:
-        json.dump(new_performance_json, write_file, indent=4)
+        json.dump(new_performance_json, write_file, indent=4, cls=_NpEncoder)
     
     print("\n"+"="*20)
     print("performance json saved to %s" %json_path)
@@ -204,6 +209,7 @@ if __name__ == "__main__":
     parser.add_argument("--L1_Lambda", required=False, type=float, default="0", help="the weight to regulate the L1 loss")
     parser.add_argument("--L2_Lambda", required=False, type=float, default="1e-4", help="the weight to regulate the L2 loss")
     parser.add_argument("--progress_bar", required=False, type=str, default="True", help="boolen, whether to show progress bar")
+    parser.add_argument("--repeat", required=False, type=int, default=1, help="Repeat index (1-based). Sets the random seed for finetune oligo sampling and is encoded in the output filename.")
     args = parser.parse_args()
 
     lr = float(args.LearningRate)
@@ -233,6 +239,11 @@ if __name__ == "__main__":
     else:
         raise ValueError("Invalide action combination")
 
+    # N=0 means no finetuning — evaluate pretrained baseline only
+    if int(args.N_Finetune) == 0:
+        to_train = to_predict = False
+        to_write_y = to_baseline = True
+
     # some save file settings
     experiments = args.experiment
     Cellline = experiments.split("_")[3]
@@ -249,24 +260,38 @@ if __name__ == "__main__":
     print(f"Runing {experiments} using cuda: {gpu_device}")
     pth_save_dir = os.path.join(PATH.pth_dir, f"v5_fintune_{args.Model_Class}_{args.Data_transform}_C{args.read_cutoff}")
     for DIR in [trainer_log, data_dir, pth_save_dir, save_dir]:
-        check_dir(DIR)  
+        check_dir(DIR)
     # Temp Theta file
     date = time.strftime("%B%d")
-    pth_save_path = pj(pth_save_dir, f"{experiments}_V{args.Val_size}_N{args.N_Finetune}_{args.Fix_params}_L2{args.L2_Lambda}")
+    pth_save_path = pj(pth_save_dir, f"{experiments}_V{args.Val_size}_N{args.N_Finetune}_rep{args.repeat}_{args.Fix_params}_L2{args.L2_Lambda}")
+    os.makedirs(pth_save_path, exist_ok=True)
 
     processed_df = pd.read_csv(csv_path).query("`in_LdGen` == True").astype({"Count":"int"})
     processed_df = processed_df.query("`Strand` == 'FORWARD' & `Identifier` != 'Not Present' ")
-    
+
+    # filter to oligos with valid NGG PAM (indelgentarget asserts seq[pam_idx+1:pam_idx+3] == "GG")
+    def _has_ngg_pam(oligo_id):
+        _, refseq, pamsite, _ = ref_lookup[oligo_id]
+        return refseq[pamsite + 1 : pamsite + 3].upper() == "GG"
+    valid_oligos = [o for o in processed_df["OligoID"].unique() if _has_ngg_pam(o)]
+    n_before = processed_df["OligoID"].nunique()
+    processed_df = processed_df[processed_df["OligoID"].isin(valid_oligos)]
+    print(f"Oligos with NGG PAM: {len(valid_oligos)}/{n_before} (dropped {n_before-len(valid_oligos)})")
 
     # split training and testing data
     Train_Oligos, Val_Oligos, Test_Oligos = reader.get_Train_Val_Test(
         e = experiments,
-        df=processed_df, 
+        df=processed_df,
         test_oligo_file = os.path.join(PATH.main_dir, args.test_oligos),
         seed = 0,
         threshold = args.read_cutoff,
         count_predictable=False
         )
+
+    # filter test oligos to those with valid NGG PAM
+    n_test_before = len(Test_Oligos)
+    Test_Oligos = [o for o in Test_Oligos if o in ref_lookup and _has_ngg_pam(o)]
+    print(f"Test oligos with NGG PAM: {len(Test_Oligos)}/{n_test_before} (dropped {n_test_before-len(Test_Oligos)})")
     # load predefined finetuning set
     if "R" in args.N_Finetune:
         # random 
@@ -281,7 +306,7 @@ if __name__ == "__main__":
 
         ## ONLY USE THE RANDOM
 
-        random.seed(np.random.randint(0,1000))
+        np.random.seed(args.repeat)
         Finetune_Oligos = np.random.choice(Train_Oligos, size=size, replace=False)
 
 
@@ -320,7 +345,7 @@ if __name__ == "__main__":
     elif not os.path.exists(args.Pretrain): 
         raise FileNotFoundError("Invalid path to Pretrained model")
     else:
-        model = model_class.load_from_checkpoint(args.Pretrain)
+        model = model_class.load_from_checkpoint(args.Pretrain, map_location='cpu')
         # ckpt = torch.load(args.Pretrain)
         # model.load_state_dict(ckpt['state_dict'])
         last_layer_w = model.del_regressor[2].weight.data
@@ -340,28 +365,29 @@ if __name__ == "__main__":
     # normalize = 'weight' not in args.Model_Class 
     feature_extraction_fn = lambda label_df, refseq, cutsite : alignmap.ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
 
-    Train_DS = reader.ST_dataset(Finetune_Oligos_train,processed_df, experiments, 
-                          read_data_fn = read_data,
-                          transformation=transform,
-                          feat_ext_fn = feature_extraction_fn,
-                          normalize=normalize)
-    Val_DS = reader.ST_dataset(Finetune_Oligos_val,processed_df, experiments, 
-                               read_data_fn = read_data,
-                               transformation=transform , 
-                               feat_ext_fn = feature_extraction_fn,
-                               normalize=normalize)
-    Test_DS = reader.ST_dataset(Test_Oligos,processed_df, experiments, 
+    Test_DS = reader.ST_dataset(Test_Oligos,processed_df, experiments,
                                 read_data_fn = read_data,
                                 transformation=transform,
                                 feat_ext_fn = feature_extraction_fn,
                                 normalize=normalize)
-
-    Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
-    Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
     Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
 
+    if to_train:
+        Train_DS = reader.ST_dataset(Finetune_Oligos_train,processed_df, experiments,
+                              read_data_fn = read_data,
+                              transformation=transform,
+                              feat_ext_fn = feature_extraction_fn,
+                              normalize=normalize)
+        Val_DS = reader.ST_dataset(Finetune_Oligos_val,processed_df, experiments,
+                                   read_data_fn = read_data,
+                                   transformation=transform ,
+                                   feat_ext_fn = feature_extraction_fn,
+                                   normalize=normalize)
+        Train_DL = DataLoader(Train_DS, shuffle=True, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+        Val_DL = DataLoader(Val_DS, shuffle=False, batch_size=3, num_workers=num_workers, collate_fn=my_collect_fn)
+
     trainer = pl.Trainer(
-			auto_lr_find=True,
+			# auto_lr_find=True,
             accelerator=device,
             # fast_dev_run=True,
             enable_progress_bar=eval(args.progress_bar),
@@ -432,7 +458,7 @@ if __name__ == "__main__":
     if to_baseline:
         #  to generate baseline for the pretrained model
         Forecast_Y = pj(pth_save_path, "ForeCast_TestY.pkl")
-        pmodel = model_class.load_from_checkpoint(args.Pretrain)
+        pmodel = model_class.load_from_checkpoint(args.Pretrain, map_location='cpu')
 
         pmodel.eval()
         predict_y = trainer.predict(pmodel, Test_DL)
