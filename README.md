@@ -76,14 +76,14 @@ Under the main directory , run
 ```shell
 python scripts/STfeatv5_inDecay.py --experiment ST_June_2017_BOB_LV7A_DPI7 --read_cutoff 500 --Model_Class ST_DeepDecay --Data_transform interaction
 ```
-
+&nbsp;  
 
 ## Finetune model with Sanger sequencing data
 
+To finetune inDecay on your own Sanger sequencing (`.ab1`) files, see the step-by-step tutorial in [demo/zygote_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main/demo/zygote_demo.ipynb). It walks you through processing raw `.ab1` traces into the labeled training data used by inDecay.
 
-&nbsp;  
 
-For example, to finetune the model with livestock data, run
+When you finished, run the following command to finetune the model with your own sanger sequencing data
 ```shell
 python scripts/STfeatv5_inDecay_mouse.py --data_archive species -G 0  -P pretrained/mESC_featv5_c20.ckpt -T 1 
 ```
