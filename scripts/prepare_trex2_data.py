@@ -18,9 +18,9 @@ Steps
 Usage
 -----
     python scripts/prepare_trex2_data.py \\
-        --trex2_dir /rds/user/wz369/hpc-work/crispr_nonCas9_preprocess/data/processed/trex2 \\
-        --indecay_dir /rds/user/wz369/hpc-work/inDecay \\
-        --sif /rds/user/wz369/hpc-work/containers/selftarget.sif \\
+        --trex2_dir /PATH/TO/trex2/processed \\
+        --indecay_dir /PATH/TO/inDecay \\
+        --sif /PATH/TO/selftarget.sif \\
         --cellline TREX2 --rep R1 \\
         --test_fraction 0.1 --seed 42 --n_jobs 8
 """

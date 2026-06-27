@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-SIF_PATH="/rds/user/wz369/hpc-work/containers/selftarget.sif"
+SIF_PATH="/PATH/TO/selftarget.sif"  # TODO: set this path for your environment
 DOCKER_URI="docker://quay.io/felicityallen/selftarget"
 
 # Use a writable tmp dir on scratch for the build cache

@@ -3,15 +3,15 @@ Quick script to rebuild data/somatic/TREX2_R1.csv with correct in_LdGen values.
 Run this after indelgen files already exist (skips indelgentarget step).
 
 Usage:
-    /rds/user/wz369/hpc-work/LIBS/mamba/envs/inDecay/bin/python scripts/rebuild_trex2_csv.py
+    python scripts/rebuild_trex2_csv.py
 """
 import os, random
 import pandas as pd
 from Bio import SeqIO
 from tqdm import tqdm
 
-INDECAY_DIR  = "/rds/user/wz369/hpc-work/inDecay"
-TREX2_DIR    = "/rds/user/wz369/hpc-work/crispr_nonCas9_preprocess/data/processed/trex2"
+INDECAY_DIR  = "/PATH/TO/inDecay"  # TODO: set this path for your environment
+TREX2_DIR    = "/PATH/TO/trex2/processed"  # TODO: set this path for your environment
 INDELGEN_DIR = f"{INDECAY_DIR}/data/somatic/Indelgen_result"
 OUT_CSV      = f"{INDECAY_DIR}/data/somatic/TREX2_R1.csv"
 OUT_TEST     = f"{INDECAY_DIR}/results/trex2_test_set.txt"

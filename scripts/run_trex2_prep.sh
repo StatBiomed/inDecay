@@ -11,10 +11,10 @@
 #SBATCH --mem=32G
 #SBATCH --cpus-per-task=16
 
-PYTHON="/rds/user/wz369/hpc-work/LIBS/mamba/envs/inDecay/bin/python"
-INDECAY_DIR="/rds/user/wz369/hpc-work/inDecay"
-TREX2_DIR="/rds/user/wz369/hpc-work/crispr_nonCas9_preprocess/data/processed/trex2"
-SIF="/rds/user/wz369/hpc-work/containers/selftarget.sif"
+PYTHON="python"  # TODO: set this path for your environment
+INDECAY_DIR="/PATH/TO/inDecay"  # TODO: set this path for your environment
+TREX2_DIR="/PATH/TO/trex2/processed"  # TODO: set this path for your environment
+SIF="/PATH/TO/selftarget.sif"  # TODO: set this path for your environment
 
 mkdir -p "${INDECAY_DIR}/logs"
 cd "${INDECAY_DIR}"

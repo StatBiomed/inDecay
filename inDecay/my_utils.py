@@ -211,10 +211,10 @@ def ForeCast_gen_indels(target_seq, pam_idx):
     return df.astype({'Collapsed':int})
 
 def load_dlen_matrix():
-    return np.load("/home/wergillius/Project/CRISPR_data/class_2_deletion_Len_matrix.npy").astype("float64")
+    return np.load("/PATH/TO/class_2_deletion_Len_matrix.npy").astype("float64")  # TODO: set this path for your environment
 
 def load_dss_matrix():
-    return np.load("/home/wergillius/Project/CRISPR_data/class_2_deletion_site_matrix.npy").astype("float64")
+    return np.load("/PATH/TO/class_2_deletion_site_matrix.npy").astype("float64")  # TODO: set this path for your environment
 
 def load_PC_object(n_PC):
     """
@@ -341,8 +341,8 @@ def load_Lindel_TrainValset_Deletion(data="LF"):
         Seq_train:
     """
     # determind data path
-    LF_path = "/home/wergillius/Project/Lindel/Lindel_data_analysis/data/Lindel_ForeCasT_combined_training.txt"
-    LO_path = "/home/wergillius/Project/Lindel/Lindel_data_analysis/data/Lindel_training.txt"
+    LF_path = "/PATH/TO/Lindel_ForeCasT_combined_training.txt"  # TODO: set this path for your environment
+    LO_path = "/PATH/TO/Lindel_training.txt"  # TODO: set this path for your environment
     fname = LO_path if data == "LO" else LF_path
 
     feature_size = 3033
@@ -588,7 +588,7 @@ def get_del_ins_ratio_transform(n_class):
 def readTheta(theta_file):
     """
     a function copied from 
-    `/home/wergillius/Project/SelfTarget/indel_prediction/predictor/model.py`
+    `SelfTarget/indel_prediction/predictor/model.py (https://github.com/felicityallen/SelfTarget)`
     """
     f = io.open(theta_file)
     train_set = f.readline()[:-1].split(',')

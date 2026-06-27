@@ -3,17 +3,17 @@ Finds TREX2 oligos whose indelgen files are missing and regenerates them.
 Run after prepare_trex2_data.py if some files failed.
 
 Usage:
-    /rds/user/wz369/hpc-work/LIBS/mamba/envs/inDecay/bin/python scripts/regen_missing_indelgen.py
+    python scripts/regen_missing_indelgen.py
 """
 import os, subprocess
 from Bio import SeqIO
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 
-INDECAY_DIR  = "/rds/user/wz369/hpc-work/inDecay"
+INDECAY_DIR  = "/PATH/TO/inDecay"  # TODO: set this path for your environment
 FASTA        = f"{INDECAY_DIR}/data/SelfTarget_NewScaffold.fasta"
 INDELGEN_DIR = f"{INDECAY_DIR}/data/somatic/Indelgen_result"
-SIF          = "/rds/user/wz369/hpc-work/containers/selftarget.sif"
+SIF          = "/PATH/TO/selftarget.sif"  # TODO: set this path for your environment
 N_JOBS       = 8
 
 def run_one(args):

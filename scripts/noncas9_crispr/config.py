@@ -29,7 +29,7 @@ CAS12A_OUTPUT_DIR = PROCESSED_DIR / "cas12a"
 # SelfTarget reference — resolved from env var or inDecay PATH.py at runtime
 SELFTARGET_DIR = Path(os.environ.get(
     "SELFTARGET_DIR",
-    "/rds/user/wz369/hpc-work/SelfTarget/SelfTarget",
+    "/PATH/TO/SelfTarget/SelfTarget",  # TODO: set this path for your environment
 ))
 SELFTARGET_PYUTILS = SELFTARGET_DIR / "selftarget_pyutils"
 

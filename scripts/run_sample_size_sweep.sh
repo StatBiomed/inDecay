@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-PYTHON=/rds/user/wz369/hpc-work/LIBS/mamba/envs/inDecay/bin/python
+PYTHON=python  # TODO: set this path for your environment
 SCRIPT=scripts/STfeatv5_inDecay_finetune.py
 BASE_ARGS="-E ST_trex2_2024_TREX2_R1 \
            -P pretrained/K562_featv5_pretrained.ckpt \

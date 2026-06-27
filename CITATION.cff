@@ -1,21 +1,33 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 title: "inDecay: deep-learning prediction of CRISPR editing indel outcomes"
-# TODO before release: confirm the full author list, ORCIDs, version and DOIs below.
 authors:
   - family-names: Zheng
     given-names: Weizhong
-    orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO: fill ORCID
+    orcid: "https://orcid.org/0000-0002-5975-9295"
     affiliation: "University of Cambridge"
-  # - family-names: <FILL>            # TODO: add co-authors in order
-  #   given-names: <FILL>
-  #   orcid: "https://orcid.org/<FILL>"
-version: "1.0.0"                       # TODO: confirm release version/tag
-date-released: "2026-06-27"            # TODO: set to the release date
+  - family-names: Yu
+    given-names: Lu
+    orcid: "https://orcid.org/0009-0006-6822-8257"
+  - family-names: Ho
+    given-names: Joshua W. K.
+    orcid: "https://orcid.org/0000-0003-2331-7011"
+  - family-names: Lan
+    given-names: Guocheng
+    orcid: "https://orcid.org/0000-0001-9063-5728"
+  - family-names: Huang
+    given-names: Yuanhua
+    orcid: "https://orcid.org/0000-0003-3124-9186"
+version: "1.0.0"
+date-released: "2026-06-27"           # TODO: set to the actual release date
 url: "https://github.com/StatBiomed/inDecay"
 repository-code: "https://github.com/StatBiomed/inDecay"
 license: Apache-2.0
 doi: "10.5281/zenodo.0000000"          # TODO: replace with the minted code-record DOI after publishing
+preferred-citation:
+  type: article
+  title: "inDecay"
+  doi: "10.1101/2024.11.08.622621"
 keywords:
   - CRISPR
   - indel prediction

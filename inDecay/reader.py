@@ -687,7 +687,7 @@ def get_Sanger_train_test_WZ(genes, seed=0):
 #######
 # Old functions
 #######
-Lo_trainval_pkl = "/home/wergillius/Project/CRISPR_data/models/Lo_trainval_with_del.pkl"
+Lo_trainval_pkl = "/PATH/TO/Lo_trainval_with_del.pkl"  # TODO: set this path for your environment
 
 class Tensor_DataModule(pl.LightningDataModule):
     

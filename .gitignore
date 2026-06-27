@@ -187,3 +187,6 @@ zenodo.env
 .DS_Store
 **/.DS_Store
 .cache_weights/
+
+# keep the reference scaffold (needed by reader.py / SHAP / demo)
+!data/SelfTarget_NewScaffold.fasta
