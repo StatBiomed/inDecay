@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
-title: "inDecay: deep-learning prediction of CRISPR editing indel outcomes"
+title: "Accurate prediction of CRISPR editing outcomes in somatic cell lines and zygotes with few-shot learning with inDecay"
 authors:
   - family-names: Zheng
     given-names: Weizhong
