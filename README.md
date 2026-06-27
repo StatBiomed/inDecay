@@ -29,25 +29,31 @@ pip install -e ./
 ```
 &nbsp;  
 
-## Data download
-To get the data for re-producing the model or developing related tools, you can easily download the processed data via
+## Data and model-weight download
+
+All reproduction data and model weights are archived under permanent DOIs and pulled with checksum verification by a single script (run from the repo root):
 
 ```shell
-# Enter the a path where you want to save the data: 
-bash scripts/Data_download.sh
+python scripts/fetch_data.py            # data + weights
+# python scripts/fetch_data.py --data    # figshare data only
+# python scripts/fetch_data.py --weights # Zenodo Fig 4/5 checkpoints only
 ```
 
+| Artifact | DOI | Lands in |
+|----------|-----|----------|
+| Training / somatic data | [10.6084/m9.figshare.25133564](https://doi.org/10.6084/m9.figshare.25133564) | `data/` |
+| Figure 4 & 5 fine-tuned checkpoints | [10.5281/zenodo.20977675](https://doi.org/10.5281/zenodo.20977675) | `pl_trainer_log/` |
 
-
+The legacy `bash scripts/Data_download.sh` still works but is not checksum-verified; `fetch_data.py` is preferred.
 
 ## Set up PATH.py
-After you have downloaded the data and install the SelfTarget toolkits, please runn the following script under the main directories. 
+
+`inDecay/PATH.py` now auto-detects the repository root, so no manual editing is needed for a standard clone. On an HPC or a custom layout, override the defaults with environment variables:
 
 ```shell
-bash scripts/setup_path.sh
+export INDECAY_MAIN_DIR=/path/to/inDecay     # repo root
+export INDECAY_USER_DIR=/path/to/scratch     # optional, for SelfTarget container
 ```
-
-Please **change the directories mannually** in PATH.py **if you did not download them with default directorial setting** !!
 
 &nbsp;  
 
@@ -87,3 +93,21 @@ For example, to finetune the model with livestock data, run
 ```shell
 python scripts/STfeatv5_inDecay_mouse.py --data_archive species -G 0  -P pretrained/mESC_featv5_c20.ckpt -T 1 
 ```
+
+&nbsp;
+## Reproducing the paper figures
+
+The figure notebooks live in [`notebooks/`](notebooks/) and should be **run from the repository root**. Figures 2, 3 and the supplementary panels plot from precomputed tables already in the repo; Figures 4 & 5 additionally require the fine-tuned checkpoints fetched above.
+
+```shell
+python scripts/fetch_data.py --weights     # only needed for Figures 4 & 5
+jupyter lab notebooks/Figures4_and_5.ipynb
+```
+
+| Notebook | Figure |
+|----------|--------|
+| `notebooks/Figure2.ipynb` | Fig 2 — benchmarking |
+| `notebooks/Figure3.ipynb` | Fig 3 — transfer-learning sample-size sweep |
+| `notebooks/Figures4_and_5.ipynb` | Figs 4 & 5 — mouse & cross-species transfer |
+| `notebooks/SHAP_K562.ipynb` | SHAP feature attribution |
+| `notebooks/Supp_FrameBreakdown.ipynb` | Supplementary frame breakdown |

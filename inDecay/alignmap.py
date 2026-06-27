@@ -676,8 +676,7 @@ def ST_feat_v5_extend_guide(label_df, refseq, cutsite, k1=0.5, k2=0.6, h=1.3, ce
     # get 
     X5 = ST_decayfeat_v5(label_df, refseq, cutsite, k1, k2, h)
     extend_guide = refseq[cutsite-18:cutsite+4]
-    # ratio_weight=f"/home/louisayu/ssd/inDecay/pretrained/CHO_C20_ratio_weight.pkl"
-    ratio_weight=f"/home/louisayu/ssd/inDecay/pretrained/{cell}_C20_ratio_weight.pkl"
+    ratio_weight=f"{PATH.main_dir}/pretrained/{cell}_C20_ratio_weight.pkl"
     
     del_intcpt, ins_intcpt = del_ins_intercept(extend_guide, weight=ratio_weight)
 

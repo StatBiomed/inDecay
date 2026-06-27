@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "inDecay: deep-learning prediction of CRISPR editing indel outcomes"
+# TODO before release: confirm the full author list, ORCIDs, version and DOIs below.
+authors:
+  - family-names: Zheng
+    given-names: Weizhong
+    orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO: fill ORCID
+    affiliation: "University of Cambridge"
+  # - family-names: <FILL>            # TODO: add co-authors in order
+  #   given-names: <FILL>
+  #   orcid: "https://orcid.org/<FILL>"
+version: "1.0.0"                       # TODO: confirm release version/tag
+date-released: "2026-06-27"            # TODO: set to the release date
+url: "https://github.com/StatBiomed/inDecay"
+repository-code: "https://github.com/StatBiomed/inDecay"
+license: Apache-2.0
+doi: "10.5281/zenodo.0000000"          # TODO: replace with the minted code-record DOI after publishing
+keywords:
+  - CRISPR
+  - indel prediction
+  - deep learning
+  - transfer learning
+references:
+  - type: data
+    title: "inDecay model weights: cross-species transfer-learning checkpoints (Figures 4 & 5)"
+    doi: "10.5281/zenodo.20977675"
+  - type: data
+    title: "inDecay training and somatic data"
+    doi: "10.6084/m9.figshare.25133564"

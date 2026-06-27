@@ -180,3 +180,10 @@ scripts/PATH.py
 scripts/PATH.py
 inDecay/PATH.py
 results/Sanger*spliting.csv
+zenodo.env
+.zenodo.env
+
+# macOS
+.DS_Store
+**/.DS_Store
+.cache_weights/

@@ -11,13 +11,29 @@ import pickle as pkl
 from inDecay import my_utils, alignmap, models, reader, PATH
 sys.path.append(PATH.main_dir)
 from tqdm.contrib.concurrent import process_map
-from scripts.STfeatv2_inDecay_finetune import check_dir, decay_transform
+def check_dir(DIR_NAME):
+    os.makedirs(DIR_NAME, exist_ok=True)
+
+def decay_transform(X):
+    interaction_del = []
+    interaction_ins = []
+    for i in range(0, 5):
+        for j in range(0, 5):
+            if i == j:
+                continue
+            interaction_del.append(np.multiply(X[:, i], X[:, j]))
+    for i in range(5, 9):
+        for j in range(5, 9):
+            interaction_ins.append(np.multiply(X[:, i], X[:, j]))
+    X_del = np.hstack([X[:, :5], interaction_del])
+    X_ins = np.hstack([X[:, :5], interaction_ins])
+    return np.hstack([X_del, X_ins])
 import warnings
 warnings.filterwarnings('ignore')
 to_train = True
 to_predict = True
 to_write_y = True
-num_workers = 12
+num_workers = 0
 
 ndel = 14
 nins = 8
@@ -33,7 +49,12 @@ L1_Lambda = 0
 
 
 # Torch Device
-device = 'gpu' if torch.cuda.is_available() else 'cpu'
+if torch.cuda.is_available():
+    device = 'gpu'
+elif torch.backends.mps.is_available():
+    device = 'mps'
+else:
+    device = 'cpu'
 # some path and requisite files
 pj = os.path.join
 SelfTarget_data_dir = PATH.data_dir
@@ -231,8 +252,7 @@ if __name__ == "__main__":
     exp_name = args.Pretrain.split("ST_June_2017_")[-1].split("_LV7A_DPI7")[0]
     if "/" in exp_name:
         exp_name = os.path.basename(args.Pretrain).replace(".ckpt","")
-    if not os.path.exists(pj(PATH.pth_dir, f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}")):
-        os.mkdir(pj(PATH.pth_dir, f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}"))
+    os.makedirs(pj(PATH.pth_dir, f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}"), exist_ok=True)
     pth_save_dir = pj(PATH.pth_dir,f"{ext_guide}_{exp_name}_{args.Model_Class}_{args.Data_transform}_lr{lr}_L2{L2_Lambda}_T{args.temperature}",args.data_archive)
     pth_save_path = pj(pth_save_dir, f"{len(kf_indeces)}fold_{args.test_split}")
     
@@ -304,12 +324,11 @@ if __name__ == "__main__":
     Test_DL = DataLoader(Test_DS, shuffle=False, batch_size=1, num_workers=num_workers, collate_fn=my_collect_fn)
 
     trainer = pl.Trainer(
-			auto_lr_find=True,
             accelerator=device,
             # fast_dev_run=True,
             enable_progress_bar=eval(args.progress_bar),
 			default_root_dir=pth_save_path,
-            devices = [gpu_device],
+            devices='auto' if device != 'gpu' else [gpu_device],
 			max_epochs=100,
             check_val_every_n_epoch=1,
 			callbacks=[ callbacks.ModelCheckpoint(filename='{epoch}-{val_cre:.8f}',

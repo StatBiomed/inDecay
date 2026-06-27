@@ -4,7 +4,7 @@ echo "ready to download pre-training data"
 wget --user-agent="Mozilla/5.0" \
      --content-disposition \
      -O inDecay_data.zip \
-     "https://figshare.com/ndownloader/articles/25133564/versions/2"
+     "https://figshare.com/ndownloader/articles/25133564/versions/3"
 
 # Check if download was successful
 if [ ! -f "inDecay_data.zip" ]; then
