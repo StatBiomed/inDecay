@@ -2,6 +2,18 @@
 
 This library provides the inDecay package, the script for using our model to predict indels for your own input sequence, the script for training, finetuning the inDecay model.
 
+## 🌐 Web interface
+
+You can now run inDecay directly in your browser — no installation required — at **[https://indecay.online/](https://indecay.online/)**.
+
+## 🔬 Reproducibility
+
+Code and notebooks to reproduce the paper's figures live on the [**`reproducibility`** branch](https://github.com/StatBiomed/inDecay/tree/reproducibility). The code, model weights and data snapshots are permanently archived:
+
+- Code — Zenodo DOI [10.5281/zenodo.20979863](https://doi.org/10.5281/zenodo.20979863)
+- Model weights — Zenodo DOI [10.5281/zenodo.20977675](https://doi.org/10.5281/zenodo.20977675)
+- Training / somatic data — figshare DOI [10.6084/m9.figshare.25133564](https://doi.org/10.6084/m9.figshare.25133564)
+
 
 ## Understand the workflow of inDecay  
 We provide a demonstrating notebook ([demo/inDecay_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main-2025/demo/inDecay_demo.ipynb)) containing the most necessary code to re-implement the inDecay work flow. You can follow the demo to get an idea of how the features were extracted and designed. It also records the a simplified inDecay model and the training process using `pytorch_lightning` `Trainer`.  
