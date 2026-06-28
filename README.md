@@ -16,7 +16,7 @@ Code and notebooks to reproduce the paper's figures live on the [**`reproducibil
 
 
 ## Understand the workflow of inDecay  
-We provide a demonstrating notebook ([demo/inDecay_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main-2025/demo/inDecay_demo.ipynb)) containing the most necessary code to re-implement the inDecay work flow. You can follow the demo to get an idea of how the features were extracted and designed. It also records the a simplified inDecay model and the training process using `pytorch_lightning` `Trainer`.  
+We provide a demonstrating notebook ([demo/inDecay_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main/demo/inDecay_demo.ipynb)) containing the most necessary code to re-implement the inDecay work flow. You can follow the demo to get an idea of how the features were extracted and designed. It also records the a simplified inDecay model and the training process using `pytorch_lightning` `Trainer`.  
 
 <img src="results/model.jpg" alt="drawing" width="400"/>  
 
@@ -92,7 +92,7 @@ python scripts/STfeatv5_inDecay.py --experiment ST_June_2017_BOB_LV7A_DPI7 --rea
 
 ## Finetune model with Sanger sequencing data
 
-To finetune inDecay on your own Sanger sequencing (`.ab1`) files, see the step-by-step tutorial in [demo/zygote_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main-2025/demo/zygote_demo.ipynb). It walks you through processing raw `.ab1` traces into the labeled training data used by inDecay.
+To finetune inDecay on your own Sanger sequencing (`.ab1`) files, see the step-by-step tutorial in [demo/zygote_demo.ipynb](https://github.com/StatBiomed/inDecay/blob/main/demo/zygote_demo.ipynb). It walks you through processing raw `.ab1` traces into the labeled training data used by inDecay.
 
 
 When you finished, run the following command to finetune the model with your own sanger sequencing data
